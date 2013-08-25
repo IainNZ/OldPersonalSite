@@ -1,0 +1,78 @@
+---
+author: idunning
+comments: false
+date: 2012-10-10 02:30:07+00:00
+layout: post
+slug: installing-julia-on-linux-mint-13
+title: Installing Julia on Linux Mint 13
+wordpress_id: 71
+---
+
+I recently decided to check out [Julia](http://julialang.org/), a new "high-level, high-performance dynamic programming language for technical computing", but it isn't really Windows-friendly yet. No problem! Here is a quick guide to getting started on Windows by using a virtual machine:
+
+
+
+	
+  1. Install [VirtualBox](https://www.virtualbox.org/) - VirtualBox lets you create "virtual machines", or in other words, a "operating system - in - a - operating system".
+
+	
+  2. Get a copy of Linux - I like [Mint](http://linuxmint.com/) because it is pretty simple but functional. I am using Linux Mint 13, 32-bit MATE edition.
+
+	
+  3. Create a new virtual machine in VirtualBox, use the Ubuntu default, most of the default settings are fine (maybe give it more RAM if you can).
+
+	
+  4. Start the VM - it'll prompt you to point it towards a CD image, so just browse to the ISO file you downloaded in Step 2.
+
+	
+  5. Install Mint by following the prompts, and restart.
+
+	
+  6. Download the Julia source code from [GitHub](https://github.com/JuliaLang/julia). The best way to do this is to open a Terminal window and enter the following commands:
+
+	
+    * mkdir Development
+
+	
+    * git clone git://github.com/JuliaLang/julia.git
+
+
+
+
+	
+  7. This will install the source to a folder ~/Development/julia
+
+	
+  8. You need to install some dependent files, which you can do with the Software Manager (click in bottom left on the cog in Mint). Install the following packages:
+
+	
+    * build-essentials
+
+	
+    * gfortran
+
+	
+    * libncurses5-dev
+
+
+
+
+	
+  9. Go back to the Terminal window and run the following commands
+
+	
+    * cd julia
+
+	
+    * make
+
+
+
+
+	
+  10. This will take a while. When its done, try out Julia by typing ./julia to start Julia in interactive mode.
+
+
+Hopefully this helps. The confusing/annoying bit for me really was the packages - it hits the lack of g++ quickly, and gfortran a bit later, but doesn't hit libncurses5-dev until the end.
+
+If you find this page off of Google, and are confused by something, please leave a comment and I will update this page with more info. For more help I recommend looking at the [Julia README](https://github.com/JuliaLang/julia/blob/master/README.md) and the [Julia documentation](http://docs.julialang.org/en/latest/).

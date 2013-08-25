@@ -1,0 +1,4 @@
+name: IainDunning.com
+markdown: redcarpet
+pygments: true
+permalink: /:year/:title.html
