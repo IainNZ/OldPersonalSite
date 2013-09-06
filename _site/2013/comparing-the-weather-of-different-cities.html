@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+        <title>Comparing the Weather of Different Cities - IainDunning.com</title>
+	<meta name="description" content="Iain Dunning's personal website.">
+	<meta name="author" content="Iain Dunning">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/stylesheets/base.css">
+	<link rel="stylesheet" href="/stylesheets/skeleton.css">
+        <link rel="stylesheet" href="/stylesheets/layout.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Comparing the Weather of Different Cities</h2>
+<p class="meta">Posted on 09 Jan 2013</p>
+
+<div class="post">
+<p>When people ask me about New Zealand, they often ask me about the weather. I can tell them the rough average temperatures in Auckland, but that isn&#39;t necessarily that meaningful. What would be more useful is telling them, &quot;oh, its like X City in Y State&quot; - it makes it more real. This came up at Thanksgiving when visiting my girlfriend&#39;s family, and I realised it&#39;d make a good project. So here is what I did to make it a reality.</p>
+
+<h2>Acquiring data</h2>
+
+<p>I wanted to get weather data for both US cities and NZ cities in a comparable format, and I knew from past experience that I should be able to get &quot;Average&quot; min, max and mean temperatures, precipitation, and sunshine at least. Data like that is provided by the <a href="http://www.noaa.gov/">NOAA</a> in the USA, and <a href="http://www.niwa.co.nz/">NIWA</a> in NZ. Hammering on Google for a while revealed <a href="http://ols.nndc.noaa.gov/plolstore/plsql/olstore.prodspecific?prodnum=C00095-PUB-A0001">this page</a> for the USA and <a href="http://www.niwa.co.nz/education-and-training/schools/resources/climate">this page</a> for NZ, so I was ready to go.</p>
+
+<h2>Processing the data</h2>
+
+<p>The NOAA data was in a fixed-width format, so I made a quick function in Python that takes a filename, and a data-type, and stores it in a global dictionary object. Not the cleverest datastructure, but super easy to work with:</p>
+
+<div class="highlight"><pre><code class="python"><span class="k">def</span> <span class="nf">ReadNOAAFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">field</span><span class="p">):</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
+  <span class="n">firstLine</span> <span class="o">=</span> <span class="bp">True</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">firstLine</span><span class="p">:</span>
+      <span class="n">firstLine</span> <span class="o">=</span> <span class="bp">False</span>
+      <span class="k">continue</span>
+    <span class="n">city</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">38</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">city</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">city</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="n">months</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">43</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+      <span class="n">monthFloat</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">months</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)]</span>
+      <span class="n">data</span><span class="p">[</span><span class="n">city</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">monthFloat</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>The NIWA data was in a CSV format, with some header lines. The numbers are in Celcius, but I converted them to Farenheit as I read them. Being lazy, I stripped out the header lines by hand and then split on commas:</p>
+
+<div class="highlight"><pre><code class="python"><span class="k">def</span> <span class="nf">ReadNIWAFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">field</span><span class="p">):</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">city</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">city</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">city</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">monthFloat</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mf">9.0</span><span class="o">/</span><span class="mf">5.0</span><span class="o">+</span><span class="mf">32.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">)]</span>
+    <span class="n">mf2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span><span class="mi">12</span><span class="p">):</span> <span class="n">mf2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">monthFloat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">offset</span><span class="p">):</span> <span class="n">mf2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">monthFloat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">city</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">mf2</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Theres a bit more going on there than I&#39;m saying here - an adjustment was required. Read on...</p>
+
+<h2>First Attempt at Closeness Metric</h2>
+
+<p>With the data now in memory, it was time to code up a quick test. I just used the daily average temperatures, and calculated the sum of square errors between every city: given the temperature for each month for two cities, calculate the difference for each month. Square that difference, and the sum it up. <em>Things didn&#39;t go well.</em></p>
+
+<p>The results seemed pretty strange - Mt Cook&#39;s weather was more similar to Auckland&#39;s weather than almost all US cities. This is a bit odd because Mt Cook is the tallest mountain in New Zealand, and is not a warm place at all. After checking my Farenheit conversion, I quickly wrote out the temperatures for a couple of US and NZ cities, and realized I had forgotten that <strong>the seasons are reversed</strong>! My solution to this was to just offset the months in the NZ data by 6 months. So January (USA) and July (NZ) are now equivalent, and so on. This is possibly not perfect, as the season offsets might not be uniform. Another option would be to check all offsets for each pair of cities, and find the offset that minimizes the error. Something to check later.</p>
+
+<p>With this fixed, I ran it for Auckland, NZ and got the following preliminary results which seem encouraging. The number is the SSE when compared to Auckland. I omitted some results to make it easier to read.</p>
+
+<p><code>Auckland 0.0
+Tauranga 11.0
+Whangarei 13.5
+Kaitaia 18.1
+SANTA BARBARA, CA 29.3
+Gisborne 33.4
+Napier 37.9
+SANTA MARIA, CA 47.9
+Wanganui 54.4
+SAN FRANCISCO AP, CA 66.4
+New Plymouth 80.8
+Hamilton 81.5
+...
+SAN DIEGO, CA 335.0
+Christchurch 368.6
+SACRAMENTO, CA 375.4
+Hokitika 458.5
+LONG BEACH, CA 458.6
+Taupo 487.2
+STOCKTON, CA 517.4
+Chatham Islands 518.9
+EUREKA, CA. 522.9
+LOS ANGELES C.O., CA 586.0
+Dunedin 644.8
+SEATTLE C.O., WA 648.1
+</code></p>
+
+<h2>Bringing it to the people</h2>
+
+<p>I quickly added the other data fields, and extended the error/difference calculation to include them. Changing the weightings on the different fields affected the answer, but its a pain to play with by changing code and running it again. This kind of thing is crying out for a website.</p>
+
+<p>I grabbed the domain <a href="http://www.tenkicompare.com">www.tenkicompare.com</a>, and built a website using the following libraries:</p>
+
+<ul>
+<li>Twitter&#39;s <a href="http://twitter.github.com/bootstrap/">Bootstrap</a></li>
+<li><a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQuery UI</a></li>
+<li><a href="http://ivaynberg.github.com/select2/">Select2</a> for dropdown boxes</li>
+</ul>
+
+<p>Tenki (天気) is Japanese for weather - obviously most good domains with &quot;weather&quot; in them are either in use or someone is &quot;squatting&quot; on them. The &quot;source code&quot; of the website can be found at <a href="https://github.com/IainNZ/WeatherSite">GitHub: https://github.com/IainNZ/WeatherSite</a></p>
+
+<h2>Extending the data</h2>
+
+<p>Having three types of temperature data isn&#39;t very helpful for the purposes of comparing cities, given they are all very correlated. On the other hand, they are nicely standardized. Other useful measures like &quot;rainy-ness&quot;, &quot;sunny-ness&quot;, and humidity are out there, but it aren&#39;t always so standardized. Here are some issues:</p>
+
+<ul>
+<li><p>NIWA (New Zealand) provides monthly sunshine hours but the NOAA (USA) provides a percentage of possible sunshine hours. If you could get the number of possible sunshine hours per month, you could convert between the two. After much Googling I found the data for 1961 to 1990 <a href="http://www.ncdc.noaa.gov/oa/wdc/index.php?name=climateoftheworld">here</a> but its pretty nasty to turn into a nice table. I also found <a href="http://www.city-data.com/forum/weather/1583137-calculating-sunshine-hour-totals.html">this</a> which suggests that sunshine hours aren&#39;t going to really work if I&#39;m comparing across countries.</p></li>
+<li><p>Another issue is &quot;rain days&quot;. NIWA records a day as being a &quot;rain day&quot; if it had more than 1 mm of precipitation, but NOAA records a day as being a &quot;rain day&quot; is it has more than 0.01 inches of precipitation, which is ~0.25 mm. There is no way to convert between these, but its probably close enough.</p></li>
+<li><p>The NIWA sunhours data is missing some cities but has some additional ones. It doesn&#39;t have Whangarei, Milford Sound, or Manapouri, but has Te Anau. Whangarei being incomplete is annoying... but for now, I am omitting it.</p></li>
+<li><p>There are errors in the NOAA data. Average temperature has a &quot;Havre, TX&quot; but the other files have a &quot;Havre, MT&quot; - as far as I can tell, there is no Havre in Texas, and if you look, they have the same station number. So there is a manual fix for that in the parsing code. Although Havre isn&#39;t included in the end, see below. Dallas-Love Field has average temperature and min temperature, but not max temperature or raindays. Further investigation revealed it was listed as &quot;Dallad&quot; in max temp data... In average temperature there is &quot;AUSTIN/CITY, TX&quot; but in raindays its &quot;AUSTIN, TX&quot;, but same station code, so that required another tweak.</p></li>
+<li><p>A large number of stations don&#39;t have sun percentage information, so for now sun percentage isn&#39;t being used. Perhaps the cities that appear in the sun percentage are all I need, but I&#39;m not sure at this point.</p></li>
+</ul>
+
+<p>The different-data issues lead to me creating three options:</p>
+
+<ol>
+<li>Compare against same country - all measures available.</li>
+<li>Compare against different countries - limited.</li>
+<li>Compare against all - limited.</li>
+</ol>
+
+<h2>Not the end</h2>
+
+<p>I still need to add more countries, and add some visualizations of the city-vs-city comparisons - but that can wait for now, I&#39;ve spent too much time fiddling with this as it is! So if you want to <a href="http://www.tenkicompare.com">compare the weather in two cities</a>, this is the site for you.</p>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>

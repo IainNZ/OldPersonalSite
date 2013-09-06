@@ -1,0 +1,72 @@
+<h3>What is a &quot;TSP&quot;?</h3>
+
+<p>From the <a href="http://www.tsp.gatech.edu/problem/index.html">Georgia Institue of Technology website</a>:</p>
+
+<blockquote>
+<p>Given a collection of cities and the cost of travel between each pair of them, the traveling salesman problem, or TSP for short, is to find the cheapest way of visiting all of the cities and returning to your starting point. In the standard version we study, the travel costs are symmetric in the sense that traveling from city X to city Y costs just as much as traveling from Y to X.</p>
+</blockquote>
+
+<h3>Integer Programming Formulation</h3>
+
+<p>Given our definition of a TSP from above, we can start formulating the problem as an integer program:</p>
+
+<p>min</p>
+
+<p><img src="http://idunning.scripts.mit.edu/blog/wp-content/uploads/2012/08/tsp_obj.png" alt="TSP Formulation"></p>
+
+<p>subject to</p>
+
+<p><img src="http://idunning.scripts.mit.edu/blog/wp-content/uploads/2012/08/tsp_con1.png" alt="TSP Formulation"></p>
+
+<p>  (must leave each city)</p>
+
+<p><img src="http://idunning.scripts.mit.edu/blog/wp-content/uploads/2012/08/tsp_con2.png" alt="TSP Formulation"></p>
+
+<p>  (must enter each city)</p>
+
+<p>where our xij is a binary (0 or 1) variable that says if we will go from city i to city j on our tour. We are dealing with just the case where the costs between cities are symmetric, that is cij=cji, so this can be simplified considerably. The simplified IP for a 4 city problem would have:</p>
+
+<ul>
+<li><p>A variable xij for each link: (1,2) (1,3) (1,4) (2,3) (2,4) (3,4)</p></li>
+<li><p>A constraint for each city, that says each city must be visited and left:</p>
+
+<ul>
+<li>x1,2 + x1,3 + x1,4 = 2</li>
+<li>x1,2 + x2,3 + x2,4 = 2</li>
+<li>x1,3 + x2,3 + x3,4 = 2</li>
+<li>x1,4 + x2,4 + x3,4 = 2</li>
+</ul></li>
+</ul>
+
+<h3>Try it out</h3>
+
+<p>So now we&#39;ve got our integer programming formulation, let&#39;s try it out on a problem. Click the Reset button below - the default configuration of cities should (magically) appear.</p>
+
+<p>You can drag the cities around and re-solve, or add cities to make it more complex. When you are ready to move on, click the Reset button.</p>
+
+<p>You may notice that the solution is not quite right for certain arrangements. While each city is visited and left, the optimal solution was not a path through all the cities but instead two smaller paths. We can call these smaller tours <em>subtours</em>, and the constraints necessary to eliminate them are called <em>subtour-elimination constraints</em>.</p>
+
+<h3>Subtour-Elimination Constraints</h3>
+
+<p>For a better and more detailed explanation of this, check out the <a href="http://www.tsp.gatech.edu/methods/opt/subtour.htm">Georgia Tech</a> website.</p>
+
+<p>To complete our integer programming formulation we need to add these subtour-elimination constraints. An example of a subtour elimination constraint for the 6 city problem shown above would be:</p>
+
+<ul>
+<li>x0,1 + x1,2 + x0,2 &lt;= 2</li>
+</ul>
+
+<p>This says that no more than two of the arcs between the nodes (0,1,2) are allowed to be in the solution. Here is something to try: how many possible subtour-elimination constraints are there for this problem? The answer is big, and keeps getting bigger as the number of cities grows. It&#39;d take a long time to just write out all those constraints, let alone solve it. And yet, people solve TSPs with integer programming - so whats the secret?</p>
+
+<p>Lets try adding that subtour-elimination constraint we worked out before:</p>
+
+<p>// Insert subtour elimination constraints here. The model building code in this webpage will evaluate the code in this box before solving, allowing you to tell it to add some extra constraints by saying which arcs are in each subtour. Remove the // from the start of the next line to add a constraint.
+// subtours.push([ [[0,1], [0,2], [1,2]], 2 ]) // Adds  x01 + x02 + x12 &lt;= 2</p>
+
+<p>Have you followed the above instructions? Now re-solve the TSP above. Perfect!</p>
+
+<p>We only need one of the many possible subtour-elimination constraints to change our nearly-correct solution into the optimal solution. A very similar method was first used <a href="http://www.tsp.gatech.edu/methods/dfj/index.html">quite some time ago, in 1954</a> to solve a problem with 49 cities! This way of solving a problem, by first solving a relaxed version of it and then adding constraints (or &quot;cuts&quot;) to improve the relaxation, is one of the techniques used to solve all sorts of integer programs.</p>
+
+<h3>Output from the Integer Progamming Solver</h3>
+
+<p>We can see what the solver is doing by looking at the output that appears below when we hit &quot;Solve&quot;.</p>

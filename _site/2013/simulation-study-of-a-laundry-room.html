@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+        <title>Simulation Study of a Laundry Room - IainDunning.com</title>
+	<meta name="description" content="Iain Dunning's personal website.">
+	<meta name="author" content="Iain Dunning">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/stylesheets/base.css">
+	<link rel="stylesheet" href="/stylesheets/skeleton.css">
+        <link rel="stylesheet" href="/stylesheets/layout.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Simulation Study of a Laundry Room</h2>
+<p class="meta">Posted on 16 May 2013</p>
+
+<div class="post">
+<p>For my first two years at MIT I lived in graduate housing (<a href="http://s-p.mit.edu/">Sidney-Pacific</a>, to be exact). Its a big building: about 700 graduate students, one of, if not the, biggest graduate &quot;dorm&quot; in North America. What I&#39;m going to discuss today is pretty mundane, but maybe of interest to some: the laundry room! Assuming nothing is broken, there are are 24 washing machines (washers) and 24 dryers. The length of a cycle on the washers is 30 minutes, and the length of a cycle is at least 1 hour on the dryers, although you can pay for longer cycles if you want.</p>
+
+<div class="photo"><img src="/images/laundryroom.jpg" alt="Screenshot from web-based laundry room monitor showing the layout"><p class="caption">Screenshot from web-based laundry room monitor showing the layout</p></div>
+
+<p>Here is the primary observation: if it takes 30 minutes for a washing cycle, and an hour for a drying cycle, how is it that there isn&#39;t a big problem? Obviously something is going on here to make it all work. What I wanted to do is experiment with <a href="http://julialang.org/">Julia</a> to see what parameters would make the laundry room &quot;work&quot;, and not have a lot of unhappy people with wet clothing!</p>
+
+<p>First of all, lets characterize how people show up to the laundry. I&#39;m going to assume initially that everyone uses only one washer, and that they arrive according to a <a href="http://en.wikipedia.org/wiki/Poisson_process">Poisson process</a>. The first assumption will be relaxed later, so lets look at the second assumption. Its probably not <em>too</em> bad on a busy Saturday/Sunday morning, so we&#39;ll say thats the time of week we are looking at - if the laundry is quiet, it isn&#39;t a problem anyway. We must also acknowledge the implied assumption that the number of machines in use doesn&#39;t affect the arrival rate - this could be a big deal, although you could sort of get around it if this is the steady state rate after an adjustment for that.</p>
+
+<p>Lets assume at &quot;steady state&quot; that 75% of the washers are in use on average (18 machines). If people are arriving at a rate of λ (lambda) per hour, and the service time is 0.5 hours (30 minutes), we will have steady state when the rate of people finishing equals the rate of people arriving. That is, λ = n/0.5. So to get an average of 18 machines in use, we should assume 36 people are arriving per hour. From my own observations, and given that less than 24 machines are often working, one person every 2 minutes at peak time seems OK. If we assume that people move their washing instantly into a dryer, again only using one of each,  λ = n/1.5, so we&#39;d only need ~15 people an hour for things to start backing up. The model we will experiment with is as follows:</p>
+
+<ul>
+<li>Residents arrive at a rate of λ=36 per hour. If all the washers are in use, they will leave - no queueing. If there is a free machine, they will take it and start a 30 minute cycle on a single machine.</li>
+<li>At the end of the wash cycle, they will do one of two things:
+
+<ul>
+<li>With probability <em>p</em> they will put their clothes in a dryer, if available, and set it for an hour cycle. If there is no free dryer they will wait for one.</li>
+<li>With probability <em>1-p</em> they will take their clothes to their room and put them on a drying rack.</li>
+<li>The probabilities are independent of the number of dryers in use.</li>
+</ul></li>
+</ul>
+
+<p>We will play with different values of p to investigate the affect on the time-averaged queue length of the dryers. The code to do this was written in <a href="http://julialang.org/">Julia</a> using the <a href="https://github.com/BenLauwens/SimJulia.jl">SimJulia</a> package, with inter-arrival times generated using <a href="https://github.com/JuliaStats/Distributions.jl">Distributions.jl</a>. We ignore the start-up effects for simplicity reasons by running the simulation for 1000 hours (only a takes a second to simulate it though). The code will be at the bottom of this post. The plotting was done with gnuplot, although Julia does have some good plotting functionality.</p>
+
+<div class="photo"><img src="/images/laundryroomdry.png" alt="Queue length versus probability of drying in room"><p class="caption">Queue length versus probability of drying in room</p></div>
+
+<p>As you can see, as the probability goes to zero the queue length starts to grow exponentially, as you&#39;d expect from queuing theory/back of the envelope calculations. Increasing probability now, by the time we reach <em>p=0.4</em>, the average queue length is down to 1 - this is probably &quot;good enough&quot;. So, under these assumptions, roughly half the people would need to be taking their laundry to their room. This seems unlikely to me, so lets revisit our model and change some things around.</p>
+
+<h2>A more complex arrival process</h2>
+
+<p>One assumption we made above was that each person only uses one machine. This is definitely not true - you&#39;ll see people use two quite a bit. We will add a new parameter q - the probability someone uses two washing machines. I&#39;ll also make the assumption that even if someone uses two washing machines, they only use one dryer (or don&#39;t use a dryer at all). To maintain our 75% average usage of the washing machines, we need to calculate λ as a function of q. If we want 18 machines in use on average at steady state, we need λ to satisfy the formula ((1-q) + 2q)λ = (1 + q)λ = 18/0.5. We can check this is right: if q=0, we obtain λ=36 as before, and q=1 we obtain λ=18 - as you&#39;d expect. Another intuition check: if every person uses two washing machines, and the steady state is less than capacity, then you&#39;d expect the steady state usage of dryers to be equal to the steady state usage of washing machines. </p>
+
+<div class="photo"><img src="/images/laundrytwowash.png" alt="Queue length versus probability of drying in room and probability of using two washing machines"><p class="caption">Queue length versus probability of drying in room and probability of using two washing machines</p></div>
+
+<p>The plot suggests we can get a similar queue length to <em>p=0.4, q=0.0</em> with <em>p=0.2, q=0.3</em>, which seems more realistic.</p>
+
+<h2>Conclusions and Future Work</h2>
+
+<p>In general this full model seems to suggest that the laundry room is barely stable at its busiest point, and that there are probably times during peak usage where someone might need to wait for a dryer (or give up and dry it in their room). Fortunately it seems that the laundry room rarely reaches that level of usage so its not a big deal. There are some factors that could make the situation &#39;worse&#39;: people running longer cycles, using two dryers if they use two washers, the delays between washer and dryer and with people taking dried clothing out of the dryer. Factors making it &#39;better&#39; are that people might check the number of machines in use before coming down, thus the arrival rate slows as the number of machines in use grows. Because I used a simulator instead of doing it analytically, it would be easy to extend this code to include these effects. However, estimating parameters for these would require some data collection/surveying - probably not worth it!</p>
+
+<p>Another thing that would be easy to change but hard to calibrate would be to model people queued for the dryers as leaving their washing in the washing machine(s). This would actually be a very easy change to the code, and would make the problem a lot more painful to analyze analytically - especially if you threw in a random time delay after the wash cycle. That is the beauty of simulation, but I&#39;d spend so much time tinkering with parameters it didn&#39;t seem worth it. All in all, this was a good distraction from &quot;real&quot; work and shows the versatility of Julia.</p>
+
+<h2>Appendix: the code</h2>
+
+<p>Here is the code for the one-person-one-washer version.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="c"># Laundry Simulator</span>
+<span class="c"># Iain Dunning, 2013</span>
+<span class="k">using</span> <span class="n">Distributions</span>
+<span class="k">using</span> <span class="n">SimJulia</span>
+    
+<span class="kd">const</span> <span class="n">MAX_WASHER</span> <span class="o">=</span> <span class="mi">24</span>
+<span class="kd">const</span> <span class="n">MAX_DRYER</span> <span class="o">=</span> <span class="mi">24</span>
+<span class="kd">const</span> <span class="n">STEADY_STATE</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="kd">const</span> <span class="n">WASHER_SERVICE</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="kd">const</span> <span class="n">DRYER_SERVICE</span> <span class="o">=</span> <span class="mf">1.0</span>
+    
+<span class="k">function</span><span class="nf"> useWash</span><span class="p">(</span><span class="n">person</span><span class="p">::</span><span class="n">Process</span><span class="p">,</span> <span class="n">washers</span><span class="p">::</span><span class="n">Resource</span><span class="p">,</span> <span class="n">dryers</span><span class="p">::</span><span class="n">Resource</span><span class="p">,</span> <span class="n">dryRoomChance</span><span class="p">::</span><span class="kt">Float64</span><span class="p">)</span>
+  <span class="c"># Arrive at laundry</span>
+  <span class="n">arrivalTime</span> <span class="o">=</span> <span class="n">now</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+  <span class="c"># Check if enough washing machines</span>
+  <span class="n">numWashInUse</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">washers</span><span class="o">.</span><span class="n">active_set</span><span class="p">)</span>
+  <span class="n">numWashToUse</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">if</span> <span class="n">numWashInUse</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">MAX_WASHER</span>
+    <span class="c"># Insufficient washing machines</span>
+    <span class="k">return</span>
+  <span class="k">end</span>
+  <span class="c"># Using washing machines</span>
+  <span class="n">request</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">washers</span><span class="p">)</span>
+  <span class="n">hold</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">WASHER_SERVICE</span><span class="p">)</span>
+  <span class="n">release</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">washers</span><span class="p">)</span>
+    
+  <span class="c"># Decide whether we will dry in room, or dry in dryer</span>
+  <span class="k">if</span> <span class="n">rand</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">dryRoomChance</span>
+    <span class="c"># Try to use dryer</span>
+    <span class="n">request</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">dryers</span><span class="p">)</span>
+    <span class="n">hold</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">DRYER_SERVICE</span><span class="p">)</span>
+    <span class="n">release</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">dryers</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> genPerson</span><span class="p">(</span><span class="n">source</span><span class="p">::</span><span class="n">Process</span><span class="p">,</span> <span class="n">washers</span><span class="p">::</span><span class="n">Resource</span><span class="p">,</span> <span class="n">dryers</span><span class="p">::</span><span class="n">Resource</span><span class="p">,</span> <span class="n">dryRoomChance</span><span class="p">::</span><span class="kt">Float64</span><span class="p">)</span>
+  <span class="n">arrivalRate</span> <span class="o">=</span> <span class="n">STEADY_STATE</span> <span class="o">/</span> <span class="n">WASHER_SERVICE</span>
+  <span class="n">exp_dist</span> <span class="o">=</span> <span class="n">Exponential</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">arrivalRate</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">10000</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">simulation</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="p">@</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&quot;Person%d&quot;</span><span class="p">,</span><span class="n">i</span><span class="p">))</span>
+    <span class="n">activate</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">now</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="n">useWash</span><span class="p">,</span> <span class="n">washers</span><span class="p">,</span> <span class="n">dryers</span><span class="p">,</span> <span class="n">dryRoomChance</span><span class="p">)</span>
+    <span class="n">interArrival</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">exp_dist</span><span class="p">)</span>
+    <span class="n">hold</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">interArrival</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> runSim</span><span class="p">(</span><span class="n">dryRoomChance</span><span class="p">::</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+  <span class="n">srand</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+  <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">uint</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+  <span class="n">washers</span> <span class="o">=</span> <span class="n">Resource</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="s">&quot;Washers&quot;</span><span class="p">,</span> <span class="n">uint</span><span class="p">(</span><span class="n">MAX_WASHER</span><span class="p">),</span> <span class="n">true</span><span class="p">)</span>
+  <span class="n">dryers</span> <span class="o">=</span> <span class="n">Resource</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="s">&quot;Dryers&quot;</span><span class="p">,</span> <span class="n">uint</span><span class="p">(</span><span class="n">MAX_DRYER</span><span class="p">),</span> <span class="n">true</span><span class="p">)</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="s">&quot;Source&quot;</span><span class="p">)</span>
+  <span class="n">activate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">genPerson</span><span class="p">,</span> <span class="n">washers</span><span class="p">,</span> <span class="n">dryers</span><span class="p">,</span> <span class="n">dryRoomChance</span><span class="p">)</span>
+  <span class="n">run</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">)</span>
+
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;TimeAverage washers in use: </span><span class="si">$</span><span class="s">(time_average(activity_monitor(washers)))&quot;</span><span class="p">)</span>
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;TimeAverage dryers in use: </span><span class="si">$</span><span class="s">(time_average(activity_monitor(dryers)))&quot;</span><span class="p">)</span>
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;TimeAverage dryer queue length: </span><span class="si">$</span><span class="s">(time_average(wait_monitor(dryers)))&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">time_average</span><span class="p">(</span><span class="n">wait_monitor</span><span class="p">(</span><span class="n">dryers</span><span class="p">))</span>
+<span class="k">end</span>
+</code></pre></div>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>

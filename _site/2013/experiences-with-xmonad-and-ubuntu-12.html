@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+        <title>Experiences with Setting Up Xmonad on Ubuntu 12 - IainDunning.com</title>
+	<meta name="description" content="Iain Dunning's personal website.">
+	<meta name="author" content="Iain Dunning">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/stylesheets/base.css">
+	<link rel="stylesheet" href="/stylesheets/skeleton.css">
+        <link rel="stylesheet" href="/stylesheets/layout.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Experiences with Setting Up Xmonad on Ubuntu 12</h2>
+<p class="meta">Posted on 13 May 2013</p>
+
+<div class="post">
+<p>After being impressed with a friends <a href="http://xmonad.org/">Xmonad</a> setup, I decided to give it a go for myself. <a href="http://xmonad.org/">Xmonad</a>, in short, is a <a href="http://en.wikipedia.org/wiki/Window_manager">window manager</a> that automatically tiles and aligns all your windows - the idea being that you shouldn&#39;t mess around with these things manually yourself, because you usually want your windows to fill up the screen anyway. Before switching to Ubuntu+XMonad I primarily used Windows 7. I used the Windows-Left and Windows-Right key combinations to align two windows side-by-side all the time, so this appealed to me. I had also been meaning to use Linux on a more full-time basis, as I previously only used it when needed, usually as a virtual machine guest. This summer I will be using it a lot more so I figured why not fully embrace it. So here is my journey to going from a Windows installation to a dual-boot Ubuntu/Win7 install with Xmonad as my window manager, written mostly in real-time as I did it. Hopefully it may help someone get started - there are many posts about this sort of thing on the internet, but maybe this simpler step-by-step guide will be easier to understand than downloading a configuration file.</p>
+
+<p><em>Update</em>: After writing this post and its updates, I posted my configuration files on Github: <a href="https://github.com/IainNZ/dotfiles">https://github.com/IainNZ/dotfiles</a>. I&#39;m also aware that there are posts/configs that include the Ubuntu panel - I haven&#39;t bothered to figure that out yet, but I hope to one day get around to it.</p>
+
+<h2>Initial Setup: Install Ubuntu, xmonad, Xmobar, simple configs</h2>
+
+<ul>
+<li>Luckily I had partitioned my harddrive into a 120Gb and a ~60Gb partition beforehand, so the first thing I did was move everything I wanted off the 60Gb into the 120Gb partition.</li>
+<li>Next, I downloaded the ISO file for <a href="http://www.ubuntu.com/download/desktop">Ubuntu 12.04 LTS 64-bit</a> and a program to &quot;burn&quot; the <a href="http://www.pendrivelinux.com/universal-usb-installer-easy-as-1-2-3/">ISO to a USB stick</a>. I&#39;d never done this before, used to just use CDs, so was pleased to see how easy it was.</li>
+<li>After doing that, I rebooted and hit F12 to change the device boot order to start from the USB stick.
+Ubuntu starts up. I used Gparted to remove the 60Gb partition and then started the installer. It automatically detects the empty space and uses it up, allocating exactly 4Gb for a swap partition. I learnt that having a big enough swap partition matters quite a bit even if you don&#39;t plan to be in a situation where you will be swapping to disk: when you hibernate, <a href="http://www.howtogeek.com/113923/how-to-re-enable-hibernate-in-ubuntu-12.04/">it saves memory to the swap space</a>, rather than a file in the normal filesystem (as in Windows).</li>
+<li>After rebooting again, we are presented with a choice of operating systems. Windows still works, so thats nice (I&#39;ve managed to nuke my Windows install before...). Booting into Ubuntu, we arrive in the default desktop environment.</li>
+<li>I started up a terminal (in case you were initially confused by the Unity interface, like me, you click the icon in the top left and type in what you want, in this case <em>terminal</em>) and installed xmonad through the package manager: <em>sudo apt-get install xmonad</em></li>
+<li>I then logged out. Now, to log-in with xmonad as my window manager, I click the little Ubuntu icon next to my name and selected &quot;XMonad&quot; (not &quot;GNOME with Xmonad&quot; - the subtleties escape me at the moment...). After typing in my password and hitting enter, nothing seem to happen except the log-in screen goes away.</li>
+<li>Its not broken - there is just nothing open. Hitting <em>alt-shift-enter</em> opens a terminal, and hitting it again opens another, putting them side-by-side. You can move the mouse to shift focus, or press <em>alt-j</em> and <em>alt-k</em> to cycle between windows. For more shortcuts, I found <a href="http://xmonad.org/tour.html">this tour</a> really helpful. Helpful tip, if you need to bail out of XMonad before going on: to log out, <em>alt-shift-q</em> will work.</li>
+<li>If you are anything like me, you&#39;ll find the idea of using alt for managing windows like this a bit unnatural. Given that the Windows key is on my keyboard, makes sense to me to use that instead. Fortunately this is pretty easy to do and is my first customization of xmonad. Apparently customization is another of the virtues of Xmonad, and you actually write the configuration file as a <a href="http://en.wikipedia.org/wiki/Haskell_(programming_language">Haskell</a>) script!
+
+<ul>
+<li>First we need a directory to store our configuration (<code>mkdir ~/.xmonad</code>), and to create and edit the config file itself (e.g. <code>nano ~/.xmonad/xmonad.hs</code>)</li>
+<li>The code we&#39;ll use is as follows (from <a href="http://www.haskell.org/haskellwiki/xmonad/Frequently_asked_questions#Rebinding_the_mod_key_.28Alt_conflicts_with_other_apps.3B_I_want_the_____key.21.29">here</a>):</li>
+</ul></li>
+</ul>
+
+<div class="highlight"><pre><code class="haskell"><span class="kr">import</span> <span class="nn">XMonad</span>
+
+<span class="nf">main</span> <span class="ow">=</span> <span class="n">xmonad</span> <span class="n">defaultConfig</span>
+         <span class="p">{</span> <span class="n">modMask</span> <span class="ow">=</span> <span class="n">mod4Mask</span>
+         <span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li>The above code says to run xmonad according to the default values except for the modifications listed in this key-value structure. <em>mod4Mask</em> indicates the Windows key for most keyboards. To use the new settings, press <em>alt-q</em> to reload xmonad.hs. Test it out by creating a new terminal with <em>win-shift-enter</em>, and close it with <em>win-shift-c</em></li>
+<li>This is all rather barebones, although I kind of like how clean it is. I installed two packages that seem to come fairly highly recommended: <a href="http://tools.suckless.org/dmenu/">dmenu</a>, a progam launcher, and <a href="http://projects.haskell.org/xmobar/">xmobar</a>, a status bar progam.
+
+<ul>
+<li>First up, dmenu: <code>sudo apt-get install suckless-tools</code></li>
+<li>Press <em>win-p</em> to bring it up. We&#39;re presented with a list of program names. Start typing a name, e.g. firefox, to get auto-suggestions. Easy!</li>
+<li>Next, xmobar: <code>sudo apt-get install xmobar</code></li>
+<li>We need to create a configuration file, much like we did for xmonad itself. There is an example file <a href="http://www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen%27s_Configuration#Configuring_xmobar">here</a>, which is pretty intense at first but you can break it down. Create the file with, e.g. <code>nano ~/.xmobarrc</code> and copy-paste the default config from above. For now, I just changed the weather station from EGPF to KBOS (for Boston Logan International Airport).</li>
+<li>Finally we extend our xmonad.hs to connect it to xmobar. I used the relevant sections from <a href="http://www.haskell.org/haskellwiki/xmonad/Config_archive/John_Goerzen%27s_Configuration#Configuring_xmonad_to_use_xmobar">here</a>.</li>
+</ul></li>
+</ul>
+
+<div class="photo"><img src="/images/xmonadsshot.png" alt="Screenshot showing a typical Xmonad layout with Xmobar"><p class="caption">Screenshot showing a typical Xmonad layout with Xmobar</p></div>
+
+<h2>Adventures with Multiple Monitors</h2>
+
+<p>At my office I use a dual monitor setup. Unfortunately it was not a matter of plug-and-play, but it wasn&#39;t too hard to get it working:</p>
+
+<ul>
+<li>I logged into Unity, and setup my screens so they weren&#39;t cloned. Not sure if this was necessary/helped</li>
+<li>I logged into xmonad, and the screens were cloned - not good!</li>
+<li>Running the xrandr command listed my screens - now I know what they are called, I can change them!</li>
+<li>The following command solved my issues: <code>xrandr --output HDMI-1 --auto --left-of LVDS-1</code>
+
+<ul>
+<li><code>--output</code> is the screen we want to deal with (in this case, I&#39;m connected via HDMI)</li>
+<li><code>--auto</code> means to use the default resolution for that monitor</li>
+<li><code>--left-of LVDS-1</code> means that the screen is physically to the left of my laptop&#39;s screen</li>
+</ul></li>
+<li>Now, unfortunately, xmobar only shows up on my laptop screen. I haven&#39;t quite figured out how to make it appear on both, but you can make it appear on the main screen using <code>xrandr --output HDMI-1 --primary</code> (via <a href="http://blog.ezyang.com/2011/06/multi-monitor-xmobar-placement-on-nome/">this post</a>)</li>
+</ul>
+
+<h2>Volume Control in Xmonad/Xmobar</h2>
+
+<p>So after getting set up and using the system a bit, I realized I had no idea a) how to see what the volume is, and b) how to change it. I&#39;m going to deal with (b) first, using the info <a href="http://superuser.com/questions/389737/how-do-you-make-volume-keys-and-mute-key-work-in-xmonad">here</a>.</p>
+
+<ul>
+<li>First we need to add a new import to allow us to configure some new key combinations at the top of xmonad.hs, that is very common in a lot of configs: <code>import XMonad.Util.EZConfig(additionalKeys)</code></li>
+<li>Next we import some user-friendly names for the &quot;special&quot; keys on our keyboard: <code>import Graphics.X11.ExtraTypes.XF86</code></li>
+<li>The <code>additionalKeys</code> is going to go after our <code>defaultConfig</code> section, and will look like this:</li>
+</ul>
+
+<div class="highlight"><pre><code class="haskell"><span class="p">`</span><span class="n">additionalKeys</span><span class="p">`</span>
+    <span class="p">[</span> <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioLowerVolume</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master on &amp;&amp; amixer set Headphone on &amp;&amp; amixer set Master 2-&quot;</span><span class="p">),</span> 
+      <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioRaiseVolume</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master on &amp;&amp; amixer set Headphone on &amp;&amp; amixer set Master 2+&quot;</span><span class="p">),</span>
+      <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioMute</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master toggle &amp;&amp; amixer set Headphone toggle&quot;</span><span class="p">)</span> <span class="p">]</span>
+    <span class="p">]</span>
+</code></pre></div>
+
+<ul>
+<li>The above is pretty complicated, but there is a reason: the problem seems to be that toggling the Master volume control turns Headphone off, but toggling it again does not turn it on, see <a href="http://ubuntuforums.org/showthread.php?t=1796713">here</a> or <a href="http://askubuntu.com/questions/65764/how-do-i-toggle-sound-with-amixer">here</a>. Something is still not totally right with the unmute button, it seems to work after after a random time, but pressing a volume key to unmute works fine.</li>
+<li>Now we want to display the volume in Xmobar. It seems the best way is to have a little script that takes the output of amixer and parses the volume from it.  Lets break it down:
+
+<ul>
+<li><code>amixer get master</code> spits out the volume info, including a volume percentage.</li>
+<li>We pipe that into <code>awk</code>, this (crazy/awesome) command line text processing tool</li>
+<li>We are going to pass the command <code>-F&#39;[\[\]]&#39;</code> to <code>awk</code> first. <code>-F</code> is the field seperator argument - this is what we are going to &quot;split&quot; on (the square brackets)</li>
+<li>Next we want to get out the percentage - the second field: <code>&#39;{print $2}&#39;</code></li>
+<li>If you run what we have so far, you notice we get a lot of blank lines - this is from the lines that didn&#39;t match our pattern (I think). We pipe the output into <code>tail -n 1</code> to just get the last line</li>
+<li>What happens if we mute it? It still shows the volume... But, <code>$6</code> (the sixth field) has the on/off info we need. So lets modify our print statement to <code>&#39;{if ($6 == &quot;off&quot;) { print &quot;MUT&quot;; } else { print $2; }}&#39;</code></li>
+<li>Putting it all together: <code>amixer get Master | awk -F&#39;[\[\]]&#39; &#39;{if ($6 == &quot;off&quot;) {print &quot;MUT&quot;; } else { print $2; }}&#39; | tail -n 1</code></li>
+</ul></li>
+<li>I put this in a script <code>getvolume.sh</code>, and modified my <code>.xmobarrc</code> to have the following line which is pretty self explanatory (the 10 is the refresh rate):  <code>Run Com &quot;/home/idunning/getvolume.sh&quot; [] &quot;vol&quot; 10</code></li>
+<li>Finally put <code>%vol%</code> in your formatting string and restart Xmonad/Xmobar with Win-q - looks good!</li>
+</ul>
+
+<h2>Putting my dotfiles on Github</h2>
+
+<p>Many people on Github have &quot;dotfiles&quot; repositories - basically a repo for all the little configuration files that you see above, as well as others. This <a href="http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/">post</a> really says it all better than I can, but basically its a cool idea and not only provides a backup for your configs, it also makes your experience homogenous across computers. The second factor was actually what motivated me to finally do it, as I just started an internship at Google. My repository is at <a href="https://github.com/IainNZ/dotfiles">https://github.com/IainNZ/dotfiles</a> - there is nothing in there that is too fancy, but it might make the above more understandable. The best thing about it is in installation script, which puts symlinks to the dotfiles rather than copying them - allowing easy updates with a simple <code>git pull</code>.</p>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>

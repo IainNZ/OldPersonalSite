@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+        <title>MIT IAP 2013 - IainDunning.com</title>
+	<meta name="description" content="Iain Dunning's personal website.">
+	<meta name="author" content="Iain Dunning">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/stylesheets/base.css">
+	<link rel="stylesheet" href="/stylesheets/skeleton.css">
+        <link rel="stylesheet" href="/stylesheets/layout.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>MIT IAP 2013</h2>
+<p class="meta">Posted on 26 Jan 2013</p>
+
+<div class="post">
+<p><a href="http://mit.edu">MIT</a> has a wonderful thing called <a href="http://web.mit.edu/iap/">IAP - Independent Activities Period</a> - over the gap between Christmas/New Years and the resumption of normal classes in early February. This year I was involved in a couple of things that were a lot of fun.</p>
+
+<h2>A new class: &quot;Software Tools for Operations Research&quot;</h2>
+
+<p>While there is no question that everyone in the <a href="http://web.mit.edu/orc/www/">Operations Research Center</a> here at MIT is very talented in the area of mathematics (and many other things!), there is a wide variety in the level of ability when it comes to programming. The main reason for this is probably the variety of paths people take to reach the ORC, from pure mathematics to engineering. This all applies to the faculty too!</p>
+
+<p>Being problem solvers, we decided that one way we can address this issue is for students to transfer their skills to their fellow students. Its hard to fit hands-on, programming-intensive classes into the traditional semester-long lecture framework, so we made our own course that runs in IAP - with this year&#39;s class being the first.</p>
+
+<p>The format was a series of 3-hour-long workshops. The topics covered were</p>
+
+<ul>
+<li> introductory and advanced classes on R (<a href="http://web.mit.edu/akohair/www/index.html">Allison O&#39;Hair</a>, <a href="http://orc.scripts.mit.edu/people/student.php?name=acalmon">Andre Calmon</a>, <a href="http://johnsilberholz.com">John Silberholz</a>),</li>
+<li>data visualization (<a href="http://ta.virot.me/">Virot Chiraphadhanakul</a>),</li>
+<li>customizing integer programming solvers (<a href="http://rma350.scripts.mit.edu/home/">Ross Anderson</a>),</li>
+<li>convex optimization (<a href="http://www.mit.edu/%7Evgupta1/">Vishal Gupta</a>),</li>
+<li>distributed computing for optimization (<a href="http://johnsilberholz.com">John Silberholz</a>),</li>
+<li>and using Python for mathematical modelling (which was my workshop.)</li>
+</ul>
+
+<p>I really enjoyed delivering my workshop. It was the first time I had given such a long presentation, and it was hard to estimate how long the material I created would take to work with. My guess was we might actually finish short of the 3 hours. My general approach to the workshop was to assume that a) the class was very familiar with linear programming, and b) they knew a programming language, not necessarily Python. I began with a brief introduction to what a modelling language is and the options out there. This was followed by roughly 30 to 45 minutes on Python-specific features - lists, tuples, dictionaries, and list comprehensions. I followed this up with an exercise where I asked the following three questions:</p>
+
+<ul>
+<li>Write a list comprehension to generate the square of the numbers between 1 and 10</li>
+<li>Write a list comprehension to generate the odd numbers between 1 and 20</li>
+<li>Write code to solve the <a href="http://c2.com/cgi/wiki?FizzBuzzTest">FizzBuzz</a> question.</li>
+</ul>
+
+<p>Students worked on this by themselves for a few minutes as I walked around the room. Once I sensed that a majority had finished the first two, and some had solved FizzBuzz, I coded the solutions live on the projector.</p>
+
+<p>Next I introduced <a href="http://code.google.com/p/pulp-or/">PuLP</a> itself, the modelling language we used. I demonstrated a couple of common patterns and showed what a simple knapsack problem would look like in PuLP. This was followed by another exercise where I described the &quot;p-median&quot;/facility location problem, provided the mathematical formulation, and asked the class to implement it. The reason I selected this problem is that it is very light on data - I wrote a line to generate the customer locations, and provided that as a template, but otherwise gave them a blank slate. People rose to the challenge, and did a great job on this exercise. In a way this reflects the intuitiveness of PuLP/Python, especially if you have a deep understanding linear programming. Once again I finished this exercise by coding my solution live on the screen.</p>
+
+<p>The next section was focused on how to bring data into the mix, including random number generation and reading from CSV files. This was going deeper into Python, and sometimes introduced a lot of concepts quickly (file IO especially.) I ended up tabbing-out of the slides and going into Python to make it more concrete. The final exercise was basically the classic diet problem, with the data being stored in CSV files. There were many possible ways to store the data in memory, and it was a treat to see the diversity of approaches.</p>
+
+<p>I learnt an interesting lesson here: many chose to store the tabular data in a &quot;dictionary of dictionaries&quot;, which is certainly an intuitive way to do it. Unfortunately the idea of nesting dictionaries was a bit of an escalation for some people, and many of the less confident students felt obliged to do it this way when they heard others talking about it. Although I think most people got it in the end, I probably needed to provide a few different alternatives before hand using different data, to give the students some more guidance. On the other hand, I like that people were able to come up with approaches by themselves. I suppose this is always a tension in teaching.</p>
+
+<p>I finished with some performance concerns and pointed students towards solver-specific interfaces if they need them. There was one final cautionary example that I used and I want to reproduce here. Consider this situation:</p>
+
+<ul>
+<li>We have lists <code>SERVICES</code> and <code>LOCATIONS</code></li>
+<li>We have a list <code>PROCESSES</code>, and for each process, we have the service it belongs to.</li>
+<li>We are deciding the assignment of <code>PROCESSES</code> to <code>MACHINES</code>, <code>x[p,m]</code></li>
+<li>Imagine we have some constraint like the following:</li>
+</ul>
+
+<div class="highlight"><pre><code class="python"><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SERVICES</span><span class="p">:</span>
+  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">LOCATIONS</span><span class="p">:</span>
+    <span class="n">prob</span><span class="o">+=</span> <span class="o">...</span> <span class="o">&lt;=</span>  <span class="n">lpSum</span><span class="p">(</span><span class="n">x</span><span class="p">[(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="p">)]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">PROCS</span> <span class="k">if</span> <span class="n">PROC_SERV</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">MACHS</span> <span class="k">if</span> <span class="n">MACH_LOCATION</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">==</span> <span class="n">l</span> <span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>Can you spot the issue? The problem is we check every possible process-machine pair for every constraint. Say there ~N services, ~N locations, ~N processes and ~N machines. We go around the loops N^2 times, and the list comprehension does N^2 checks - so N^4 work!</li>
+<li>The &quot;right way&quot; to do it is to calculate a mapping of services to processes once, and a mapping of locations to machines once, e.g <code>SERV_PROCS[s]</code> and <code>LOCATION_MACH[l]</code>. This will take N^2 work, but you only do it once.</li>
+</ul>
+
+<div class="highlight"><pre><code class="python"><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SERVICES</span><span class="p">:</span>
+  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">LOCATIONS</span><span class="p">:</span>
+    <span class="n">prob</span><span class="o">+=</span> <span class="o">...</span> <span class="o">&lt;=</span> <span class="n">lpSum</span><span class="p">(</span><span class="n">x</span><span class="p">[(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="p">)]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">SERV_PROC</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">LOCATION_MACH</span><span class="p">[</span><span class="n">l</span><span class="p">])</span>
+</code></pre></div>
+
+<ul>
+<li>Now we do far less than N^2 work per constraint, in fact we do the minimum possible. This makes a huge difference in practice - be on the look out for it!</li>
+</ul>
+
+<p>We ran out of time right after that, so we didn&#39;t have to use my final exercise which was far more involved and could soak up a large amount of time. In fact, I had to rush this last example a bit, so next time I&#39;ll need to go just a bit faster on the exercises, or trim elsewhere. I think the class was a success though, and the feedback was really positive, which was a great feeling - teaching might be addictive!</p>
+
+<h2>New software: Julia and JuMP</h2>
+
+<p>I&#39;ve mentioned <a href="http://julialang.org/">Julia</a> on this blog previously - it is a up-and-coming programming language with a lot of promise. It is expressive, fast, good for math/science, and has some advanced tricks that make it a good candidate to create domain-specific languages. There is already some great package support, and many tasks one might do in R or MATLAB can be done in Julia already.</p>
+
+<p>My partner-in-crime <a href="http://www.mit.edu/%7Emlubin/">Miles Lubin</a> and myself decided to tackle the challenge of bringing Operations Research tools to Julia. Miles has done some great work on making an interface to the <a href="https://github.com/mlubin/Clp.jl">COIN CLP solver</a> and we&#39;ve worked together to make a modelling language that we call <a href="https://github.com/IainNZ/MathProg.jl">JuMP</a>. JuMP stands for &quot;Julia for Mathematical Programming&quot; and it can be compared with PuLP and Pyomo. While making an easy-to-use modelling tool was of course a goal, what we really wanted was to be as fast as commercial tools like AMPL, or maybe even a C++ solver interface. A common situation for OR people to find themselves in is that they test algorithm ideas in a language like Python or MATLAB, but find that it doesn&#39;t scale up for &quot;real problems&quot; of a larger size, forcing people to change to AMPL or C++ to get the performance they need. This is not efficient - our hypothesis was that Julia can both be useful for experimental purposes and production purposes.</p>
+
+<p>We have largely achieved this at this point, and we are on the same speed level as AMPL (within a factor of 2) and far faster than Python-based languages. The real challenge now is to flesh out the module while maintaining the speed, and to build up a body of examples. Other work is required to hook Julia up to other solvers, but this is a somewhat separate issue.</p>
+
+<p>We presented our work on this, and the work Miles did with an efficient simplex algorithm implementation, at a <a href="https://github.com/JuliaLang/julia-tutorial">IAP workshop on Julia</a>. It was very interesting to see the work being done, and I have a lot of confidence in its future. Check it out today!</p>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
