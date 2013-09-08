@@ -23,8 +23,14 @@ server {
   rewrite ^/2013/an-icelandic-adventure/$ /2013/an-icelandic-adventure.html permanent;
   
   # Other pages
-  rewrite ^/simplexjs/$ $scheme://iaindunning.com/2013/simplexjs.html permanent;
-  rewrite ^/simplexjs-tsp-demo/$ $scheme://iaindunning.com/2013/simplexjs.html permanent;
+  location /simplexjs/ {
+    return 301 http://iaindunning.com/2013/simplexjs.html;
+  }
+  location /simplexjs-tsp-demo/ {
+    return 301 http://iaindunning.com/2013/simplexjs.html;
+  }
+
+  rewrite ^/2014/test.html$ /mytest.html permanent;
 }
 
 server {
