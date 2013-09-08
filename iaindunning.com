@@ -11,6 +11,9 @@ server {
   # The domain name of our website
   server_name iaindunning.com;
 
+  # Error page
+  error_page 404 /404.html;
+
   # Redirect old posts
   rewrite ^/2012/installing-julia-on-linux-mint-13/$ /index.html permanent;
   rewrite ^/2012/solving-quadratic-knapsack-problems-with-gurobi-5/$ /index.html permanent;
@@ -29,8 +32,6 @@ server {
   location /simplexjs-tsp-demo/ {
     return 301 http://iaindunning.com/2013/simplexjs.html;
   }
-
-  rewrite ^/2014/test.html$ /mytest.html permanent;
 }
 
 server {
