@@ -21,6 +21,10 @@ server {
   rewrite ^/2013/experiences-with-xmonad-and-ubuntu-12/$ /2013/experiences-with-xmonad-and-ubuntu-12.html permanent;
   rewrite ^/2013/simulation-study-of-a-laundry-room/$ /2013/simulation-study-of-a-laundry-room.html permanent;
   rewrite ^/2013/an-icelandic-adventure/$ /2013/an-icelandic-adventure.html permanent;
+  
+  # Other pages
+  rewrite ^/2013/simplexjs/$ /2013/simplexjs.html permanent;
+  rewrite ^/2013/simplexjs-tsp-demo/$ 2013/simplexjs.html permanent;
 }
 
 server {
