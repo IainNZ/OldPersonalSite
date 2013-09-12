@@ -65,7 +65,7 @@
 <div class="post">
 <p>After being impressed with a friends <a href="http://xmonad.org/">Xmonad</a> setup, I decided to give it a go for myself. <a href="http://xmonad.org/">Xmonad</a>, in short, is a <a href="http://en.wikipedia.org/wiki/Window_manager">window manager</a> that automatically tiles and aligns all your windows - the idea being that you shouldn&#39;t mess around with these things manually yourself, because you usually want your windows to fill up the screen anyway. Before switching to Ubuntu+XMonad I primarily used Windows 7. I used the Windows-Left and Windows-Right key combinations to align two windows side-by-side all the time, so this appealed to me. I had also been meaning to use Linux on a more full-time basis, as I previously only used it when needed, usually as a virtual machine guest. This summer I will be using it a lot more so I figured why not fully embrace it. So here is my journey to going from a fresh Ubuntu install to using Xmonad as my window manager, written mostly in real-time as I did it. Hopefully it may help someone get started - there are many posts about this sort of thing on the internet, but maybe this simpler step-by-step guide will be easier to understand than downloading a configuration file.</p>
 
-<p><em>Update</em>: After writing this post and its updates, I posted my configuration files on Github: <a href="https://github.com/IainNZ/dotfiles">https://github.com/IainNZ/dotfiles</a>. I&#39;m also aware that there are posts/configs that include the Ubuntu panel - I haven&#39;t bothered to figure that out yet, but I hope to one day get around to it.</p>
+<p><em>Update</em>: After writing this post and its updates, I posted my configuration files on Github: <a href="https://github.com/IainNZ/dotfiles">https://github.com/IainNZ/dotfiles</a>. You might find it handy to refer to them as the &quot;finished product&quot;.</p>
 
 <h2>Initial Setup: Install Ubuntu, xmonad, Xmobar, simple configs</h2>
 
@@ -153,6 +153,59 @@
 </ul></li>
 <li>I put this in a script <code>getvolume.sh</code>, and modified my <code>.xmobarrc</code> to have the following line which is pretty self explanatory (the 10 is the refresh rate):  <code>Run Com &quot;/home/idunning/getvolume.sh&quot; [] &quot;vol&quot; 10</code></li>
 <li>Finally put <code>%vol%</code> in your formatting string and restart Xmonad/Xmobar with Win-q - looks good!</li>
+</ul>
+
+<h2>Adding a system tray</h2>
+
+<p>For several months I would log into Unity to set up new wireless networks. This is a bit of kludge though, so I decided to add a real system tray. This also means I can now see whether Dropbox is syncing! This section borrows heavily from <a href="https://github.com/davidbrewer/xmonad-ubuntu-conf">this configuration</a>.</p>
+
+<ul>
+<li>First step is to install a tray application. There are many options but I went with <a href="http://stalonetray.sourceforge.net/">stalonetray</a> which you can install with <code>sudo apt-get install stalonetray</code></li>
+<li>Now lets make some room for the tray. Go into xmobarrc and change <code>TopW L 100</code> to <code>TopW L 95</code> (95% width) - you can adjust this based on your screen size. It is also possible to specify the exact width in pixels.</li>
+<li>We need to tell Xmonad to ignore the tray, i.e. let it display on all workspaces, no border. Add the following code after the imports in xmonad.hs...</li>
+</ul>
+
+<div class="highlight"><pre><code class="haskell"><span class="nf">myManagementHooks</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">ManageHook</span><span class="p">]</span>
+<span class="nf">myManagementHooks</span> <span class="ow">=</span> <span class="p">[</span>
+  <span class="n">resource</span> <span class="o">=?</span> <span class="s">&quot;stalonetray&quot;</span> <span class="o">--&gt;</span> <span class="n">doIgnore</span>
+  <span class="p">]</span>
+</code></pre></div>
+
+<ul>
+<li>... and add change the <code>manageHook</code> line to <code>manageHook = manageDocks &lt;+&gt; manageHook defaultConfig &lt;+&gt; composeAll myManagementHooks</code></li>
+<li>We need to configure stalonetray. It looks for ~/.stalonetrayrc, so lets create that file now:</li>
+</ul>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># Icons stick to right side of tray</span>
+icon_gravity E
+<span class="c"># Five icons wide, one high, 0 pixels from right, 0 from top</span>
+geometry 5x1-0+0
+max_geometry 5x1-0+0
+<span class="c"># Black background</span>
+background <span class="s2">&quot;#000000&quot;</span>
+<span class="c"># Doesn&#39;t appear in a task bar (not a problem for us?)</span>
+skip_taskbar
+<span class="c"># Icons are 12 pixels high</span>
+icon_size 12
+kludges force_icons_size
+<span class="c"># Tell xmonad &quot;Stand back, I got this&quot;</span>
+window_strut none
+</code></pre></div>
+
+<ul>
+<li>Now we have a tray program, we want it to run automatically after we log in along with Dropbox and nm-applet (the wireless management applet). The file <code>/usr/share/xsessions/xmonad.desktop</code> is what determines what logging in with Xmonad selected actually does. The line <code>exec=xmonad</code> currently launches xmonad directly. We will replace this a bash script that launches the programs we want first before launching xmonad. Create a new file, e.g. <code>startxmonad.sh</code>:</li>
+</ul>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/bash</span>
+stalonetray &amp;
+nm-applet &amp;
+dropbox start
+<span class="nb">exec </span>xmonad
+</code></pre></div>
+
+<ul>
+<li>Make it executable with <code>chmod +x startxmonad.sh</code>. Now we have this file, we can modify the .desktop file, e.g. <code>sudo /usr/share/xsessions/xmonad.desktop</code> and change the <code>exec=xmonad</code> line to, e.g. <code>exec=/home/idunning/.xmonad/startxmonad.sh</code></li>
+<li>Now logout and log back in - hopefully you&#39;ll see Dropbox and nm-applet running in your tray!</li>
 </ul>
 
 <h2>Putting my dotfiles on Github</h2>
