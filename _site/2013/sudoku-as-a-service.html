@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+        <title>Sudoku-as-a-Service with Julia - IainDunning.com</title>
+	<meta name="description" content="Iain Dunning's personal website.">
+	<meta name="author" content="Iain Dunning">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/css/base.css">
+	<link rel="stylesheet" href="/css/skeleton.css">
+        <link rel="stylesheet" href="/css/layout.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== 
+	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">-->
+        
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-33856541-3', 'iaindunning.com');
+  ga('send', 'pageview');
+
+</script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Sudoku-as-a-Service with Julia</h2>
+<p class="meta">Posted on 15 Sep 2013</p>
+
+<div class="post">
+<p><a href="http://en.wikipedia.org/wiki/Sudoku">Sudoku</a> is (was?) an extremely popular number puzzle. Players are presented with a 9 by 9 grid, with some of the cells filled in with a number between 1 and 9. The goal is to complete the grid while respecting these rules:</p>
+
+<ul>
+<li>Each row of the grid must contain each of the numbers 1 to 9 exactly once.</li>
+<li>Each column of the grid must contain each of the numbers 1 to 9 exactly once.</li>
+<li>Divide the grid into 9 3-by-3 non-overlapping subgrids. Each of these 3-by-3 grids must contain each of the numbers 1 to 9 exactly once.</li>
+</ul>
+
+<h2>Solving Sudoku problems</h2>
+
+<p>This can be expressed as an <a href="http://en.wikipedia.org/wiki/Integer_programming">integer programming problem</a> by defining a variable <em>x(i,j,k)</em> that is 1 if and only if cell <em>(i,j)</em> is set to value <em>k</em>, and is 0 otherwise. This can be written mathematically (with constraints to enforce the given cells omitted) as:</p>
+
+<div class="photo"><img src="/images/sudokuform.png" alt="MIP formulation of sudoku problem"><p class="caption">MIP formulation of sudoku problem</p></div>
+
+<p>Of course there are algorithms designed to solve sudoku problems directly that are probably more efficient than integer programming, but stay with me for a moment...</p>
+
+<h2>Creating an online service in Julia</h2>
+
+<p><a href="http://julialang.org">Julia</a> is a fantastic up-and-coming dynamic language that emphasises high-performance scientific computing that is extensible and easy to read and write. It doesn&#39;t reinvent the wheel: it utilizes the <a href="http://llvm.org/">LLVM compiler</a> to generate fast code, open-source linear algebra packages to provide fast number crunching, and the <a href="https://github.com/joyent/libuv">libuv</a> library to provide excellent cross-platform IO. libuv is the library that powers the popular <a href="http://nodejs.org">node.js</a> environment that has become very popular over the past couple of years for web development. Being a web development language is not an official goal of Julia, but there is certainly no reason it can&#39;t be used. For example, if server-side number crunching is one of the features your site needs, that part could be implemented in Julia and the rest of the application logic in node.js or your tool of choice.</p>
+
+<p>The best way to get started with creating a web service is to use the <a href="https://github.com/hackerschool/HttpServer.jl">HttpServer.jl</a> package, a package made at <a href="https://www.hackerschool.com/">Hacker School</a>. Documentation is pretty scarce at this point, but hopefully by inspecting the relatively short code and looking at some examples you can get started.</p>
+
+<h2>SaaS == Sudoku-as-a-service?</h2>
+
+<p>To demonstrate that you can make pretty complex web-capable number crunching applications with relative ease, I decided to make <a href="https://github.com/IainNZ/SudokuService">SudokuService</a> - a web service that solves sudoku problems. Apart from Julia and HttpServer.jl, I used the following tools:</p>
+
+<ul>
+<li><a href="https://github.com/IainNZ/JuMP.jl">JuMP</a>, an algebraic modelling language for linear (and integer and quadratic) programming created by myself and the very talented <a href="http://www.mit.edu/%7Emlubin/">Miles Lubin</a>. You should compare JuMP with tools like <a href="http://code.google.com/p/pulp-or/">PuLP</a> and <a href="http://www.ampl.com">AMPL</a>.</li>
+<li><a href="https://projects.coin-or.org/Cbc">COIN-OR CBC</a>, an open-source integer programming solver. We also have interfaces to GLPK and Gurobi (closed-source).</li>
+</ul>
+
+<h3>Sudoku-solving Code</h3>
+
+<p>All the code is in the repository, but I thought I&#39;d put a snippet here of the JuMP code (<code>sudoku.jl</code>) where I formulate the model so you can get a feel for how it works:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+
+<span class="k">function</span><span class="nf"> SolveModel</span><span class="p">(</span><span class="n">initgrid</span><span class="p">)</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, so sense not important</span>
+
+  <span class="c"># Create the variables</span>
+  <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+
+  <span class="c"># ... snip other constraints ...</span>
+  <span class="c"># Constraint 4 - Only one value in each cell</span>
+  <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+      <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c"># ... snip initial solution constraints ...</span>
+  <span class="c"># Solve it (default solver is CBC)</span>
+  <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+  
+  <span class="c"># Check solution</span>
+  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+    <span class="nb">error</span><span class="p">(</span><span class="s">&quot;No solution found!&quot;</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">mipSol</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c"># ... snip transforming 3D 0-1 solution into 2D 1-9 grid ...</span>
+    <span class="k">return</span> <span class="n">sol</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<h3>Web-service Code</h3>
+
+<p>Finally, we need to make a server. Check out <code>server.jl</code> in the repository - its pretty straightforward and most of the work is input validation. Heres a taster:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">HttpServer</span>
+
+<span class="c"># Load the Sudoku solver</span>
+<span class="n">require</span><span class="p">(</span><span class="s">&quot;sudoku.jl&quot;</span><span class="p">)</span>
+
+<span class="c"># Build the request handler</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">HttpHandler</span><span class="p">()</span> <span class="k">do</span> <span class="n">req</span><span class="p">::</span><span class="n">Request</span><span class="p">,</span> <span class="n">res</span><span class="p">::</span><span class="n">Response</span>
+  <span class="k">if</span> <span class="n">ismatch</span><span class="p">(</span><span class="n">r</span><span class="s">&quot;^/sudoku/&quot;</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+    <span class="c"># Expecting 81 numbers between 0 and 9</span>
+    <span class="n">reqsplit</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)</span>
+    <span class="c"># ...snip validation...#</span>
+    <span class="n">probstr</span> <span class="o">=</span> <span class="n">reqsplit</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">probstr</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">81</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;Error: expected 81 numbers.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="c"># Convert string into numbers, and place in matrix</span>
+    <span class="c"># Return error if any non-numbers or numbers out of range detected</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">try</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+          <span class="n">val</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">probstr</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span><span class="p">])</span>
+          <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">10</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;Error: number out of range 0:9.&quot;</span><span class="p">)</span>
+          <span class="k">end</span>
+          <span class="n">prob</span><span class="p">[</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+          <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">catch</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;Error: couldn&#39;t parse numbers.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="c"># Attempt to solve the problem using integer programming</span>
+    <span class="k">try</span>
+      <span class="n">sol</span> <span class="o">=</span> <span class="n">SolveModel</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">prettyoutput</span>
+        <span class="c"># ...snip...</span>
+      <span class="k">else</span>
+        <span class="c"># Return solution like input</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">))</span>
+      <span class="k">end</span>
+    <span class="k">catch</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">&quot;Error: coudn&#39;t solve puzzle.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">else</span>
+    <span class="c"># Not a valid URL</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c"># Boot up the server</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">http</span><span class="p">)</span>
+<span class="n">run</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>Try it yourself!</h2>
+
+<p>Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! Instructions for installing everything are in <code>README.md</code>. I encourage you to check it out for yourself, and maybe extend it.  One project could be to implement a pure-Julia sudoku solver and benchmark performance against the MIP solver. Let me know how you go by reaching me at idunning AT mit.edu or <a href="https://www.twitter.com/iaindunning">@iaindunning</a>.</p>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
