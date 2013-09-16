@@ -131,7 +131,7 @@
 
 <h3>Web-service Code</h3>
 
-<p>Finally, we need to make a server. Check out <code>server.jl</code> in the repository - its pretty straightforward and most of the work is input validation. Heres a taster:</p>
+<p>Finally, we need to make a server. Check out <code>server.jl</code> in the repository - its pretty straightforward and most of the work is input validation. The form of a query is <code>/sudoku/123...123</code> or <code>/sudoku/123...123/pretty</code> for human-readable response. There should be 81 numbers, one for each cell of the 9x9 sudoku board, row-wise. A zero indicates a blank. Heres a taster:</p>
 
 <div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">HttpServer</span>
 
@@ -193,7 +193,14 @@
 
 <h2>Try it yourself!</h2>
 
-<p>Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! Instructions for installing everything are in <code>README.md</code>. I encourage you to check it out for yourself, and maybe extend it.  One project could be to implement a pure-Julia sudoku solver and benchmark performance against the MIP solver. Let me know how you go by reaching me at idunning AT mit.edu or <a href="https://www.twitter.com/iaindunning">@iaindunning</a>.</p>
+<p>Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! Instructions for installing everything are in <code>README.md</code>. I encourage you to check it out for yourself, and maybe extend it.  Some ideas:</p>
+
+<ul>
+<li>Implement a pure-Julia sudoku solver and benchmark performance against the MIP solver.</li>
+<li>Generalize the code to accept and solve n-by-n sudoku problems</li>
+</ul>
+
+<p>Let me know how that goes by contacting me at idunning AT mit.edu or <a href="https://www.twitter.com/iaindunning">@iaindunning</a>.</p>
 
 </div>
 

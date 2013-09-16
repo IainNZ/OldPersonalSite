@@ -70,7 +70,8 @@ end
 
 ### Web-service Code
 
-Finally, we need to make a server. Check out ``server.jl`` in the repository - its pretty straightforward and most of the work is input validation. Heres a taster:
+Finally, we need to make a server. Check out ``server.jl`` in the repository - its pretty straightforward and most of the work is input validation. The form of a query is ``/sudoku/123...123`` or ``/sudoku/123...123/pretty`` for human-readable response. There should be 81 numbers, one for each cell of the 9x9 sudoku board, row-wise. A zero indicates a blank. Heres a taster:
+
 {% highlight julia %}
 using HttpServer
 
@@ -132,4 +133,9 @@ run(server, 8000)
 
 ## Try it yourself!
 
-Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! Instructions for installing everything are in ``README.md``. I encourage you to check it out for yourself, and maybe extend it.  One project could be to implement a pure-Julia sudoku solver and benchmark performance against the MIP solver. Let me know how you go by reaching me at idunning AT mit.edu or [@iaindunning](https://www.twitter.com/iaindunning).
+Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! Instructions for installing everything are in ``README.md``. I encourage you to check it out for yourself, and maybe extend it.  Some ideas:
+ 
+ * Implement a pure-Julia sudoku solver and benchmark performance against the MIP solver.
+ * Generalize the code to accept and solve n-by-n sudoku problems
+
+Let me know how that goes by contacting me at idunning AT mit.edu or [@iaindunning](https://www.twitter.com/iaindunning).
