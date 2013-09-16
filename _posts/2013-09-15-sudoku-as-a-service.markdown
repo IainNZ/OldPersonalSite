@@ -11,6 +11,8 @@ title: Sudoku-as-a-Service with Julia
  * Each column of the grid must contain each of the numbers 1 to 9 exactly once.
  * Divide the grid into 9 3-by-3 non-overlapping subgrids. Each of these 3-by-3 grids must contain each of the numbers 1 to 9 exactly once.
 
+{% img /images/sudokupuzzle.png An unsolved sudoku puzzle (Wikimedia Commons) %}
+
 In this post I'm going to
  
  * walk through one way to solve sudoku puzzles, and 
