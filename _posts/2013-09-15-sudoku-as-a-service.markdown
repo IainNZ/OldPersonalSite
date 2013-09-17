@@ -16,7 +16,7 @@ title: Sudoku-as-a-Service with Julia
 In this post I'm going to
  
  * walk through one way to solve sudoku puzzles, and 
- * how you can offer that functionality as a online service
+ * show how you can offer that functionality as an online service
 
 using the [Julia](http://julialang.org) programming language.
 
