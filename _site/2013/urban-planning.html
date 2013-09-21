@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>Solving a Combination Lock Puzzle with JuMP + Julia - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">Iain Dunning</h1>
+      <h5>
+        Problem solver. Experiences, thoughts, and technical notes.
+        <a href="/">More about me.</a>
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Solving a Combination Lock Puzzle with JuMP + Julia</h2>
+<p class="meta">Posted on 21 Sep 2013</p>
+
+<div class="post">
+<p><a href="http://puzzlor.editme.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/IainNZ/JuMP.jl">JuMP</a>, an algebraic modelling language for/in <a href="http://julialang.org">Julia</a>.</p>
+
+<h2>Combination Locks (August 2012)</h2>
+
+<p><a href="http://puzzlor.editme.com/combinationlocks">(Link to full problem statement)</a></p>
+
+<p>Our goal is to determine 6 numbers, where each of the 6 numbers has 6 possibilities and the sum of the numbers is 419. Lets first describe the possibilities (pulled from the image) as a matrix P:</p>
+
+<div>
+$$
+P =
+ \begin{bmatrix}
+  39 & 90 & 75 & 88 & 15 & 57 \\
+   9 &  2 & 58 & 68 & 48 & 64 \\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  44 & 63 & 10 & 83 & 46 & 03
+ \end{bmatrix}
+$$
+</div>
+
+<p>We will model the problem as a integer program with variables \( x_{ij} \) that equal 1 if and only if for lock (row) <em>i</em> we select the number (column) <em>j</em>. Our model is thus the following feasibility problem:</p>
+
+<div>
+$$
+\begin{alignat*}{1}
+\max \quad & 0\\
+\text{subject to} \quad & \sum_{ij}D_{ij}x_{ij}=419\\
+ & \sum_{j=1}^6 x_{ij} = 1 \qquad \forall i \in \{1,\dots,6\}\\
+ & x_{ij}\in\left\{ 0,1\right\}
+\end{alignat*}
+$$
+</div>
+
+<p>where the first constraint enforces the sum of the numbers equals 419, and the second constraint ensures we pick a number for each lock. We can solve this problem with the following code:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+
+<span class="k">function</span><span class="nf"> SolveCombination</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, sense unimportant</span>
+  
+  <span class="c"># Variable x: 1 iff select number j for lock i</span>
+  <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+
+  <span class="c"># Constraint 1: Sum of numbers is equal to 419</span>
+  <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">}</span> <span class="o">==</span> <span class="mi">419</span><span class="p">)</span>
+
+  <span class="c"># Constraint 2: Must pick a number from each lock</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">6</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c"># Solve with default solver (CBC)</span>
+  <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Couldn&#39;t find the numbers!&quot;</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Found the numbers:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">6</span>
+      <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">6</span>
+        <span class="k">if</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mf">0.99</span>
+          <span class="n">println</span><span class="p">(</span><span class="s">&quot;Lock </span><span class="si">$</span><span class="s">i is </span><span class="si">$</span><span class="s">(P[i,j])&quot;</span><span class="p">)</span>
+          <span class="k">break</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="mi">39</span> <span class="mi">90</span> <span class="mi">75</span> <span class="mi">88</span> <span class="mi">15</span> <span class="mi">57</span><span class="p">;</span>
+      <span class="mi">9</span>  <span class="mi">2</span> <span class="mi">58</span> <span class="mi">68</span> <span class="mi">48</span> <span class="mi">64</span><span class="p">;</span>
+     <span class="mi">29</span> <span class="mi">55</span> <span class="mi">16</span> <span class="mi">67</span>  <span class="mi">8</span> <span class="mi">91</span><span class="p">;</span>
+     <span class="mi">40</span> <span class="mi">54</span> <span class="mi">66</span> <span class="mi">22</span> <span class="mi">32</span> <span class="mi">25</span><span class="p">;</span>
+     <span class="mi">49</span>  <span class="mi">1</span> <span class="mi">17</span> <span class="mi">41</span> <span class="mi">14</span> <span class="mi">30</span><span class="p">;</span>
+     <span class="mi">44</span> <span class="mi">63</span> <span class="mi">10</span> <span class="mi">83</span> <span class="mi">46</span>  <span class="mi">3</span><span class="p">]</span>
+<span class="n">SolveCombination</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+</code></pre></div>
+
+<p><br>
+An extension question: what happens if relax constraint 2? How many locks would we need to make the sum 419 if we didn&#39;t need to set all 6 locks?</p>
+
+</div>
+
+    </div>
+    <aside class="four columns">
+      <a href="/">Home</a><br><br>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/urban-planning.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
