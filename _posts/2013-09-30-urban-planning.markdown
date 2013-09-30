@@ -5,13 +5,13 @@ layout: post
 title: Solving an Urban Planning Puzzle with JuMP + Julia
 ---
 
-[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/IainNZ/JuMP.jl), an algebraic modelling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/IainNZ/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
 
 ## Urban Planning (August 2013)
 
 [(Link to full problem statement)](http://puzzlor.editme.com/urbanplanning)
 
-In this problem we have a 5x5 grid with two possibilities for each lot: residential or commericial. Lets define a binary variable  \\( x\_{ij} \\) that is 1 if and only if lot \\( (i,j) \\) is residential. The challenge now is to express the objective. For each row and column there are the following possibilities:
+In this problem we have a 5x5 grid with two possibilities for each lot: residential or commercial. Let's define a binary variable  \\( x\_{ij} \\) that is 1 if and only if lot \\( (i,j) \\) is residential. The challenge now is to express the objective. For each row and column there are the following possibilities:
 
 * Five residential \\( \\sum\_{j=1}^5 x\_{ij} = 5 \\) is +5 points
 * Four residential \\( \\sum\_{j=1}^5 x\_{ij} = 4 \\) is +4 points
@@ -20,11 +20,11 @@ In this problem we have a 5x5 grid with two possibilities for each lot: resident
 * One residential \\( \\sum\_{j=1}^5 x\_{ij} = 1 \\) is -4 points
 * Zero residential \\( \\sum\_{j=1}^5 x\_{ij} = 0 \\) is -5 points
 
-We will need auxiliary variables to model this problem, but let's first review some integer programming modelling "tricks". 
+We will need additional variables that don't directly correspond to a decision in the original problem, commonly referred to as auxiliary variables, to model this problem. Before we talk about that let's first review some integer programming modelling "tricks". 
 
-### Modelling Logical Constraints with Binary Variables
+### Modeling Logical Constraints with Binary Variables
 
-In linear integer programming, all constraints must be linear in the decision variables. Solving non-linear integer programming problems is possible, but is significantly more difficult. The challenge of integer programming modelling then is to "linearize" all the logic of the problem. Consider the following constraints:
+In linear integer programming, all constraints must be linear in the decision variables. Solving non-linear integer programming problems is possible, but is significantly more difficult. The challenge of integer programming modeling then is to "linearize" all the logic of the problem. Consider the following constraints:
 
 <div>
 $$
@@ -55,7 +55,7 @@ $$
 
 Let's apply this to the problem at hand.
 
-### Modelling the positive point cases
+### Modeling the positive point cases
 
 Define new variables
 
@@ -63,7 +63,7 @@ Define new variables
 * \\( y\_{R,i}^4 = 1 \\) iff row \\( i \\) has 4 or more residential,
 * \\( y\_{R,i}^3 = 1 \\) iff row \\( i \\) has 3 or more residential
 
-and equivalent \\( y_{C,i} \\) for columns. The objective of our problem, for the positive parts at least, can be written as
+and equivalent \\( y_{C,i} \\) for columns. The objective function of our problem, for the positive parts at least, can be written as
 
 <div>
 $$
@@ -71,7 +71,7 @@ $$
 $$
 </div>
 
-Note that \\( x \\) does not appear in the objective, and that the optimizer will want to set these \\( y \\) variables to one if at all possible. Knowing that, we simply need to restrict these variables from being 1 if the condition is not met. The following constraints achieve this goal:
+Note that \\( x \\) does not appear in the objective, and that the optimizer will want to set these \\( y \\) variables to one if at all possible to drive the objective function value higher. Knowing that, we simply need to restrict these variables from being 1 if the condition is not met. The following constraints achieve this goal:
 
 <div>
 $$
@@ -91,9 +91,16 @@ y_{R,i}^3 \leq \frac{4}{3} \rightarrow y_{R,i}^3 \leq 1
 $$
 </div>
 
-When combined with the objective sense, the \\( \leq \\) is effectively an equality. Note also that if the sum of the variables is zero, the problem is still feasible.
+When combined with the objective sense, the \\( \leq \\) is effectively an equality. Note also that if the sum of the \\( x \\) variables is zero on the right-hand-side, the problem is still feasible - that is, we don't force the \\( y \\) variables to satisfy mutually exclusive constraints like
 
-### Modelling the negative point cases
+<div>
+$$
+y_{R,i}^3 \leq -0.5 \\
+y_{R,i}^3 \in {0,1}
+$$
+</div>
+
+### Modeling the negative point cases
 
 We can use a similar approach for the negative point cases, but the constraints are perhaps less intuitive. As before, define variables
 
@@ -101,7 +108,7 @@ We can use a similar approach for the negative point cases, but the constraints 
 * \\( y\_{R,i}^{-4} = 1 \\) iff row \\( i \\) has 1 residential or less,
 * \\( y\_{R,i}^{-5} = 1 \\) iff row \\( i \\) has 0 residential.
 
-The objective contribution from these variables can be written as
+The objective function "contribution" from these variables can be written as
 
 <div>
 $$
@@ -109,7 +116,7 @@ $$
 $$
 </div>
 
-The optimizer tries to drive these variables towards zero. Before we restricted variables away from 1, but now we will restrict them away from zero with the following constraints:
+The optimizer tries to drive these variables towards zero. Before we were restricting variables away from one, but now we will restrict them _away_ from zero with the following constraints:
 
 <div>
 $$
@@ -129,13 +136,15 @@ y_{R,i}^{-5} \geq 1 - \frac{1}{1} \rightarrow y_{R,i}^{-5} \geq 0
 $$
 </div>
 
-You can also check the case where the sum is zero, and it is also clear that if the sum is 3 or higher then all can be set to zero.
+You can also check that all variables will set to 1 in the case where the sum is zero, and that if the sum is 3 or higher then all can be set to zero.
 
 ### Putting it all together
 
 Apart from a constraint to set the total number of residential lots, we have everything we need. Let's build the model in JuMP and Julia.
 
 {% highlight julia %}
+using JuMP
+
 function SolveUrban()
 
   m = Model(:Max)
@@ -165,21 +174,21 @@ function SolveUrban()
   # to the x variables
   # Rows
   for i = 1:5
-    @addConstraint(m, y["R", 5,i] <=   1.0/5.0*sum{x[i,j], j=1:5}) # sum = 5
-    @addConstraint(m, y["R", 4,i] <=   1.0/4.0*sum{x[i,j], j=1:5}) # sum = 4
-    @addConstraint(m, y["R", 3,i] <=   1.0/3.0*sum{x[i,j], j=1:5}) # sum = 3
-    @addConstraint(m, y["R",-3,i] >= 1-1.0/3.0*sum{x[i,j], j=1:5}) # sum = 2
-    @addConstraint(m, y["R",-4,i] >= 1-1.0/2.0*sum{x[i,j], j=1:5}) # sum = 1
-    @addConstraint(m, y["R",-5,i] >= 1-1.0/1.0*sum{x[i,j], j=1:5}) # sum = 0
+    @addConstraint(m, y["R", 5,i] <=   1/5*sum{x[i,j], j=1:5}) # sum = 5
+    @addConstraint(m, y["R", 4,i] <=   1/4*sum{x[i,j], j=1:5}) # sum = 4
+    @addConstraint(m, y["R", 3,i] <=   1/3*sum{x[i,j], j=1:5}) # sum = 3
+    @addConstraint(m, y["R",-3,i] >= 1-1/3*sum{x[i,j], j=1:5}) # sum = 2
+    @addConstraint(m, y["R",-4,i] >= 1-1/2*sum{x[i,j], j=1:5}) # sum = 1
+    @addConstraint(m, y["R",-5,i] >= 1-1/1*sum{x[i,j], j=1:5}) # sum = 0
   end
   # Columns
   for j = 1:5
-    @addConstraint(m, y["C", 5,j] <=   1.0/5.0*sum{x[i,j], i=1:5}) # sum = 5
-    @addConstraint(m, y["C", 4,j] <=   1.0/4.0*sum{x[i,j], i=1:5}) # sum = 4
-    @addConstraint(m, y["C", 3,j] <=   1.0/3.0*sum{x[i,j], i=1:5}) # sum = 3
-    @addConstraint(m, y["C",-3,j] >= 1-1.0/3.0*sum{x[i,j], i=1:5}) # sum = 2
-    @addConstraint(m, y["C",-4,j] >= 1-1.0/2.0*sum{x[i,j], i=1:5}) # sum = 1
-    @addConstraint(m, y["C",-5,j] >= 1-1.0/1.0*sum{x[i,j], i=1:5}) # sum = 0
+    @addConstraint(m, y["C", 5,j] <=   1/5*sum{x[i,j], i=1:5}) # sum = 5
+    @addConstraint(m, y["C", 4,j] <=   1/4*sum{x[i,j], i=1:5}) # sum = 4
+    @addConstraint(m, y["C", 3,j] <=   1/3*sum{x[i,j], i=1:5}) # sum = 3
+    @addConstraint(m, y["C",-3,j] >= 1-1/3*sum{x[i,j], i=1:5}) # sum = 2
+    @addConstraint(m, y["C",-4,j] >= 1-1/2*sum{x[i,j], i=1:5}) # sum = 1
+    @addConstraint(m, y["C",-5,j] >= 1-1/1*sum{x[i,j], i=1:5}) # sum = 0
   end
 
   # Solve it with the default solver (CBC)
