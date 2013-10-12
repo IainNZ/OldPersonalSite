@@ -5,7 +5,7 @@ layout: post
 title: Solving an Urban Planning Puzzle with JuMP + Julia
 ---
 
-[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/IainNZ/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
 
 ## Urban Planning (August 2013)
 
@@ -143,6 +143,7 @@ You can also check that all variables will set to 1 in the case where the sum is
 Apart from a constraint to set the total number of residential lots, we have everything we need. Let's build the model in JuMP and Julia.
 
 {% highlight julia %}
+# Assuming a solver has been previously installed, e.g. Cbc
 using JuMP
 
 function SolveUrban()

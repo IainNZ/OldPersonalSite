@@ -5,7 +5,7 @@ layout: post
 title: Solving a Combination Lock Puzzle with JuMP + Julia
 ---
 
-[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/IainNZ/JuMP.jl), an algebraic modelling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
 
 ## Combination Locks (August 2012)
 
@@ -40,6 +40,7 @@ $$
 where the first constraint enforces the sum of the numbers equals 419, and the second constraint ensures we pick a number for each lock. We can solve this problem with the following code:
 
 {% highlight julia %}
+# Assuming a solver has been previously installed, e.g. Cbc
 using JuMP
 
 function SolveCombination(P)

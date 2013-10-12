@@ -96,48 +96,49 @@
 
 <p><a href="http://julialang.org">Julia</a> is a fantastic up-and-coming dynamic language that emphasises high-performance scientific computing that is extensible and easy to read and write. It doesn&#39;t reinvent the wheel: it utilizes the <a href="http://llvm.org/">LLVM compiler</a> to generate fast code, open-source linear algebra packages to provide fast number crunching, and the <a href="https://github.com/joyent/libuv">libuv</a> library to provide excellent cross-platform IO. libuv is the library that powers the popular <a href="http://nodejs.org">node.js</a> environment that has become very popular over the past couple of years for web development. Being a web development language is not an official goal of Julia, but there is certainly no reason it can&#39;t be used. For example, if server-side number crunching is one of the features your site needs, that part could be implemented in Julia and the rest of the application logic in node.js or your tool of choice.</p>
 
-<p>But back to sudoku. The Julia package <a href="https://github.com/IainNZ/JuMP.jl">JuMP</a> is an algebraic modelling language for linear (and integer and quadratic) programming created by myself and the very talented <a href="http://www.mit.edu/%7Emlubin/">Miles Lubin</a>. You should compare JuMP with tools like <a href="http://code.google.com/p/pulp-or/">PuLP</a> and <a href="http://www.ampl.com">AMPL</a>. If you aren&#39;t familiar with algebraic modelling languages embedded in other languages, you can think of them as an embedded <a href="http://en.wikipedia.org/wiki/Domain_specific_language">domain specific language (DSL)</a>. Julia&#39;s fantastic <a href="http://docs.julialang.org/en/latest/manual/metaprogramming/">metaprogramming functionality</a> has allowed us to create a particularily fast and expressive modelling language. I encourage you to read to the brief documentation, but here is a taste of what it looks like.</p>
+<p>But back to sudoku. The Julia package <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a> is an algebraic modeling language for linear (and integer and quadratic) programming created by myself and the very talented <a href="http://www.mit.edu/%7Emlubin/">Miles Lubin</a>. You should compare JuMP with tools like <a href="http://code.google.com/p/pulp-or/">PuLP</a> and <a href="http://www.ampl.com">AMPL</a>. If you aren&#39;t familiar with algebraic modeling languages embedded in other languages, you can think of them as an embedded <a href="http://en.wikipedia.org/wiki/Domain_specific_language">domain specific language (DSL)</a>. Julia&#39;s fantastic <a href="http://docs.julialang.org/en/latest/manual/metaprogramming/">metaprogramming functionality</a> has allowed us to create a particularily fast and expressive modeling language. I encourage you to read to the <a href="https://jump.readthedocs.org/en/latest/jump.html">documentation</a>, but here is a taste of what it looks like.</p>
 
-<div class="highlight"><pre><code class="julia"><span class="lineno"> 1</span> <span class="k">using</span> <span class="n">JuMP</span>
-<span class="lineno"> 2</span> 
-<span class="lineno"> 3</span> <span class="k">function</span><span class="nf"> SolveModel</span><span class="p">(</span><span class="n">initgrid</span><span class="p">)</span>
-<span class="lineno"> 4</span>   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, so sense not important</span>
-<span class="lineno"> 5</span> 
-<span class="lineno"> 6</span>   <span class="c"># Create the variables</span>
-<span class="lineno"> 7</span>   <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
-<span class="lineno"> 8</span> 
-<span class="lineno"> 9</span>   <span class="c"># ... snip other constraints ...</span>
-<span class="lineno">10</span>   <span class="c"># Constraint 4 - Only one value in each cell</span>
-<span class="lineno">11</span>   <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
-<span class="lineno">12</span>     <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
-<span class="lineno">13</span>       <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
-<span class="lineno">14</span>     <span class="k">end</span>
-<span class="lineno">15</span>   <span class="k">end</span>
-<span class="lineno">16</span> 
-<span class="lineno">17</span>   <span class="c"># ... snip initial solution constraints ...</span>
-<span class="lineno">18</span>   <span class="c"># Solve it (default solver is CBC)</span>
-<span class="lineno">19</span>   <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-<span class="lineno">20</span>   
-<span class="lineno">21</span>   <span class="c"># Check solution</span>
-<span class="lineno">22</span>   <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
-<span class="lineno">23</span>     <span class="nb">error</span><span class="p">(</span><span class="s">&quot;No solution found!&quot;</span><span class="p">)</span>
-<span class="lineno">24</span>   <span class="k">else</span>
-<span class="lineno">25</span>     <span class="n">mipSol</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="lineno">26</span>     
-<span class="lineno">27</span>     <span class="n">sol</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-<span class="lineno">28</span>     <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
-<span class="lineno">29</span>       <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
-<span class="lineno">30</span>         <span class="k">for</span> <span class="n">val</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
-<span class="lineno">31</span>           <span class="k">if</span> <span class="n">mipSol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.9</span>  <span class="c"># mipSol is stored as floats</span>
-<span class="lineno">32</span>             <span class="n">sol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-<span class="lineno">33</span>           <span class="k">end</span>
-<span class="lineno">34</span>         <span class="k">end</span>
-<span class="lineno">35</span>       <span class="k">end</span>
-<span class="lineno">36</span>     <span class="k">end</span>
-<span class="lineno">37</span> 
-<span class="lineno">38</span>     <span class="k">return</span> <span class="n">sol</span>
-<span class="lineno">39</span>   <span class="k">end</span>
-<span class="lineno">40</span> <span class="k">end</span>
+<div class="highlight"><pre><code class="julia"><span class="lineno"> 1</span> <span class="c"># Assuming a solver has been previously installed, e.g. Cbc </span>
+<span class="lineno"> 2</span> <span class="k">using</span> <span class="n">JuMP</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">function</span><span class="nf"> SolveModel</span><span class="p">(</span><span class="n">initgrid</span><span class="p">)</span>
+<span class="lineno"> 5</span>   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, so sense not important</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="c"># Create the variables</span>
+<span class="lineno"> 8</span>   <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span>   <span class="c"># ... snip other constraints ...</span>
+<span class="lineno">11</span>   <span class="c"># Constraint 4 - Only one value in each cell</span>
+<span class="lineno">12</span>   <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">13</span>     <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">14</span>       <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="lineno">15</span>     <span class="k">end</span>
+<span class="lineno">16</span>   <span class="k">end</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>   <span class="c"># ... snip initial solution constraints ...</span>
+<span class="lineno">19</span>   <span class="c"># Solve it (default solver is CBC)</span>
+<span class="lineno">20</span>   <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="lineno">21</span>   
+<span class="lineno">22</span>   <span class="c"># Check solution</span>
+<span class="lineno">23</span>   <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+<span class="lineno">24</span>     <span class="nb">error</span><span class="p">(</span><span class="s">&quot;No solution found!&quot;</span><span class="p">)</span>
+<span class="lineno">25</span>   <span class="k">else</span>
+<span class="lineno">26</span>     <span class="n">mipSol</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="lineno">27</span>     
+<span class="lineno">28</span>     <span class="n">sol</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="lineno">29</span>     <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">30</span>       <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">31</span>         <span class="k">for</span> <span class="n">val</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">32</span>           <span class="k">if</span> <span class="n">mipSol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.9</span>  <span class="c"># mipSol is stored as floats</span>
+<span class="lineno">33</span>             <span class="n">sol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+<span class="lineno">34</span>           <span class="k">end</span>
+<span class="lineno">35</span>         <span class="k">end</span>
+<span class="lineno">36</span>       <span class="k">end</span>
+<span class="lineno">37</span>     <span class="k">end</span>
+<span class="lineno">38</span> 
+<span class="lineno">39</span>     <span class="k">return</span> <span class="n">sol</span>
+<span class="lineno">40</span>   <span class="k">end</span>
+<span class="lineno">41</span> <span class="k">end</span>
 </code></pre></div>
 
 <p>Line 7 creates our variable <em>x</em> with three indices over the range 1 to 9, and enforces integrality. <code>@defVar</code> is a macro, not a function, which lets it create a variable <code>x</code> in the local scope. I have removed the other constraints for brevity and left the constraint that enforces that each cell contains only one value. Note the correspondance between the mathematical notation (&quot;for all rows, for all columns&quot;) and the <code>for</code> loops (lines 11 and 12). <code>@addConstraint</code> (line 13) is another macro that facilitates the efficient storage of the constraint as a sparse vector, and matches the mathematical description very closely. On line 19 we solve the model with the default solver <a href="https://projects.coin-or.org/Cbc">COIN-OR CBC</a> - an open-source integer programming solver. As a side note, Julia/JuMP also has interfaces to GLPK (open-source) and Gurobi (closed-source). Finally, we pull the solution back from the solver (if a feasible solution could be found) as a three-dimensional matrix of 0s and 1s which we convert to a two-dimensional vector of 1-to-9s (lines 27 to 36).</p>
@@ -236,6 +237,8 @@
       <a href="/">Home</a><br><br>
       <h4>Recent Posts</h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
         
           <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
         

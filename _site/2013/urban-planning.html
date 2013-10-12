@@ -56,7 +56,7 @@
 <p class="meta">Posted on 30 Sep 2013</p>
 
 <div class="post">
-<p><a href="http://puzzlor.editme.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/IainNZ/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
+<p><a href="http://puzzlor.editme.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
 
 <h2>Urban Planning (August 2013)</h2>
 
@@ -199,7 +199,8 @@ $$
 
 <p>Apart from a constraint to set the total number of residential lots, we have everything we need. Let&#39;s build the model in JuMP and Julia.</p>
 
-<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+<div class="highlight"><pre><code class="julia"><span class="c"># Assuming a solver has been previously installed, e.g. Cbc</span>
+<span class="k">using</span> <span class="n">JuMP</span>
 
 <span class="k">function</span><span class="nf"> SolveUrban</span><span class="p">()</span>
 
@@ -281,6 +282,8 @@ $$
       <a href="/">Home</a><br><br>
       <h4>Recent Posts</h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
         
           <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
         

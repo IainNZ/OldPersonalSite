@@ -56,7 +56,7 @@
 <p class="meta">Posted on 21 Sep 2013</p>
 
 <div class="post">
-<p><a href="http://puzzlor.editme.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/IainNZ/JuMP.jl">JuMP</a>, an algebraic modelling language for/in <a href="http://julialang.org">Julia</a>.</p>
+<p><a href="http://puzzlor.editme.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
 
 <h2>Combination Locks (August 2012)</h2>
 
@@ -91,7 +91,8 @@ $$
 
 <p>where the first constraint enforces the sum of the numbers equals 419, and the second constraint ensures we pick a number for each lock. We can solve this problem with the following code:</p>
 
-<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+<div class="highlight"><pre><code class="julia"><span class="c"># Assuming a solver has been previously installed, e.g. Cbc</span>
+<span class="k">using</span> <span class="n">JuMP</span>
 
 <span class="k">function</span><span class="nf"> SolveCombination</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, sense unimportant</span>
@@ -144,6 +145,8 @@ An extension question: what happens if relax constraint 2? How many locks would 
       <a href="/">Home</a><br><br>
       <h4>Recent Posts</h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
         
           <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
         
