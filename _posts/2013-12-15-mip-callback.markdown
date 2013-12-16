@@ -41,7 +41,7 @@ Pkg.add("CPLEXLink")
 
 {% endhighlight %}
 
-<h3>Formulating the TSP problem</h3>
+<h3>Formulating the TSP integer program</h3>
 
 From the <a href="http://www.tsp.gatech.edu/problem/index.html">Georgia Institue of Technology website</a>:
 
