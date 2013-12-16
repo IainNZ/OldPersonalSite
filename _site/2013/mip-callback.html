@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>Using JuMP to Solve a TSP with Lazy Constraints - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">
+        <a style="color: inherit; text-decoration: inherit;" href="/">Iain Dunning</a>
+      </h1>
+      <h5>
+        Experiences, thoughts, and technical notes.
+        <a href="/">More about me</a>.
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Using JuMP to Solve a TSP with Lazy Constraints</h2>
+<p class="meta">Posted on 15 Dec 2013</p>
+
+<div class="post">
+<p><a href="http://github.com/JuliaOpt/JuMP.jl">JuMP</a> is an algebraic modeling language for optimization problems implemented as a package for the <a href="http://julialang.org">Julia</a> programming language. It works with many solvers, both open-source and commercial - see the <a href="http://juliaopt.org">JuliaOpt</a> home page for more information. I&#39;ve written <a href="http://localhost:4000/2013/urban-planning.html">a</a> <a href="http://localhost:4000/2013/combination-locks.html">few</a> <a href="http://localhost:4000/2013/sudoku-as-a-service.html">times</a> about solving problems with JuMP.</p>
+
+<p>We just released <strong>version 0.2</strong> of JuMP which, among other things, provides solver-independent callbacks for <a href="http://en.wikipedia.org/wiki/Linear_programming#Integer_unknowns">mixed-integer linear programming problems</a> (MILPs). MILPs are usually solved by solving a succession of linear relaxations of the original problem in a process known as branch-and-bound. Basically: if the solution of a linear relaxation has a fractional value for a variable that should be integral, (e.g. x = 4.3), we branch on that variable to create two new linear relaxation problems - one where the variable is constrained to be less than or equal to the rounded down value (e.g. x = 4) and other where the variable is constrained to be greather than or equal to the rounded up value (e.g. x = 5). There is a lot more that goes on to make this efficient, but that&#39;s the basic idea.</p>
+
+<p>Optimization software often allows users to provide <strong>callback functions</strong> that run when certain events happen in the branch-and-bound process, allowing the user to modify the solve process. The one I will describe today allows us to add a new constraint to the problem that may &quot;cut off&quot; a solution to the problem whenever a new solution is found -  a <strong>&quot;lazy constraint&quot;</strong>. You can read more about lazy constraints at <a href="http://orinanobworld.blogspot.com/2012/08/user-cuts-versus-lazy-constraints.html">Paul Rubin&#39;s blog</a>.</p>
+
+<p>A problem with solver callbacks is that each solver implements them differently. Some solvers may allow the user to provide one callback function and pass a parameter into the callback telling it what the solve state is and what the user can now do. Other solvers want a different callback for every possible situation. For this reason, and probably others, unifying all these interfaces across solvers in a simple way hasn&#39;t really been done before in an solver-independent algebraic modeling language. JuMP makes the process as simple as can be (hopefully), and you can <strong><a href="https://jump.readthedocs.org/en/release-0.2/jump.html#solver-callbacks">read the documentation to find out more</a></strong>.</p>
+
+<p>In this blog post I will demonstrate how you can use JuMP&#39;s lazy constraint callback functionality to solve a travelling salesman problem (TSP) using <strong>subtour elimination constraints</strong>. To follow along at home you&#39;ll need one (but preferably at least two of): GNU GLPK, Gurobi, or CPLEX. To install Julia, see the <a href="http://julialang.org/downloads/">Download page</a> and to install JuMP you can run the following commands at the Julia prompt:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="c"># Update package listing</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+<span class="c"># Install JuMP</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;JuMP&quot;</span><span class="p">)</span>
+
+<span class="c"># Install interface to your solver of choice.</span>
+<span class="c"># Further setup might be required for these - see the README for each package!</span>
+
+<span class="c"># Gurobi</span>
+<span class="c"># https://github.com/JuliaOpt/Gurobi.jl</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;Gurobi&quot;</span><span class="p">)</span>
+ 
+<span class="c"># GNU GLPK</span>
+<span class="c"># https://github.com/JuliaOpt/GLPK.jl</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;GLPK&quot;</span><span class="p">)</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;GLPKMathProgInterface&quot;</span><span class="p">)</span>
+
+<span class="c"># CPLEX (experimental!)</span>
+<span class="c"># https://github.com/joehuchette/CPLEXLink.jl</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;CPLEXLink&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+<h3>Formulating the TSP problem</h3>
+
+From the <a href="http://www.tsp.gatech.edu/problem/index.html">Georgia Institue of Technology website</a>:
+
+<blockquote>Given a collection of cities and the cost of travel between each pair of them, the traveling salesman problem, or TSP for short, is to find the cheapest way of visiting all of the cities and returning to your starting point. In the standard version we study, the travel costs are symmetric in the sense that traveling from city X to city Y costs just as much as traveling from Y to X.</blockquote>
+
+One way to write the (partial) integer programming formulation of the undirected version of this problem is:
+
+<div>
+$$
+\begin{align}
+\min_{x\in\{0,1\}} & \sum_{i=1,\dots,n,j=i,\dots,n} d_{i,j} x_{i,j} \\
+\text{Subject to}  & x_{i,j} = x_{j,i} \quad \forall i,j \\
+                   & x_{i,i} = 0 \quad \forall i \\
+                   & \sum_{j=1,\dots,n} = 2
+\end{align}
+$$
+</div>
+
+<p>The translation of this math is as follows:</p>
+
+<ul>
+<li>\( x_{i,j} \) variable is 1 if we go between city \( i \) and city \( j \)  on our tour.</li>
+<li>\( d_{i,j} \) is the distance or cost between the two cities.</li>
+<li>The first constraint makes our problem undirected (going from i to j is the same as going from j to i)</li>
+<li>The second constraint removes the variables that correspond to leaving and entering the same city.</li>
+<li>The final constraints says we must enter and leave a city once and once only.</li>
+</ul>
+
+<p>This is unfortunately not sufficient to model the TSP. Consider the following solution, which you can check satisfies all the constraints and is significantly shorter than the true solution.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="c"># The + are our cities</span>
+<span class="c">#       +           +</span>
+<span class="c">#   +                   +</span>
+<span class="c">#       +           +</span>
+<span class="c"># The solution to the above problem is</span>
+<span class="c">#    /--+           +--\</span>
+<span class="c">#   +   |           |   +</span>
+<span class="c">#    \--+           +--/</span>
+<span class="c"># But it should be</span>
+<span class="c">#    /--+-----------+--\</span>
+<span class="c">#   +                   +</span>
+<span class="c">#    \--+-----------+--/</span>
+</code></pre></div>
+
+<p>We can remove these &quot;incorrect&quot; solutions using so-called &quot;subtour-elimination constraints&quot; (see again the <a href="http://www.tsp.gatech.edu/methods/opt/subtour.htm">Georgia Tech</a> website). These constraints essentially say that for any given set of cities, if you treat that set as a black box there must be at least one trip into that set and one trip out. Unfortunately there are an <strong>exponential number of subsets of cities</strong>, and so an exponential number of constraints. We could generate them all but you will find that, in practice, very few are actually needed. The secret is to add them &quot;lazily&quot; - only when they are needed. You only need one constraint to &quot;correct&quot; the solution to our example problem above.</p>
+
+<h3>Solving the relaxed problem with JuMP</h3>
+
+<p>Let&#39;s first solve the problem without callbacks and subtour elimination constraints. Here is the code I came up with. I solved it with Gurobi, and the full final code is in the <a href="https://github.com/JuliaOpt/JuMP.jl/blob/master/examples/tsp.jl">JuMP examples</a> folder. I don&#39;t define <code>extractTour</code> here - see the example file, it simply turns the <code>x</code> matrix of 0-1s into a human-readable description of the tour.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+<span class="k">using</span> <span class="n">Gurobi</span>
+
+<span class="c"># solveTSP</span>
+<span class="c"># Given a matrix of city locations, solve the TSP</span>
+<span class="c"># Inputs:</span>
+<span class="c">#   n       Number of cities</span>
+<span class="c">#   cities  n-by-2 matrix of (x,y) city locations</span>
+<span class="c"># Output:</span>
+<span class="c">#   path    Vector with order to cities are visited in</span>
+<span class="k">function</span><span class="nf"> solveTSP</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cities</span><span class="p">)</span>
+
+    <span class="c"># Calculate pairwise distance matrix</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">:</span><span class="n">n</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">cities</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">cities</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c"># Create a model that we will use Gurobi to solve</span>
+    <span class="c"># We need to tell Gurobi we are using lazy constraints</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">GurobiSolver</span><span class="p">(</span><span class="n">LazyConstraints</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c"># x[i,j] is 1 iff we travel between i and j, 0 otherwise</span>
+    <span class="c"># Although we define all n^2 variables, we will only use</span>
+    <span class="c"># the upper triangle</span>
+    <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
+
+    <span class="c"># Minimize length of tour</span>
+    <span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="p">:</span><span class="n">n</span><span class="p">})</span>
+
+    <span class="c"># Make x_ij and x_ji be the same thing (undirectional)</span>
+    <span class="c"># Don&#39;t allow self-arcs</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">n</span>
+            <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c"># We must enter and leave every city once and only once</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">}</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="c"># Solve the problem</span>
+    <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="c"># Return best tour</span>
+    <span class="k">return</span> <span class="n">extractTour</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">end</span>  <span class="c"># end solveTSP</span>
+
+
+<span class="c"># Create a simple instance that looks like</span>
+<span class="c">#       +           +</span>
+<span class="c">#   +                   +</span>
+<span class="c">#       +           +</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">cities</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">50</span> <span class="mi">200</span><span class="p">;</span>
+          <span class="mi">100</span> <span class="mi">100</span><span class="p">;</span>
+          <span class="mi">100</span> <span class="mi">300</span><span class="p">;</span>
+          <span class="mi">500</span> <span class="mi">100</span><span class="p">;</span>
+          <span class="mi">500</span> <span class="mi">300</span><span class="p">;</span>
+          <span class="mi">550</span> <span class="mi">200</span><span class="p">]</span>
+<span class="n">tour</span> <span class="o">=</span> <span class="n">solveTSP</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cities</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Solution: &quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span>
+</code></pre></div>
+
+<p>As you can see, there is pretty much a line-to-line correspondence between the JuMP constraint and objective definitions and the mathematical statement of the problem.</p>
+
+<h3>Implementing the lazy constraint callback</h3>
+
+<p>To add a subtour elimination constraint, we first need to identify a subtour. In the <a href="https://github.com/JuliaOpt/JuMP.jl/blob/master/examples/tsp.jl">example code</a> I create a simple function <code>findSubtour(n, sol)</code> that takes the matrix of 0-1 solutions and returns a length <code>n</code> vector of Booleans encoding the set of cities in one possible subtour. We can now use that to build a new constraint and add it to the problem:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">function</span><span class="nf"> subtour</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span>
+    <span class="c"># Find any set of cities in a subtour</span>
+    <span class="n">subtour</span><span class="p">,</span> <span class="n">subtour_length</span> <span class="o">=</span> <span class="n">findSubtour</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">subtour_length</span> <span class="o">==</span> <span class="n">n</span>
+        <span class="c"># This &quot;subtour&quot; is actually all cities, so we are done</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+    
+    <span class="c"># Subtour found - add lazy constraint</span>
+    <span class="c"># We will build it up piece-by-piece (variable-by-variable)</span>
+    <span class="n">arcs_from_subtour</span> <span class="o">=</span> <span class="n">AffExpr</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">subtour</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c"># If this city isn&#39;t in subtour, skip it</span>
+            <span class="k">continue</span>
+        <span class="k">end</span>
+        <span class="c"># Want to include all arcs from this city, which is in</span>
+        <span class="c"># the subtour, to all cities not in the subtour</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span>
+                <span class="c"># Self-arc</span>
+                <span class="k">continue</span>
+            <span class="k">elseif</span> <span class="n">subtour</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="c"># Both ends in same subtour</span>
+                <span class="k">continue</span>
+            <span class="k">else</span>
+                <span class="c"># j isn&#39;t in subtour</span>
+                <span class="n">arcs_from_subtour</span> <span class="o">+=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c"># Add the new subtour elimination constraint we built</span>
+    <span class="n">addLazyConstraint</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">arcs_from_subtour</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<p>Again, nothing too fancy. There are a few key things to understand here:</p>
+
+<ul>
+<li>As you can see in the full listing in the example code, this function is defined inside the same scope as the variables - this means you have access to <code>x[i,j]</code>, making creating the new constraint easy.</li>
+<li>The logic for determining the subtour is elsewhere, and all we define here is the callback &quot;stub&quot;. This is good code design as it allows us to test the subtour code in isolation, as well as not &quot;cluttering&quot; the model definition.</li>
+<li><code>addLazyConstraint</code> is a function defined by JuMP, and <code>AffExpr</code> is a type defined by JuMP - it stands for affine expression.</li>
+<li>Our <code>subtour</code> callback takes one argument, <code>cb</code>. This is a handle used by JuMP to keep track of where things are in the solve process. <code>addLazyConstraint</code> acts on <code>cb</code>, unlike <code>addConstraint</code>.</li>
+</ul>
+
+<p>All that is left is for us to tell JuMP to use our <code>subtour</code> callback, as in the following snippet:</p>
+
+<div class="highlight"><pre><code class="julia">    <span class="c"># ......</span>
+        <span class="c"># Add the new subtour elimination constraint we built</span>
+        <span class="n">addLazyConstraint</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">arcs_from_subtour</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">end</span>  <span class="c"># End function subtour</span>
+
+    <span class="c"># Solve the problem with our cut generator</span>
+    <span class="n">setlazycallback</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">subtour</span><span class="p">)</span>
+    <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="c"># Return best tour</span>
+    <span class="k">return</span> <span class="n">extractTour</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">end</span>  <span class="c"># end solveTSP</span>
+</code></pre></div>
+
+<h3>Go try it!</h3>
+
+<p>This feature is new and (internally) a bit complicated to smooth over the differences in solvers. It <em>should</em> work, but we are always happy to have more testers! To experience the magic of solver-independent callbacks you should only need to change two things - the <code>using</code> line and the <code>Model</code> line, e.g.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="c"># Gurobi</span>
+<span class="k">using</span> <span class="n">Gurobi</span>
+<span class="c"># ...</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">GurobiSolver</span><span class="p">(</span><span class="n">LazyConstraints</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c"># GLPK</span>
+<span class="k">using</span> <span class="n">GLPKMathProgInterface</span>
+<span class="c"># ...</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">GLPKSolverMIP</span><span class="p">())</span>
+
+<span class="c"># CPLEX</span>
+<span class="k">using</span> <span class="n">CPLEXLink</span>
+<span class="c"># ...</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">CplexSolver</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Let us know how it goes. If you have issues open a report at the <a href="https://github.com/JuliaOpt/JuMP.jl/issues?state=open">JuMP issues page</a>, <a href="https://twitter.com/iaindunning">Tweet at me</a>, or email me (idunning AT mit DOT edu).</p>
+
+<h3>Coming soon</h3>
+
+<p>We hope to add support in JuMP for other common callbacks such as heuristics, cuts, and branching rules in the near future. Also on our mind is adding support for <a href="http://scip.zib.de/">SCIP</a> (which has a wide variety of callbacks) and <a href="http://www.sulumoptimization.com/">Sulum</a> (callbacks are coming soon).</p>
+
+</div>
+
+      <hr />
+    </div>
+    <aside class="four columns">
+      <h4>Projects</h4>
+      <div style="text-align: center; line-height: 100%; margin-bottom: 10px">
+        <a href="http://juliaopt.org">JuliaOpt<br><img src="/images/juliaopt86.png" alt="JuliaOpt"></a><br>
+        <small>Optimization software for/in <a href="http://julialang.org">Julia</a></small>
+        <br><br>
+        <a href="http://tenkicompare.com">TenkiCompare</a><br>
+        <small>Compare weather in different cities</small>
+        <br><br>
+        <a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a><br>
+        <small>Simplex+B&amp;B solver in pure Javascript</small>
+        <br><br>
+        <a href="http://opensolver.org">OpenSolver</a><br>
+        <small>Solve large MILPs in Excel</small>
+      </div>
+      <hr>
+      <h4>Recent Posts</h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2013/mip-callback.html">Using JuMP to Solve a TSP with Lazy Constraints</a></li>
+        
+          <li><a href="/2013/us-senate.html">Representation, Filibusters and the US Senate</a></li>
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
+        
+          <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/combination-locks.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
