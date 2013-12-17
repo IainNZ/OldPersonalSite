@@ -5,11 +5,11 @@ layout: post
 title: Solving an Urban Planning Puzzle with JuMP + Julia
 ---
 
-[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
 
 ## Urban Planning (August 2013)
 
-[(Link to full problem statement)](http://puzzlor.editme.com/urbanplanning)
+[(Link to full problem statement)](http://puzzlor.com/2013-08_UrbanPlanning.html)
 
 In this problem we have a 5x5 grid with two possibilities for each lot: residential or commercial. Let's define a binary variable  \\( x\_{ij} \\) that is 1 if and only if lot \\( (i,j) \\) is residential. The challenge now is to express the objective. For each row and column there are the following possibilities:
 

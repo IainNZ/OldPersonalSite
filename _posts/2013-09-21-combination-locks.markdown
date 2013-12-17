@@ -5,11 +5,11 @@ layout: post
 title: Solving a Combination Lock Puzzle with JuMP + Julia
 ---
 
-[The PuzzlOR](http://puzzlor.editme.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
 
 ## Combination Locks (August 2012)
 
-[(Link to full problem statement)](http://puzzlor.editme.com/combinationlocks)
+[(Link to full problem statement)](http://puzzlor.com/2012-08_CombinationLocks.html)
 
 Our goal is to determine 6 numbers, where each of the 6 numbers has 6 possibilities and the sum of the numbers is 419. Lets first describe the possibilities (pulled from the image) as a matrix P:
 
