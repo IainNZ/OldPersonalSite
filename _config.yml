@@ -2,3 +2,5 @@ name: IainDunning.com
 markdown: redcarpet
 pygments: true
 permalink: /:year/:title.html
+url: http://iaindunning.com
+description: Experiences, thoughts, and technical notes.
