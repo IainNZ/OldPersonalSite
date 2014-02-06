@@ -17,7 +17,7 @@ Our goal is to determine 6 numbers, where each of the 6 numbers has 6 possibilit
 $$
 P =
  \begin{bmatrix}
-  39 & 90 & 75 & 88 & 15 & 57 \\
+  39 & 06 & 75 & 88 & 15 & 57 \\
    9 &  2 & 58 & 68 & 48 & 64 \\
   \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
   44 & 63 & 10 & 83 & 46 & 03
@@ -75,7 +75,7 @@ function SolveCombination(P)
   end
 end
 
-P = [39 90 75 88 15 57;
+P = [39 06 75 88 15 57;
       9  2 58 68 48 64;
      29 55 16 67  8 91;
      40 54 66 22 32 25;
