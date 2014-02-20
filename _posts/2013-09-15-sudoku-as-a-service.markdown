@@ -47,7 +47,7 @@ But back to sudoku. The Julia package [JuMP](https://github.com/JuliaOpt/JuMP.jl
 using JuMP
 
 function SolveModel(initgrid)
-  m = Model(:Max)  # Feasibility problem, so sense not important
+  m = Model()
 
   # Create the variables
   @defVar(m, 0 <= x[1:9, 1:9, 1:9] <= 1, Int)

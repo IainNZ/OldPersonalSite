@@ -44,7 +44,7 @@ where the first constraint enforces the sum of the numbers equals 419, and the s
 using JuMP
 
 function SolveCombination(P)
-  m = Model(:Max)  # Feasibility problem, sense unimportant
+  m = Model()
   
   # Variable x: 1 iff select number j for lock i
   @defVar(m, 0 <= x[i=1:6, j=1:6] <= 1, Int)
