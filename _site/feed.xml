@@ -261,7 +261,7 @@ $$
 
 &lt;p&gt;We hope to add support in JuMP for other common callbacks such as heuristics, cuts, and branching rules in the near future. Also on our mind is adding support for &lt;a href=&quot;http://scip.zib.de/&quot;&gt;SCIP&lt;/a&gt; (which has a wide variety of callbacks) and &lt;a href=&quot;http://www.sulumoptimization.com/&quot;&gt;Sulum&lt;/a&gt; (callbacks are coming soon).&lt;/p&gt;
 </description>
-				<pubDate>Sun, 15 Dec 2013 07:00:00 -0500</pubDate>
+				<pubDate>Sun, 15 Dec 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/mip-callback.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/mip-callback.html</guid>
 			</item>
@@ -395,7 +395,7 @@ even without the filibuster.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;The Senate does not represent the voices of the people. The argument for its existence and creation is usually claimed to be a check against the &amp;quot;tyranny of the majority&amp;quot; (the House, being a more representative body, represents the &amp;quot;majority&amp;quot; in this case). However, one must question whether this notion makes sense in the modern day and, even if it does, whether the degree to which a minority can block measures (with or without the even more &amp;quot;unrepresentative&amp;quot; filibuster) is a price worth paying.&lt;/p&gt;
 </description>
-				<pubDate>Fri, 22 Nov 2013 07:00:00 -0500</pubDate>
+				<pubDate>Fri, 22 Nov 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/us-senate.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/us-senate.html</guid>
 			</item>
@@ -422,7 +422,7 @@ even without the filibuster.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;We&amp;#39;ve set up a &lt;a href=&quot;https://github.com/JuliaOpt&quot;&gt;JuliaOpt GitHub organization&lt;/a&gt; and a &lt;a href=&quot;http://juliaopt.org&quot;&gt;JuliaOpt website&lt;/a&gt; - check them out the projects, use it, report bugs, and contribute back - we&amp;#39;d love to have you join us.&lt;/p&gt;
 </description>
-				<pubDate>Sat, 12 Oct 2013 08:00:00 -0400</pubDate>
+				<pubDate>Sat, 12 Oct 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/informs-juliaopt.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/informs-juliaopt.html</guid>
 			</item>
@@ -577,7 +577,7 @@ $$
 
 &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; SolveUrban&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
-  &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 
   &lt;span class=&quot;c&quot;&gt;# x is indexed by row and column&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -589,7 +589,7 @@ $$
   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rowcol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
   &lt;span class=&quot;c&quot;&gt;# Objective - combine the positive and negative parts&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setObjective&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setObjective&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;R&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; 
   &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;R&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; 
   &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;R&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;C&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; 
@@ -648,7 +648,7 @@ $$
 
 &lt;p&gt;The problem size here is so small that a solution is found almost instantly. However these are real issues for &amp;quot;real-world&amp;quot; problems and a lot of research is devoted to both improving solvers and studying the implications of different formulations.&lt;/p&gt;
 </description>
-				<pubDate>Mon, 30 Sep 2013 08:00:00 -0400</pubDate>
+				<pubDate>Mon, 30 Sep 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/urban-planning.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/urban-planning.html</guid>
 			</item>
@@ -694,7 +694,7 @@ $$
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JuMP&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; SolveCombination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Feasibility problem, sense unimportant&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
   
   &lt;span class=&quot;c&quot;&gt;# Variable x: 1 iff select number j for lock i&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -737,7 +737,7 @@ $$
 &lt;p&gt;&lt;br&gt;
 An extension question: what happens if relax constraint 2? How many locks would we need to make the sum 419 if we didn&amp;#39;t need to set all 6 locks?&lt;/p&gt;
 </description>
-				<pubDate>Sat, 21 Sep 2013 08:00:00 -0400</pubDate>
+				<pubDate>Sat, 21 Sep 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/combination-locks.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/combination-locks.html</guid>
 			</item>
@@ -790,7 +790,7 @@ An extension question: what happens if relax constraint 2? How many locks would 
 &lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JuMP&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; 
 &lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; SolveModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initgrid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Feasibility problem, so sense not important&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt; 
 &lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Create the variables&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -918,7 +918,7 @@ An extension question: what happens if relax constraint 2? How many locks would 
 
 &lt;p&gt;Let me know how that goes by contacting me at idunning AT mit.edu or &lt;a href=&quot;https://www.twitter.com/iaindunning&quot;&gt;@iaindunning&lt;/a&gt;.&lt;/p&gt;
 </description>
-				<pubDate>Sun, 15 Sep 2013 08:00:00 -0400</pubDate>
+				<pubDate>Sun, 15 Sep 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/sudoku-as-a-service.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/sudoku-as-a-service.html</guid>
 			</item>
@@ -1242,7 +1242,7 @@ function SolveTSP() {
 DrawCities();
 &lt;/script&gt;
 </description>
-				<pubDate>Sun, 08 Sep 2013 08:00:00 -0400</pubDate>
+				<pubDate>Sun, 08 Sep 2013 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2013/simplexjs.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/simplexjs.html</guid>
 			</item>
@@ -1405,7 +1405,7 @@ DrawCities();
 
 &lt;p&gt;You probably could not cut down on the biggest components of the cost without doing a very different trip. Some people seem to just visit the lower area - e.g. Reykjavik, to Geyser, to Skogafoss, to Jokulsarlon, and back. There quite a few buses on the roads in the south, but I&amp;#39;m not sure if you can hop-on hop-off with them. Hitchhiking not recommended - we saw a few people trying it and it didn&amp;#39;t seem to be going great. We couldn&amp;#39;t even fit them in usually because it was hardly ever one person and we had all our gear too. You could cut down on your food budget by stocking up in Reykjavik and doing cooking on a burner, or just avoiding restaurants entirely.&lt;/p&gt;
 </description>
-				<pubDate>Wed, 05 Jun 2013 03:08:52 -0400</pubDate>
+				<pubDate>Wed, 05 Jun 2013 07:08:52 +0000</pubDate>
 				<link>http://iaindunning.com/2013/an-icelandic-adventure.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/an-icelandic-adventure.html</guid>
 			</item>
@@ -1520,7 +1520,7 @@ DrawCities();
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 </description>
-				<pubDate>Thu, 16 May 2013 17:12:36 -0400</pubDate>
+				<pubDate>Thu, 16 May 2013 21:12:36 +0000</pubDate>
 				<link>http://iaindunning.com/2013/simulation-study-of-a-laundry-room.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/simulation-study-of-a-laundry-room.html</guid>
 			</item>
@@ -1661,8 +1661,8 @@ window_strut none
 &lt;/ul&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-stalonetray &amp;amp;
-nm-applet &amp;amp;
+stalonetray &lt;span class=&quot;p&quot;&gt;&amp;amp;&lt;/span&gt;
+nm-applet &lt;span class=&quot;p&quot;&gt;&amp;amp;&lt;/span&gt;
 dropbox start
 &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;xmonad
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -1676,7 +1676,7 @@ dropbox start
 
 &lt;p&gt;Many people on Github have &amp;quot;dotfiles&amp;quot; repositories - basically a repo for all the little configuration files that you see above, as well as others. This &lt;a href=&quot;http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/&quot;&gt;post&lt;/a&gt; really says it all better than I can, but basically its a cool idea and not only provides a backup for your configs, it also makes your experience homogenous across computers. The second factor was actually what motivated me to finally do it, as I just started an internship at Google. My repository is at &lt;a href=&quot;https://github.com/IainNZ/dotfiles&quot;&gt;https://github.com/IainNZ/dotfiles&lt;/a&gt; - there is nothing in there that is too fancy, but it might make the above more understandable. The best thing about it is in installation script, which puts symlinks to the dotfiles rather than copying them - allowing easy updates with a simple &lt;code&gt;git pull&lt;/code&gt;.&lt;/p&gt;
 </description>
-				<pubDate>Mon, 13 May 2013 03:17:12 -0400</pubDate>
+				<pubDate>Mon, 13 May 2013 07:17:12 +0000</pubDate>
 				<link>http://iaindunning.com/2013/experiences-with-xmonad-and-ubuntu-12.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/experiences-with-xmonad-and-ubuntu-12.html</guid>
 			</item>

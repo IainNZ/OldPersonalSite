@@ -105,7 +105,7 @@
 <span class="lineno"> 2</span> <span class="k">using</span> <span class="n">JuMP</span>
 <span class="lineno"> 3</span> 
 <span class="lineno"> 4</span> <span class="k">function</span><span class="nf"> SolveModel</span><span class="p">(</span><span class="n">initgrid</span><span class="p">)</span>
-<span class="lineno"> 5</span>   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(:</span><span class="n">Max</span><span class="p">)</span>  <span class="c"># Feasibility problem, so sense not important</span>
+<span class="lineno"> 5</span>   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
 <span class="lineno"> 6</span> 
 <span class="lineno"> 7</span>   <span class="c"># Create the variables</span>
 <span class="lineno"> 8</span>   <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
