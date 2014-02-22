@@ -7,6 +7,116 @@
 		<atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Fun with Unicode and Julia</title>
+				<description>&lt;p&gt;The &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; programming language has excellent support for Unicode. One of the main benefits is that you are no longer restricted to using English characters when writing code - for example, Chinese speakers may prefer to name their variables or functions in Chinese instead of English.&lt;/p&gt;
+
+&lt;h3&gt;Mathematical Notation&lt;/h3&gt;
+
+&lt;p&gt;English users can still benefit though, especially when it comes to mathematics-heavy code. Mathematical academic papers make heavy use of the Greek alphabet but most languages don&amp;#39;t support Unicode identifiers. This leads to code sprinkled with variables name &lt;code&gt;mu&lt;/code&gt; and &lt;code&gt;sigma&lt;/code&gt;. Julia, however, doesn&amp;#39;t mind Unicode identifiers one bit. Take this example edited snippet from &lt;a href=&quot;https://github.com/JuliaStats/Distributions.jl&quot;&gt;Distributions.jl&lt;/a&gt;, a Julia package that really uses the language&amp;#39;s design to the maximum:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;k&quot;&gt;immutable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ContinuousUnivariateDistribution&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Float64&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Float64&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zero&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;std.dev. must be positive&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;median&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;zval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;abs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;φ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We could even dream up our own (substantially less useful) code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;err&quot;&gt;∑&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Could also do ∏(x) = prod(x)&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;√&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;./&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;√&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;∑&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.^&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting. I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.&lt;/p&gt;
+
+&lt;h3&gt;Non-standard string literals&lt;/h3&gt;
+
+&lt;p&gt;What is a non-standard string literal? From the &lt;a href=&quot;http://docs.julialang.org/en/latest/manual/strings/#non-standard-string-literals&quot;&gt;Julia manual&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;There are situations when you want to construct a string or use string semantics, but the behavior of the standard string construct is not quite what is needed. For these kinds of situations, Julia provides non-standard string literals. A non-standard string literal looks like a regular double-quoted string literal, but is immediately prefixed by an identifier, and doesn’t behave quite like a normal string literal. Regular expressions, as described below, are one example of a non-standard string literal.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A regular expression in Julia looks like this: &lt;code&gt;r&amp;quot;^\s*(?:#|$)&amp;quot;&lt;/code&gt;. You can define your own non-standard string literals using macros, and if you use Unicdoe... For example, consider the following macros:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;k&quot;&gt;macro&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;♥‿♥&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&amp;quot;I LOVE &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;(uppercase(s))&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;♥‿♥&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# I LOVE JULIA&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;macro&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;****BOOM**** &amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.45&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lowercase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;elseif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.90&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uppercase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;#&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;out_str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot; ****BOOM****&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** juli# #nd UNIco## ****BOOM****&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** J#L## aND unICODE ****BOOM****&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** julIa And UniC#dE ****BOOM****&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Optimization variables names&lt;/h3&gt;
+
+&lt;p&gt;Unicode names might make for interesting keys in a dictionary. The following code requires &lt;a href=&quot;http://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt; and an integer programming solver, e.g. &lt;a href=&quot;http://github.com/JuliaOpt/Cbc.jl&quot;&gt;Cbc&lt;/a&gt; - both are available through the Julia package manager.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JuMP&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt; Suit&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;weight&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;♠&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Suit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;5.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;♣&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Suit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;♥&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Suit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;3.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;♦&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Suit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;6.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;3.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;suits&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♠&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♣&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♥&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♦&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;suits&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setObjective&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;suits&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;addConstraint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;suits&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;3.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Selected hand: [&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♠&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♠&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♣&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♣&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♥&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♥&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♦&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♦&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;]&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Selected hand: [♠♣]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+</description>
+				<pubDate>Sat, 22 Feb 2014 12:00:00 +0000</pubDate>
+				<link>http://iaindunning.com/2014/julia-unicode.html</link>
+				<guid isPermaLink="true">http://iaindunning.com/2014/julia-unicode.html</guid>
+			</item>
+		
+			<item>
 				<title>Using JuMP to Solve a TSP with Lazy Constraints</title>
 				<description>&lt;p&gt;&lt;a href=&quot;http://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt; is an algebraic modeling language for optimization problems implemented as a package for the &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; programming language. It works with many solvers, both open-source and commercial - see the &lt;a href=&quot;http://juliaopt.org&quot;&gt;JuliaOpt&lt;/a&gt; home page for more information. I&amp;#39;ve written &lt;a href=&quot;http://iaindunning.com/2013/urban-planning.html&quot;&gt;a&lt;/a&gt; &lt;a href=&quot;http://iaindunning.com/2013/combination-locks.html&quot;&gt;few&lt;/a&gt; &lt;a href=&quot;http://iaindunning.com/2013/sudoku-as-a-service.html&quot;&gt;times&lt;/a&gt; about solving problems with JuMP.&lt;/p&gt;
 
@@ -1523,162 +1633,6 @@ DrawCities();
 				<pubDate>Thu, 16 May 2013 21:12:36 +0000</pubDate>
 				<link>http://iaindunning.com/2013/simulation-study-of-a-laundry-room.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/simulation-study-of-a-laundry-room.html</guid>
-			</item>
-		
-			<item>
-				<title>Experiences with Setting Up Xmonad on Ubuntu 12</title>
-				<description>&lt;p&gt;After being impressed with a friends &lt;a href=&quot;http://xmonad.org/&quot;&gt;Xmonad&lt;/a&gt; setup, I decided to give it a go for myself. &lt;a href=&quot;http://xmonad.org/&quot;&gt;Xmonad&lt;/a&gt;, in short, is a &lt;a href=&quot;http://en.wikipedia.org/wiki/Window_manager&quot;&gt;window manager&lt;/a&gt; that automatically tiles and aligns all your windows - the idea being that you shouldn&amp;#39;t mess around with these things manually yourself, because you usually want your windows to fill up the screen anyway. Before switching to Ubuntu+XMonad I primarily used Windows 7. I used the Windows-Left and Windows-Right key combinations to align two windows side-by-side all the time, so this appealed to me. I had also been meaning to use Linux on a more full-time basis, as I previously only used it when needed, usually as a virtual machine guest. This summer I will be using it a lot more so I figured why not fully embrace it. So here is my journey to going from a fresh Ubuntu install to using Xmonad as my window manager, written mostly in real-time as I did it. Hopefully it may help someone get started - there are many posts about this sort of thing on the internet, but maybe this simpler step-by-step guide will be easier to understand than downloading a configuration file.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Update&lt;/em&gt;: After writing this post and its updates, I posted my configuration files on Github: &lt;a href=&quot;https://github.com/IainNZ/dotfiles&quot;&gt;https://github.com/IainNZ/dotfiles&lt;/a&gt;. You might find it handy to refer to them as the &amp;quot;finished product&amp;quot;.&lt;/p&gt;
-
-&lt;h2&gt;Initial Setup: Install Ubuntu, xmonad, Xmobar, simple configs&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;I started up a terminal (in case you were initially confused by the Unity interface, like me, you click the icon in the top left and type in what you want, in this case &lt;em&gt;terminal&lt;/em&gt;) and installed xmonad through the package manager: &lt;em&gt;sudo apt-get install xmonad&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;I then logged out. Now, to log-in with xmonad as my window manager, I click the little Ubuntu icon next to my name and selected &amp;quot;XMonad&amp;quot; (not &amp;quot;GNOME with Xmonad&amp;quot; - the subtleties escape me at the moment...). After typing in my password and hitting enter, nothing seem to happen except the log-in screen goes away.&lt;/li&gt;
-&lt;li&gt;Its not broken - there is just nothing open. Hitting &lt;em&gt;alt-shift-enter&lt;/em&gt; opens a terminal, and hitting it again opens another, putting them side-by-side. You can move the mouse to shift focus, or press &lt;em&gt;alt-j&lt;/em&gt; and &lt;em&gt;alt-k&lt;/em&gt; to cycle between windows. For more shortcuts, I found &lt;a href=&quot;http://xmonad.org/tour.html&quot;&gt;this tour&lt;/a&gt; really helpful. Helpful tip, if you need to bail out of XMonad before going on: to log out, &lt;em&gt;alt-shift-q&lt;/em&gt; will work.&lt;/li&gt;
-&lt;li&gt;If you are anything like me, you&amp;#39;ll find the idea of using alt for managing windows like this a bit unnatural. Given that the Windows key is on my keyboard, makes sense to me to use that instead. Fortunately this is pretty easy to do and is my first customization of xmonad. Apparently customization is another of the virtues of Xmonad, and you actually write the configuration file as a &lt;a href=&quot;http://en.wikipedia.org/wiki/Haskell_(programming_language&quot;&gt;Haskell&lt;/a&gt;) script!
-
-&lt;ul&gt;
-&lt;li&gt;First we need a directory to store our configuration (&lt;code&gt;mkdir ~/.xmonad&lt;/code&gt;), and to create and edit the config file itself (e.g. &lt;code&gt;nano ~/.xmonad/xmonad.hs&lt;/code&gt;)&lt;/li&gt;
-&lt;li&gt;The code we&amp;#39;ll use is as follows (from &lt;a href=&quot;http://www.haskell.org/haskellwiki/xmonad/Frequently_asked_questions#Rebinding_the_mod_key_.28Alt_conflicts_with_other_apps.3B_I_want_the_____key.21.29&quot;&gt;here&lt;/a&gt;):&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;haskell&quot;&gt;&lt;span class=&quot;kr&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;XMonad&lt;/span&gt;
-
-&lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xmonad&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultConfig&lt;/span&gt;
-         &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modMask&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mod4Mask&lt;/span&gt;
-         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The above code says to run xmonad according to the default values except for the modifications listed in this key-value structure. &lt;em&gt;mod4Mask&lt;/em&gt; indicates the Windows key for most keyboards. To use the new settings, press &lt;em&gt;alt-q&lt;/em&gt; to reload xmonad.hs. Test it out by creating a new terminal with &lt;em&gt;win-shift-enter&lt;/em&gt;, and close it with &lt;em&gt;win-shift-c&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;This is all rather barebones, although I kind of like how clean it is. I installed two packages that seem to come fairly highly recommended: &lt;a href=&quot;http://tools.suckless.org/dmenu/&quot;&gt;dmenu&lt;/a&gt;, a progam launcher, and &lt;a href=&quot;http://projects.haskell.org/xmobar/&quot;&gt;xmobar&lt;/a&gt;, a status bar progam.
-
-&lt;ul&gt;
-&lt;li&gt;First up, dmenu: &lt;code&gt;sudo apt-get install suckless-tools&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Press &lt;em&gt;win-p&lt;/em&gt; to bring it up. We&amp;#39;re presented with a list of program names. Start typing a name, e.g. firefox, to get auto-suggestions. Easy!&lt;/li&gt;
-&lt;li&gt;Next, xmobar: &lt;code&gt;sudo apt-get install xmobar&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;We need to create a configuration file, much like we did for xmonad itself. There is an example file &lt;a href=&quot;http://www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen%27s_Configuration#Configuring_xmobar&quot;&gt;here&lt;/a&gt;, which is pretty intense at first but you can break it down. Create the file with, e.g. &lt;code&gt;nano ~/.xmobarrc&lt;/code&gt; and copy-paste the default config from above. For now, I just changed the weather station from EGPF to KBOS (for Boston Logan International Airport).&lt;/li&gt;
-&lt;li&gt;Finally we extend our xmonad.hs to connect it to xmobar. I used the relevant sections from &lt;a href=&quot;http://www.haskell.org/haskellwiki/xmonad/Config_archive/John_Goerzen%27s_Configuration#Configuring_xmonad_to_use_xmobar&quot;&gt;here&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/xmonadsshot.png&quot; alt=&quot;Screenshot showing a typical Xmonad layout with Xmobar&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Screenshot showing a typical Xmonad layout with Xmobar&lt;/p&gt;&lt;/div&gt;
-
-&lt;h2&gt;Adventures with Multiple Monitors&lt;/h2&gt;
-
-&lt;p&gt;At my office I use a dual monitor setup. Unfortunately it was not a matter of plug-and-play, but it wasn&amp;#39;t too hard to get it working:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;I logged into Unity, and setup my screens so they weren&amp;#39;t cloned. Not sure if this was necessary/helped&lt;/li&gt;
-&lt;li&gt;I logged into xmonad, and the screens were cloned - not good!&lt;/li&gt;
-&lt;li&gt;Running the xrandr command listed my screens - now I know what they are called, I can change them!&lt;/li&gt;
-&lt;li&gt;The following command solved my issues: &lt;code&gt;xrandr --output HDMI-1 --auto --left-of LVDS-1&lt;/code&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;--output&lt;/code&gt; is the screen we want to deal with (in this case, I&amp;#39;m connected via HDMI)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;--auto&lt;/code&gt; means to use the default resolution for that monitor&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;--left-of LVDS-1&lt;/code&gt; means that the screen is physically to the left of my laptop&amp;#39;s screen&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Now, unfortunately, xmobar only shows up on my laptop screen. I haven&amp;#39;t quite figured out how to make it appear on both, but you can make it appear on the main screen using &lt;code&gt;xrandr --output HDMI-1 --primary&lt;/code&gt; (via &lt;a href=&quot;http://blog.ezyang.com/2011/06/multi-monitor-xmobar-placement-on-nome/&quot;&gt;this post&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;Volume Control in Xmonad/Xmobar&lt;/h2&gt;
-
-&lt;p&gt;So after getting set up and using the system a bit, I realized I had no idea a) how to see what the volume is, and b) how to change it. I&amp;#39;m going to deal with (b) first, using the info &lt;a href=&quot;http://superuser.com/questions/389737/how-do-you-make-volume-keys-and-mute-key-work-in-xmonad&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;First we need to add a new import to allow us to configure some new key combinations at the top of xmonad.hs, that is very common in a lot of configs: &lt;code&gt;import XMonad.Util.EZConfig(additionalKeys)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Next we import some user-friendly names for the &amp;quot;special&amp;quot; keys on our keyboard: &lt;code&gt;import Graphics.X11.ExtraTypes.XF86&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;The &lt;code&gt;additionalKeys&lt;/code&gt; is going to go after our &lt;code&gt;defaultConfig&lt;/code&gt; section, and will look like this:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;haskell&quot;&gt;&lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;additionalKeys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xF86XK_AudioLowerVolume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;amixer set Master on &amp;amp;&amp;amp; amixer set Headphone on &amp;amp;&amp;amp; amixer set Master 2-&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
-      &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xF86XK_AudioRaiseVolume&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;amixer set Master on &amp;amp;&amp;amp; amixer set Headphone on &amp;amp;&amp;amp; amixer set Master 2+&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xF86XK_AudioMute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spawn&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;amixer set Master toggle &amp;amp;&amp;amp; amixer set Headphone toggle&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The above is pretty complicated, but there is a reason: the problem seems to be that toggling the Master volume control turns Headphone off, but toggling it again does not turn it on, see &lt;a href=&quot;http://ubuntuforums.org/showthread.php?t=1796713&quot;&gt;here&lt;/a&gt; or &lt;a href=&quot;http://askubuntu.com/questions/65764/how-do-i-toggle-sound-with-amixer&quot;&gt;here&lt;/a&gt;. Something is still not totally right with the unmute button, it seems to work after after a random time, but pressing a volume key to unmute works fine.&lt;/li&gt;
-&lt;li&gt;Now we want to display the volume in Xmobar. It seems the best way is to have a little script that takes the output of amixer and parses the volume from it.  Lets break it down:
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;amixer get master&lt;/code&gt; spits out the volume info, including a volume percentage.&lt;/li&gt;
-&lt;li&gt;We pipe that into &lt;code&gt;awk&lt;/code&gt;, this (crazy/awesome) command line text processing tool&lt;/li&gt;
-&lt;li&gt;We are going to pass the command &lt;code&gt;-F&amp;#39;[\[\]]&amp;#39;&lt;/code&gt; to &lt;code&gt;awk&lt;/code&gt; first. &lt;code&gt;-F&lt;/code&gt; is the field seperator argument - this is what we are going to &amp;quot;split&amp;quot; on (the square brackets)&lt;/li&gt;
-&lt;li&gt;Next we want to get out the percentage - the second field: &lt;code&gt;&amp;#39;{print $2}&amp;#39;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;If you run what we have so far, you notice we get a lot of blank lines - this is from the lines that didn&amp;#39;t match our pattern (I think). We pipe the output into &lt;code&gt;tail -n 1&lt;/code&gt; to just get the last line&lt;/li&gt;
-&lt;li&gt;What happens if we mute it? It still shows the volume... But, &lt;code&gt;$6&lt;/code&gt; (the sixth field) has the on/off info we need. So lets modify our print statement to &lt;code&gt;&amp;#39;{if ($6 == &amp;quot;off&amp;quot;) { print &amp;quot;MUT&amp;quot;; } else { print $2; }}&amp;#39;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Putting it all together: &lt;code&gt;amixer get Master | awk -F&amp;#39;[\[\]]&amp;#39; &amp;#39;{if ($6 == &amp;quot;off&amp;quot;) {print &amp;quot;MUT&amp;quot;; } else { print $2; }}&amp;#39; | tail -n 1&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;I put this in a script &lt;code&gt;getvolume.sh&lt;/code&gt;, and modified my &lt;code&gt;.xmobarrc&lt;/code&gt; to have the following line which is pretty self explanatory (the 10 is the refresh rate):  &lt;code&gt;Run Com &amp;quot;/home/idunning/getvolume.sh&amp;quot; [] &amp;quot;vol&amp;quot; 10&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Finally put &lt;code&gt;%vol%&lt;/code&gt; in your formatting string and restart Xmonad/Xmobar with Win-q - looks good!&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;Adding a system tray&lt;/h2&gt;
-
-&lt;p&gt;For several months I would log into Unity to set up new wireless networks. This is a bit of kludge though, so I decided to add a real system tray. This also means I can now see whether Dropbox is syncing! This section borrows heavily from &lt;a href=&quot;https://github.com/davidbrewer/xmonad-ubuntu-conf&quot;&gt;this configuration&lt;/a&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;First step is to install a tray application. There are many options but I went with &lt;a href=&quot;http://stalonetray.sourceforge.net/&quot;&gt;stalonetray&lt;/a&gt; which you can install with &lt;code&gt;sudo apt-get install stalonetray&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Now lets make some room for the tray. Go into xmobarrc and change &lt;code&gt;TopW L 100&lt;/code&gt; to &lt;code&gt;TopW L 95&lt;/code&gt; (95% width) - you can adjust this based on your screen size. It is also possible to specify the exact width in pixels.&lt;/li&gt;
-&lt;li&gt;We need to tell Xmonad to ignore the tray, i.e. let it display on all workspaces, no border. Add the following code after the imports in xmonad.hs...&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;haskell&quot;&gt;&lt;span class=&quot;nf&quot;&gt;myManagementHooks&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ManageHook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;nf&quot;&gt;myManagementHooks&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-  &lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=?&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;stalonetray&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;doIgnore&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-&lt;li&gt;... and add change the &lt;code&gt;manageHook&lt;/code&gt; line to &lt;code&gt;manageHook = manageDocks &amp;lt;+&amp;gt; manageHook defaultConfig &amp;lt;+&amp;gt; composeAll myManagementHooks&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;We need to configure stalonetray. It looks for ~/.stalonetrayrc, so lets create that file now:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Icons stick to right side of tray&lt;/span&gt;
-icon_gravity E
-&lt;span class=&quot;c&quot;&gt;# Five icons wide, one high, 0 pixels from right, 0 from top&lt;/span&gt;
-geometry 5x1-0+0
-max_geometry 5x1-0+0
-&lt;span class=&quot;c&quot;&gt;# Black background&lt;/span&gt;
-background &lt;span class=&quot;s2&quot;&gt;&amp;quot;#000000&amp;quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# Doesn&amp;#39;t appear in a task bar (not a problem for us?)&lt;/span&gt;
-skip_taskbar
-&lt;span class=&quot;c&quot;&gt;# Icons are 12 pixels high&lt;/span&gt;
-icon_size 12
-kludges force_icons_size
-&lt;span class=&quot;c&quot;&gt;# Tell xmonad &amp;quot;Stand back, I got this&amp;quot;&lt;/span&gt;
-window_strut none
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Now we have a tray program, we want it to run automatically after we log in along with Dropbox and nm-applet (the wireless management applet). The file &lt;code&gt;/usr/share/xsessions/xmonad.desktop&lt;/code&gt; is what determines what logging in with Xmonad selected actually does. The line &lt;code&gt;exec=xmonad&lt;/code&gt; currently launches xmonad directly. We will replace this a bash script that launches the programs we want first before launching xmonad. Create a new file, e.g. &lt;code&gt;startxmonad.sh&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-stalonetray &lt;span class=&quot;p&quot;&gt;&amp;amp;&lt;/span&gt;
-nm-applet &lt;span class=&quot;p&quot;&gt;&amp;amp;&lt;/span&gt;
-dropbox start
-&lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;xmonad
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Make it executable with &lt;code&gt;chmod +x startxmonad.sh&lt;/code&gt;. Now we have this file, we can modify the .desktop file, e.g. &lt;code&gt;sudo /usr/share/xsessions/xmonad.desktop&lt;/code&gt; and change the &lt;code&gt;exec=xmonad&lt;/code&gt; line to, e.g. &lt;code&gt;exec=/home/idunning/.xmonad/startxmonad.sh&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Now logout and log back in - hopefully you&amp;#39;ll see Dropbox and nm-applet running in your tray!&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2&gt;Putting my dotfiles on Github&lt;/h2&gt;
-
-&lt;p&gt;Many people on Github have &amp;quot;dotfiles&amp;quot; repositories - basically a repo for all the little configuration files that you see above, as well as others. This &lt;a href=&quot;http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/&quot;&gt;post&lt;/a&gt; really says it all better than I can, but basically its a cool idea and not only provides a backup for your configs, it also makes your experience homogenous across computers. The second factor was actually what motivated me to finally do it, as I just started an internship at Google. My repository is at &lt;a href=&quot;https://github.com/IainNZ/dotfiles&quot;&gt;https://github.com/IainNZ/dotfiles&lt;/a&gt; - there is nothing in there that is too fancy, but it might make the above more understandable. The best thing about it is in installation script, which puts symlinks to the dotfiles rather than copying them - allowing easy updates with a simple &lt;code&gt;git pull&lt;/code&gt;.&lt;/p&gt;
-</description>
-				<pubDate>Mon, 13 May 2013 07:17:12 +0000</pubDate>
-				<link>http://iaindunning.com/2013/experiences-with-xmonad-and-ubuntu-12.html</link>
-				<guid isPermaLink="true">http://iaindunning.com/2013/experiences-with-xmonad-and-ubuntu-12.html</guid>
 			</item>
 		
 	</channel>

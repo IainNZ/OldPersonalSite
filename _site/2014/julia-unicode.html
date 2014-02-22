@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>Fun with Unicode and Julia - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+  <link rel="alternate" type="application/rss+xml" title="IainDunning.com" href="http://iaindunning.com/feed.xml">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">
+        <a style="color: inherit; text-decoration: inherit;" href="/">Iain Dunning</a>
+      </h1>
+      <h5>
+        Experiences, thoughts, and technical notes.
+        <a href="/">More about me</a>.
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Fun with Unicode and Julia</h2>
+<p class="meta">Posted on 22 Feb 2014</p>
+
+<div class="post">
+<p>The <a href="http://julialang.org">Julia</a> programming language has excellent support for Unicode. One of the main benefits is that you are no longer restricted to using English characters when writing code - for example, Chinese speakers may prefer to name their variables or functions in Chinese instead of English.</p>
+
+<h3>Mathematical Notation</h3>
+
+<p>English users can still benefit though, especially when it comes to mathematics-heavy code. Mathematical academic papers make heavy use of the Greek alphabet but most languages don&#39;t support Unicode identifiers. This leads to code sprinkled with variables name <code>mu</code> and <code>sigma</code>. Julia, however, doesn&#39;t mind Unicode identifiers one bit. Take this example edited snippet from <a href="https://github.com/JuliaStats/Distributions.jl">Distributions.jl</a>, a Julia package that really uses the language&#39;s design to the maximum:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">immutable</span> <span class="n">Normal</span> <span class="o">&lt;:</span> <span class="n">ContinuousUnivariateDistribution</span>
+    <span class="err">μ</span><span class="p">::</span><span class="kt">Float64</span>
+    <span class="err">σ</span><span class="p">::</span><span class="kt">Float64</span>
+    <span class="k">function</span><span class="nf"> Normal</span><span class="p">(</span><span class="err">μ</span><span class="p">::</span><span class="n">Real</span><span class="p">,</span> <span class="err">σ</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span>
+        <span class="err">σ</span> <span class="o">&gt;</span> <span class="n">zero</span><span class="p">(</span><span class="err">σ</span><span class="p">)</span> <span class="o">||</span> <span class="nb">error</span><span class="p">(</span><span class="s">&quot;std.dev. must be positive&quot;</span><span class="p">)</span>
+        <span class="nb">new</span><span class="p">(</span><span class="n">float64</span><span class="p">(</span><span class="err">μ</span><span class="p">),</span> <span class="n">float64</span><span class="p">(</span><span class="err">σ</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="n">Normal</span><span class="p">(</span><span class="err">μ</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">float64</span><span class="p">(</span><span class="err">μ</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">Normal</span><span class="p">()</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">mean</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="err">μ</span>
+<span class="n">median</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="err">μ</span>
+<span class="n">zval</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">d</span><span class="o">.</span><span class="err">μ</span><span class="p">)</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span>
+<span class="n">var</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">abs2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span><span class="p">)</span>
+<span class="n">std</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="err">σ</span>
+<span class="n">pdf</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="err">φ</span><span class="p">(</span><span class="n">zval</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span>
+</code></pre></div>
+
+<p>We could even dream up our own (substantially less useful) code:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="err">∑</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c"># Could also do ∏(x) = prod(x)</span>
+<span class="err">√</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">function</span><span class="nf"> normalize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">./</span> <span class="err">√</span><span class="p">(</span><span class="err">∑</span><span class="p">(</span><span class="n">x</span><span class="o">.^</span><span class="mi">2</span><span class="p">))</span>
+<span class="k">end</span>
+<span class="n">println</span><span class="p">(</span><span class="n">normalize</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+</code></pre></div>
+
+<p>The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting. I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.</p>
+
+<h3>Non-standard string literals</h3>
+
+<p>What is a non-standard string literal? From the <a href="http://docs.julialang.org/en/latest/manual/strings/#non-standard-string-literals">Julia manual</a>:</p>
+
+<blockquote>
+<p>There are situations when you want to construct a string or use string semantics, but the behavior of the standard string construct is not quite what is needed. For these kinds of situations, Julia provides non-standard string literals. A non-standard string literal looks like a regular double-quoted string literal, but is immediately prefixed by an identifier, and doesn’t behave quite like a normal string literal. Regular expressions, as described below, are one example of a non-standard string literal.</p>
+</blockquote>
+
+<p>A regular expression in Julia looks like this: <code>r&quot;^\s*(?:#|$)&quot;</code>. You can define your own non-standard string literals using macros, and if you use Unicdoe... For example, consider the following macros:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">macro</span> <span class="err">♥‿♥</span><span class="n">_str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="s">&quot;I LOVE </span><span class="si">$</span><span class="s">(uppercase(s))&quot;</span>
+<span class="k">end</span>
+
+<span class="n">println</span><span class="p">(</span> <span class="err">♥‿♥</span><span class="s">&quot;Julia&quot;</span> <span class="p">)</span>  <span class="c"># I LOVE JULIA</span>
+
+<span class="k">macro</span> <span class="err">爆発</span><span class="n">_str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">out_str</span> <span class="o">=</span> <span class="s">&quot;****BOOM**** &quot;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="k">in</span> <span class="n">text</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mf">0.45</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out_str</span><span class="p">,</span> <span class="n">lowercase</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="k">elseif</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mf">0.90</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out_str</span><span class="p">,</span> <span class="n">uppercase</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="k">else</span>
+            <span class="n">out_str</span> <span class="o">*=</span> <span class="s">&quot;#&quot;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">out_str</span> <span class="o">*</span> <span class="s">&quot; ****BOOM****&quot;</span>
+<span class="k">end</span>
+<span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** juli# #nd UNIco## ****BOOM****</span>
+<span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** J#L## aND unICODE ****BOOM****</span>
+<span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** julIa And UniC#dE ****BOOM****</span>
+</code></pre></div>
+
+<h3>Optimization variables names</h3>
+
+<p>Unicode names might make for interesting keys in a dictionary. The following code requires <a href="http://github.com/JuliaOpt/JuMP.jl">JuMP</a> and an integer programming solver, e.g. <a href="http://github.com/JuliaOpt/Cbc.jl">Cbc</a> - both are available through the Julia package manager.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">JuMP</span>
+
+<span class="k">type</span><span class="nc"> Suit</span>
+    <span class="n">value</span>
+    <span class="n">weight</span>
+<span class="k">end</span>
+<span class="err">♠</span> <span class="o">=</span> <span class="n">Suit</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="err">♣</span> <span class="o">=</span> <span class="n">Suit</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="err">♥</span> <span class="o">=</span> <span class="n">Suit</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="err">♦</span> <span class="o">=</span> <span class="n">Suit</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">suits</span> <span class="o">=</span> <span class="p">[</span><span class="err">♠</span><span class="p">,</span><span class="err">♣</span><span class="p">,</span><span class="err">♥</span><span class="p">,</span><span class="err">♦</span><span class="p">]</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">suits</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
+<span class="p">@</span><span class="n">setObjective</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span>  <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">s</span> <span class="k">in</span> <span class="n">suits</span><span class="p">})</span>
+<span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span>      <span class="n">sum</span><span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">weight</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">s</span> <span class="k">in</span> <span class="n">suits</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;Selected hand: [&quot;</span><span class="p">)</span>
+<span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♠</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♠&quot;</span><span class="p">)</span>
+<span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♣</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♣&quot;</span><span class="p">)</span>
+<span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♥</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♥&quot;</span><span class="p">)</span>
+<span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♦</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♦&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)</span>  <span class="c"># Selected hand: [♠♣]</span>
+</code></pre></div>
+
+</div>
+
+      <hr />
+    </div>
+    <aside class="four columns">
+      <h4>Projects</h4>
+      <div style="text-align: center; line-height: 100%; margin-bottom: 10px">
+        <a href="http://juliaopt.org">JuliaOpt<br><img src="/images/juliaopt86.png" alt="JuliaOpt"></a><br>
+        <small>Optimization software for/in <a href="http://julialang.org">Julia</a></small>
+        <br><br>
+        <a href="http://tenkicompare.com">TenkiCompare</a><br>
+        <small>Compare weather in different cities</small>
+        <br><br>
+        <a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a><br>
+        <small>Simplex+B&amp;B solver in pure Javascript</small>
+        <br><br>
+        <a href="http://opensolver.org">OpenSolver</a><br>
+        <small>Solve large MILPs in Excel</small>
+      </div>
+      <hr>
+      <h4>Related Sites</h4>
+      <a href="http://kellyheber.com/">Kelly Heber</a> <small>(env. management)</small><br>
+      <a href="http://www.racheldunning.com/">Rachel Dunning</a> <small>(legal star)</small><br>
+      <a href="http://kiaorane.com/">Kia Ora New England</a> <small>(Kiwis!)</small><br>
+      <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> <small>(OR ninja)</small><br>
+      <hr>
+      <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/julia-unicode.html">Fun with Unicode and Julia</a></li>
+        
+          <li><a href="/2013/mip-callback.html">Using JuMP to Solve a TSP with Lazy Constraints</a></li>
+        
+          <li><a href="/2013/us-senate.html">Representation, Filibusters and the US Senate</a></li>
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
+        
+          <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/combination-locks.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
