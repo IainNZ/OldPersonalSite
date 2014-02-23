@@ -54,7 +54,7 @@ What is a non-standard string literal? From the [Julia manual](http://docs.julia
 
 > There are situations when you want to construct a string or use string semantics, but the behavior of the standard string construct is not quite what is needed. For these kinds of situations, Julia provides non-standard string literals. A non-standard string literal looks like a regular double-quoted string literal, but is immediately prefixed by an identifier, and doesn’t behave quite like a normal string literal. Regular expressions, as described below, are one example of a non-standard string literal.
 
-A regular expression in Julia looks like this: ``r"^\s*(?:#|$)"``. You can define your own non-standard string literals using macros, and if you use Unicdoe... For example, consider the following macros:
+A regular expression in Julia looks like this: ``r"^\s*(?:#|$)"``. You can define your own non-standard string literals using macros, and if you use Unicode... For example, consider the following macros:
 
 {% highlight julia %}
 
@@ -120,7 +120,7 @@ println("]")  # Selected hand: [♠♣]
 
 ### Here-be-dragons-fun: Visually similar symbols
 
-Something the Julia community recently had to work through is how to handle Unicode charaters that look very similar. One issue that I don't believe affects Julia but affects other languages is the non-breaking-space, which is visually identical to the normal space: this [sample code from Ruby](http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html) shows the counter-intuitive results.
+Something the Julia community recently had to work through is how to handle Unicode characters that look very similar. One issue that I don't believe affects Julia but affects other languages is the non-breaking-space, which is visually identical to the normal space: this [sample code from Ruby](http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html) shows the counter-intuitive results.
 
 The issue with Julia (version 0.2) can be summed in a short snippet of code:
 

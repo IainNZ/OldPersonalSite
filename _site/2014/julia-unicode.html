@@ -105,7 +105,7 @@
 <p>There are situations when you want to construct a string or use string semantics, but the behavior of the standard string construct is not quite what is needed. For these kinds of situations, Julia provides non-standard string literals. A non-standard string literal looks like a regular double-quoted string literal, but is immediately prefixed by an identifier, and doesn’t behave quite like a normal string literal. Regular expressions, as described below, are one example of a non-standard string literal.</p>
 </blockquote>
 
-<p>A regular expression in Julia looks like this: <code>r&quot;^\s*(?:#|$)&quot;</code>. You can define your own non-standard string literals using macros, and if you use Unicdoe... For example, consider the following macros:</p>
+<p>A regular expression in Julia looks like this: <code>r&quot;^\s*(?:#|$)&quot;</code>. You can define your own non-standard string literals using macros, and if you use Unicode... For example, consider the following macros:</p>
 
 <div class="highlight"><pre><code class="julia"><span class="k">macro</span> <span class="err">♥‿♥</span><span class="n">_str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="s">&quot;I LOVE </span><span class="si">$</span><span class="s">(uppercase(s))&quot;</span>
@@ -164,7 +164,7 @@
 
 <h3>Here-be-dragons-fun: Visually similar symbols</h3>
 
-<p>Something the Julia community recently had to work through is how to handle Unicode charaters that look very similar. One issue that I don&#39;t believe affects Julia but affects other languages is the non-breaking-space, which is visually identical to the normal space: this <a href="http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html">sample code from Ruby</a> shows the counter-intuitive results.</p>
+<p>Something the Julia community recently had to work through is how to handle Unicode characters that look very similar. One issue that I don&#39;t believe affects Julia but affects other languages is the non-breaking-space, which is visually identical to the normal space: this <a href="http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html">sample code from Ruby</a> shows the counter-intuitive results.</p>
 
 <p>The issue with Julia (version 0.2) can be summed in a short snippet of code:</p>
 
