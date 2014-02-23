@@ -10,9 +10,9 @@
 				<title>Fun with Unicode and Julia</title>
 				<description>&lt;p&gt;The &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; programming language has excellent support for Unicode. One of the main benefits is that you are no longer restricted to using English characters when writing code - for example, Chinese speakers may prefer to name their variables or functions in Chinese instead of English.&lt;/p&gt;
 
-&lt;h3&gt;Mathematical Notation&lt;/h3&gt;
+&lt;h3&gt;Serious-fun: Mathematical notation&lt;/h3&gt;
 
-&lt;p&gt;English users can still benefit though, especially when it comes to mathematics-heavy code. Mathematical academic papers make heavy use of the Greek alphabet but most languages don&amp;#39;t support Unicode identifiers. This leads to code sprinkled with variables name &lt;code&gt;mu&lt;/code&gt; and &lt;code&gt;sigma&lt;/code&gt;. Julia, however, doesn&amp;#39;t mind Unicode identifiers one bit. Take this example edited snippet from &lt;a href=&quot;https://github.com/JuliaStats/Distributions.jl&quot;&gt;Distributions.jl&lt;/a&gt;, a Julia package that really uses the language&amp;#39;s design to the maximum:&lt;/p&gt;
+&lt;p&gt;English users can still benefit though, especially when it comes to mathematics-heavy code. Mathematical academic papers make heavy use of the Greek alphabet, but you don&amp;#39;t often seem them in code - this leads to variables name like &lt;code&gt;mu&lt;/code&gt; and &lt;code&gt;sigma&lt;/code&gt; appearing everywhere. Julia, however, doesn&amp;#39;t mind Unicode identifiers one bit (apparently &lt;a href=&quot;http://rosettacode.org/wiki/Unicode_variable_names&quot;&gt;many other languages&lt;/a&gt; don&amp;#39;t either) and in fact has a much more welcoming attitude to them than I&amp;#39;ve seen elsewhere. Take this example (abridged) snippet from &lt;a href=&quot;https://github.com/JuliaStats/Distributions.jl&quot;&gt;Distributions.jl&lt;/a&gt;, a Julia package that really uses the language&amp;#39;s design to the maximum:&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;k&quot;&gt;immutable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ContinuousUnivariateDistribution&lt;/span&gt;
     &lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Float64&lt;/span&gt;
@@ -44,9 +44,9 @@
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting. I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.&lt;/p&gt;
+&lt;p&gt;The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting or add-ins (e.g. &lt;a href=&quot;https://github.com/mvoidex/UnicodeMath&quot;&gt;Sublime Text&lt;/a&gt;). I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.&lt;/p&gt;
 
-&lt;h3&gt;Non-standard string literals&lt;/h3&gt;
+&lt;h3&gt;Fun: non-standard string literals&lt;/h3&gt;
 
 &lt;p&gt;What is a non-standard string literal? From the &lt;a href=&quot;http://docs.julialang.org/en/latest/manual/strings/#non-standard-string-literals&quot;&gt;Julia manual&lt;/a&gt;:&lt;/p&gt;
 
@@ -81,7 +81,7 @@
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** julIa And UniC#dE ****BOOM****&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h3&gt;Optimization variables names&lt;/h3&gt;
+&lt;h3&gt;Fun-for-some: Optimization variables names&lt;/h3&gt;
 
 &lt;p&gt;Unicode names might make for interesting keys in a dictionary. The following code requires &lt;a href=&quot;http://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt; and an integer programming solver, e.g. &lt;a href=&quot;http://github.com/JuliaOpt/Cbc.jl&quot;&gt;Cbc&lt;/a&gt; - both are available through the Julia package manager.&lt;/p&gt;
 
@@ -110,6 +110,23 @@
 &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♦&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♦&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;]&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Selected hand: [♠♣]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Here-be-dragons-fun: Visually similar symbols&lt;/h3&gt;
+
+&lt;p&gt;Something the Julia community recently had to work through is how to handle Unicode charaters that look very similar. One issue that I don&amp;#39;t believe affects Julia but affects other languages is the non-breaking-space, which is visually identical to the normal space: this &lt;a href=&quot;http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html&quot;&gt;sample code from Ruby&lt;/a&gt; shows the counter-intuitive results.&lt;/p&gt;
+
+&lt;p&gt;The issue with Julia (version 0.2) can be summed in a short snippet of code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;µ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;µ&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The problem is that we are using &lt;code&gt;μ&lt;/code&gt; (&amp;quot;micro sign&amp;quot;) and &lt;code&gt;µ&lt;/code&gt; (&amp;quot;Greek small letter mu&amp;quot;), an easy mistake to make in practice. This was discussed at length in &lt;a href=&quot;https://github.com/JuliaLang/julia/issues/5434&quot;&gt;Issue #5434&lt;/a&gt;. To summarize the outcome, it turns out that there is a &lt;a href=&quot;https://en.wikipedia.org/wiki/Unicode_equivalence&quot;&gt;whole Wikipedia page&lt;/a&gt; dedicated to the various degrees of equivalences one can draw. The decision to be made is what degree of conservativeness you want to apply. At one end of the spectrum is making almost everything possible equivalent, e.g. treat &lt;code&gt;ℍ&lt;/code&gt; and &lt;code&gt;H&lt;/code&gt; as the same. At the other end is basically doing nothing (or maybe only for a strict subset of &amp;quot;common&amp;quot; mistakes.) In the end the discussion settled on using the &amp;quot;NFC&amp;quot; normalization, with any further issues addressed as they arise. Python3 seems to have &lt;a href=&quot;http://legacy.python.org/dev/peps/pep-3131/#implementation&quot;&gt;selected NFC as well&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The ability to use Unicode in identifiers is not a widely used one for general purpose computing, and with the exception of non-English identifiers this is probably a good thing for maintainability. I do hope to see it used with more confidence in technical computing, if it aids understanding of algorithm implementation.&lt;/p&gt;
 </description>
 				<pubDate>Sat, 22 Feb 2014 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2014/julia-unicode.html</link>
