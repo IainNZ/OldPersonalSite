@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>Naval Warfare with JuMP + Julia - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+  <link rel="alternate" type="application/rss+xml" title="IainDunning.com" href="http://iaindunning.com/feed.xml">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">
+        <a style="color: inherit; text-decoration: inherit;" href="/">Iain Dunning</a>
+      </h1>
+      <h5>
+        Experiences, thoughts, and technical notes.
+        <a href="/">More about me</a>.
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>Naval Warfare with JuMP + Julia</h2>
+<p class="meta">Posted on 11 Apr 2014</p>
+
+<div class="post">
+<p><a href="http://puzzlor.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I&#39;m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
+
+<h2>Subs vs. Battleships (April 2013)</h2>
+
+<p><a href="http://puzzlor.com/2013-04_SubsBattleships.html">(Link to full problem statement)</a></p>
+
+<p>In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.</p>
+
+<h3>Modeling the Problem</h3>
+
+<p>Our decision variables are binary: \( x_{s,b} = 1 \) if submarine \( s \) will be sent to destroy battleship \( b \), and will be 0 otherwise.</p>
+
+<p>Our constraints are also fairly simple to state for this problem set up. First of all, all submarines must be destroyed. We can rephrase that to say that the total number of submarines that &quot;visit&quot; each battleship is 1:</p>
+
+<div>
+$$
+\sum_{s=1}^{15} x_{s,b} = 1 \quad \forall b = 1, \dots, 15
+$$
+</div>
+
+<p>The other constraint is that a submarine cannot destroy more than one battleship. We can rephrase this one slightly too, and instead say that that total number of battleships destroyed by a submarine is 1:</p>
+
+<div>
+$$
+\sum_{b=1}^{15} x_{s,b} = 1 \quad \forall s = 1, \dots, 15
+$$
+</div>
+
+<h3>Putting it all together</h3>
+
+<p>Let&#39;s build the model in JuMP and Julia!</p>
+
+<div class="highlight"><pre><code class="julia"><span class="c"># Assuming a solver has been previously installed, e.g. [CBC](http://github.com/JuliaOpt/Cbc.jl)</span>
+<span class="k">using</span> <span class="n">JuMP</span>
+
+<span class="k">function</span><span class="nf"> solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span>
+
+  <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+
+  <span class="c"># x is a binary variable</span>
+  <span class="c"># x_s,b = 1 if sub s is matched with battleship b</span>
+  <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
+
+  <span class="c"># Objective - minimize total distance travelled</span>
+  <span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span> <span class="n">dist</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> 
+                                <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">})</span>
+
+  <span class="c"># Every ship must be attacked!</span>
+  <span class="k">for</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span> <span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c"># A submarine can attack only 1 ship</span>
+  <span class="k">for</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span> <span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c"># Solve it</span>
+  <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+    <span class="nb">error</span><span class="p">(</span><span class="s">&quot;Solver couldn&#39;t find solution!&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c"># Print results</span>
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;Total distance traveled: &quot;</span><span class="p">,</span> 
+            <span class="n">round</span><span class="p">(</span><span class="n">getObjectiveValue</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+  <span class="k">for</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+      <span class="k">if</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mf">0.9</span>
+        <span class="c"># This binary variable is set to 1</span>
+        <span class="c"># We use 0.9 though because due to floating point</span>
+        <span class="c"># error it might be not exactly 1.0</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Sub &quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s">&quot; at (&quot;</span><span class="p">,</span> 
+                <span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s">&quot;)&quot;</span><span class="p">,</span>
+                <span class="s">&quot; attacks ship &quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s">&quot; at (&quot;</span><span class="p">,</span> 
+                <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<p>The code is a fairly direct translation of our mathematical model. Our function takes into two lists of ship locations - we&#39;ll describe their format more precisely in a moment. First we create a new model object, and define binary variables for each possible combination of submarine and battleship. We set our objective to minimize total distance, and add our two groups of constraints. Finally we solve and process the output.</p>
+
+<p>To complete the code we need to define the <code>dist(sub,ship)</code> function used in the objective and create some test data.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">function</span><span class="nf"> dist</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">ship</span><span class="p">)</span>
+  <span class="c"># We use Euclidean distance between the cells</span>
+  <span class="k">return</span> <span class="n">norm</span><span class="p">(</span><span class="n">sub</span> <span class="o">-</span> <span class="n">ship</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">sub_locs</span> <span class="o">=</span> <span class="p">{</span>  <span class="p">[</span> <span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
+<span class="n">ship_locs</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="p">[</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+              <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
+
+<span class="n">solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>Plotting the solution</h3>
+
+<p>There are many plotting solutions available in Julia but today I&#39;m going to use <a href="https://github.com/stevengj/PyPlot.jl">PyPlot.jl</a>, a wrapper around the versatile <a href="http://matplotlib.org/">Matplotlib</a>. First, we need to modify our solve routine to return pairs of submarines and battleships:</p>
+
+<div class="highlight"><pre><code class="julia">  <span class="n">pairs</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="k">for</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+    <span class="c"># ...</span>
+      <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+    <span class="c"># ...</span>
+  <span class="k">end</span>
+  <span class="k">return</span> <span class="n">pairs</span>
+</code></pre></div>
+
+<p>then the plotting code follows pretty naturally from that - not much to say!</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">using</span> <span class="n">PyPlot</span>
+<span class="c"># Setup the figure</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="p">[:</span><span class="n">gca</span><span class="p">]()</span>
+<span class="n">ax</span><span class="p">[:</span><span class="n">set_xticks</span><span class="p">]([</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[:</span><span class="n">set_yticks</span><span class="p">]([</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+
+<span class="c"># Plot the submarines and battleships</span>
+<span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
+  <span class="n">ax</span><span class="p">[:</span><span class="n">add_patch</span><span class="p">](</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span>
+                            <span class="n">radius</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">))</span>
+  <span class="n">ax</span><span class="p">[:</span><span class="n">add_patch</span><span class="p">](</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">ship_locs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">ship_locs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span>
+                            <span class="n">radius</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="c"># Draw lines between each submarine and battleship</span>
+<span class="k">for</span> <span class="n">pair</span> <span class="k">in</span> <span class="n">pairs</span>
+  <span class="n">s</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">pair</span>
+  <span class="n">plot</span><span class="p">(</span> <span class="p">(</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span> 
+        <span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">fig</span><span class="p">[:</span><span class="n">canvas</span><span class="p">][:</span><span class="n">draw</span><span class="p">]()</span>
+<span class="n">readline</span><span class="p">()</span>  <span class="c"># Stop the program from exiting until we&#39;ve seen it!</span>
+</code></pre></div>
+
+<p>The result looks pretty sensible too.</p>
+
+<div class="photo"><img src="/images/submarines.png" alt="Those battleships didn't stand a chance!"><p class="caption">Those battleships didn't stand a chance!</p></div>
+
+<h3>Extensions</h3>
+
+<p>Here some ideas for some things you could do with this problem, and a &quot;difficulty&quot; for each:</p>
+
+<ul>
+<li><p><em>(easy)</em> What happens if you use <a href="http://en.wikipedia.org/wiki/Manhattan_distance">Manhattan distance</a> instead of <a href="http://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>? You can find out by making a very very small change to how the <code>norm</code> function is used.</p></li>
+<li><p><em>(easy)</em> How would you need to change the model if there were more battleships than submarines? Or more submarines than battleships?</p></li>
+<li><p><em>(medium)</em> How would you modify the model to limit how far a submarine could travel?</p></li>
+<li><p><em>(medium)</em> Suppose that some battleships require two submarines to be destroyed. How would you extend the model?</p></li>
+<li><p><em>(hard)</em> How would you extend the model to allow submarines to attack two ships? You&#39;d need to model the order that the ships are visited in calculate the total distance.</p></li>
+<li><p><em>(hard)</em> How would could you model uncertainty in the locations of the battleships?</p></li>
+</ul>
+
+</div>
+
+      <hr />
+    </div>
+    <aside class="four columns">
+      <h4>Projects</h4>
+      <div style="text-align: center; line-height: 100%; margin-bottom: 10px">
+        <a href="http://juliaopt.org">JuliaOpt<br><img src="/images/juliaopt86.png" alt="JuliaOpt"></a><br>
+        <small>Optimization software for/in <a href="http://julialang.org">Julia</a></small>
+        <br><br>
+        <a href="http://tenkicompare.com">TenkiCompare</a><br>
+        <small>Compare weather in different cities</small>
+        <br><br>
+        <a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a><br>
+        <small>Simplex+B&amp;B solver in pure Javascript</small>
+        <br><br>
+        <a href="http://opensolver.org">OpenSolver</a><br>
+        <small>Solve large MILPs in Excel</small>
+      </div>
+      <hr>
+      <h4>Related Sites</h4>
+      <a href="http://kellyheber.com/">Kelly Heber</a> <small>(env. management)</small><br>
+      <a href="http://www.racheldunning.com/">Rachel Dunning</a> <small>(legal star)</small><br>
+      <a href="http://kiaorane.com/">Kia Ora New England</a> <small>(Kiwis!)</small><br>
+      <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> <small>(OR ninja)</small><br>
+      <hr>
+      <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/subs-battleships.html">Naval Warfare with JuMP + Julia</a></li>
+        
+          <li><a href="/2014/julia-unicode.html">Fun with Unicode and Julia</a></li>
+        
+          <li><a href="/2013/mip-callback.html">Using JuMP to Solve a TSP with Lazy Constraints</a></li>
+        
+          <li><a href="/2013/us-senate.html">Representation, Filibusters and the US Senate</a></li>
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
+        
+          <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/combination-locks.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>
