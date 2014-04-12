@@ -13,6 +13,8 @@ title: Naval Warfare with JuMP + Julia
 
 In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.
 
+{% img /images/submarines.png Those battleships don't stand a chance! %}
+
 ### Modeling the Problem
 
 Our decision variables are binary: \\( x\_{s,b} = 1 \\) if submarine \\( s \\) will be sent to destroy battleship \\( b \\), and will be 0 otherwise.
@@ -166,9 +168,7 @@ fig[:canvas][:draw]()
 readline()  # Stop the program from exiting until we've seen it!
 {% endhighlight %}
 
-The result looks pretty sensible too.
-
-{% img /images/submarines.png Those battleships didn't stand a chance! %}
+The result looks pretty sensible too - see the image at the top of the post.
 
 ### Extensions
 

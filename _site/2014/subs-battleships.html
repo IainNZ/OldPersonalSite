@@ -67,6 +67,8 @@
 
 <p>In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.</p>
 
+<div class="photo"><img src="/images/submarines.png" alt="Those battleships don't stand a chance!"><p class="caption">Those battleships don't stand a chance!</p></div>
+
 <h3>Modeling the Problem</h3>
 
 <p>Our decision variables are binary: \( x_{s,b} = 1 \) if submarine \( s \) will be sent to destroy battleship \( b \), and will be 0 otherwise.</p>
@@ -214,9 +216,7 @@ $$
 <span class="n">readline</span><span class="p">()</span>  <span class="c"># Stop the program from exiting until we&#39;ve seen it!</span>
 </code></pre></div>
 
-<p>The result looks pretty sensible too.</p>
-
-<div class="photo"><img src="/images/submarines.png" alt="Those battleships didn't stand a chance!"><p class="caption">Those battleships didn't stand a chance!</p></div>
+<p>The result looks pretty sensible too - see the image at the top of the post.</p>
 
 <h3>Extensions</h3>
 
