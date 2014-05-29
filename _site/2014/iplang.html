@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>IpLang - an optimization-based esolang - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+  <link rel="alternate" type="application/rss+xml" title="IainDunning.com" href="http://iaindunning.com/feed.xml">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">
+        <a style="color: inherit; text-decoration: inherit;" href="/">Iain Dunning</a>
+      </h1>
+      <h5>
+        Experiences, thoughts, and technical notes.
+        <a href="/">More about me</a>.
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>IpLang - an optimization-based esolang</h2>
+<p class="meta">Posted on 28 May 2014</p>
+
+<div class="post">
+<p>In this post I present my new programming langauge, IpLang. The program is described as the solution to a binary optimization problem, and there are a large number of possible encodings for even the most simple program.</p>
+
+<h3>Esoteric Programming Languages</h3>
+
+<p>After learning how to program in a couple of langauges, a fairly natural thing to want to do is to create your own. Some people believe that their new language is the solution to the worlds software development problem, but the reality seems to be that there are only so many programming languages that the world can handle at any one time, and most of these efforts die out. Some people walk a different path, and instead create languages not as &quot;real&quot; development tools but more as an exploration of the space possible ways to get tell a computer what we want it to do. These more quirky languages are sometimes called <a href="http://esolangs.org/wiki/Main_Page">esolangs</a>, and there have been many over the years. Some examples include:</p>
+
+<ul>
+<li><a href="http://esolangs.org/wiki/Intercal">INTERCAL</a> requires the user to be polite - if <code>PLEASE</code>, <code>PLEASE DO NOT</code> and so on do not appear enough in the program, it will not run.</li>
+<li><a href="http://esolangs.org/wiki/Spleenmap">Spleenmap</a> uses only 5 instructions, and is written as a two dimensional block of text.</li>
+<li><a href="http://esolangs.org/wiki/Brainfuck">Brainfuck</a> is probably the most famous (and copied). It uses 8 instructions, and strikes a fairly interesting sweet-spot between minimalism and complexity. Here is a program in Brainfuck that prints out <em>Hello World!</em>:</li>
+</ul>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">++++++++[&gt;++++[&gt;++&gt;+++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;+&gt;+&gt;-&gt;&gt;+[&lt;]&lt;-]&gt;&gt;.&gt;---.+++++++..+++.&gt;&gt;.&lt;-.&lt;.+++.------.--------.&gt;&gt;+.&gt;++.
+</code></pre></div>
+<p>As you can tell from the Esolang listings, there have been a lot of esolangs made over the years. A large number are based on Brainfuck, either in that they extend it slightly or they can be directly transliterated to Brainfuck. A good one is <a href="http://esolangs.org/wiki/Ook!">Ook!</a>, where the 8 instructions are matched to different combinations of &quot;ook&quot; and punctuation, e.g. &quot;increment&quot; is <code>Ook. Ook.</code> and &quot;decrement&quot; is <code>Ook! Ook!</code>.</p>
+
+<p>Another simple transliteration of Brainfuck would be to simply use a binary encoding, e.g.</p>
+
+<ul>
+<li><code>000</code> - <code>Move pointer right</code></li>
+<li><code>001</code> - <code>Move pointer left</code></li>
+<li><code>010</code> - <code>Increment memory cell under pointer</code></li>
+<li><code>011</code> - <code>Decrement memory cell under pointer</code></li>
+<li><code>100</code> - <code>Output character for memory cell under pointer</code></li>
+<li><code>101</code> - <code>Input character and store in memory cell under pointer</code></li>
+<li><code>110</code> - <code>Jump past matching 111 if cell under pointer is 0</code></li>
+<li><code>111</code> - <code>Jump back to matching 110 if cell under pointer isn&#39;t 0</code></li>
+</ul>
+
+<p>I&#39;ll return to this in a moment. For now, let us take a detour into mathematics.</p>
+
+<h3>Integer (Linear) Programming</h3>
+
+<p><a href="http://en.wikipedia.org/wiki/Linear_programming">Linear programming</a> (LP) is one of the core tools in the numerical optimization toolbox. In linear programming we are interested in the following problem:</p>
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize} \quad & \sum_{j=1}^{n} c_j x_j \\
+\text{subject to} \quad & \sum_{j=1}^{n} A_{i,j} x_j \leq b_i \qquad \forall i \in \{1,\dots,m\}\\
+\end{alignat*}
+$$
+</div>
+
+<p>In words, find the (real) values of \( x_{j} \) that maximizes the value of a linear expression subject to a set of linear constraints. Note that we can make the constraints equality or greather-than-or-equal-to with simple transformations. This problem has some fantastic structure that allows us to solve it efficiently, and despite (because of?) everything being linear it has found a wide variety of uses. Note that &quot;programming&quot; is used in a very different sense to the modern &quot;programming language&quot;, although they both share a common origin from the days when &quot;computers&quot; were people. To avoid confusion, some now use &quot;linear optimization&quot; instead.</p>
+
+<p>A natural extension of this problem is restrict all or some of the values of \( x_{j} \) to the set of integers, or even just the values 0 and 1. This is often called &quot;integer programming&quot; (IP) and although it is a much tougher problem, large (\( n \) can be on the order of \( 10^6 \) ) integer programs can be solved (usually as a sequence of linear program relaxations).</p>
+
+<p>In real-world problems the constraint &quot;data&quot; \( A_{ij} \) is very sparse - most of the values are 0, and most constraints involve very few of the variables. As a result, constructing the \( A \) matrix manually is painful, inefficient, and hard to maintain. Instead, people use algebraic modeling languages which can be though of as mathematical domain-specific languages, sometimes in embedded in other languages. One such language is <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, which is embedded in the <a href="http://julialang.org/">Julia</a> programming language. For an example of how a modeling language is used, check out my <a href="http://iaindunning.com/2013/sudoku-as-a-service.html">Sudoku-as-a-Service</a> post.</p>
+
+<h3>IpLang</h3>
+
+<p>Given that Brainfuck only has eight instructions, we can use 3 bits per instruction, and can encode an \( n \) - instruction-long Brainfuck program as a sequence of \( 3n \) bits. We can thus, for any Brainfuck program, create an integer optimization problem with \( 3n \) decision variables where the optimal solution is that program.</p>
+
+<p>Thus, <strong>IpLang</strong> is born. An IpLang program is written as integer programming problem, and is run by</p>
+
+<ol>
+<li>Solving the integer optimization problem (e.g. using <a href="https://github.com/JuliaOpt/Cbc.jl">Cbc</a> or another solver from the <a href="http://juliaopt.org/">JuliaOpt collection</a>).</li>
+<li>Treat the solution as a bit string and <a href="http://en.wikipedia.org/wiki/Transpile">transpile</a> it to Brainfuck.</li>
+<li>Run the Brainfuck program.</li>
+</ol>
+
+<p>The interest comes from the multitude of ways to encode a problem. Consider the following very simple program which emits an exclamation mark then terminates:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">++++++++[&gt;++++&lt;-]&gt;+.
+</code></pre></div>
+<p>This program is 20 instructions long, or 60 bits, so we will need a 60 variable optimization problem. There are two simple problems that will always work that are also completely boring. In the first, define a vector \( \mathbf{c} \in \mathbb{R}^n \) such that \( c_j \) is positive if \( x_j \) should be 1, and negative if it should be 0. Then our optimization problem is simply</p>
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize}   \quad & \sum_{j=1}^{n} c_j x_j \\
+\text{subject to} \quad & x_j \in \left\{0,1\right\} \quad \forall j \in \{1,\dots,n\}\\
+\end{alignat*}
+$$
+</div>
+
+<p>which is horribly dull. In the second, we don&#39;t even define an objective - instead we express the program as a vector \( \mathbf{b} \in \left\{0,1\right\}^n \) and define a constraint for each decision variable, i.e.</p>
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize}   \quad & 0 \\
+\text{subject to} \quad & x_j = b_j \quad \forall j \in \{1,\dots,n\}\\
+                        & x_j \in \left\{0,1\right\} \quad \forall j \in \{1,\dots,n\}\\
+\end{alignat*}
+$$
+</div>
+
+<p>which is also really dull.</p>
+
+<h3>Scoring an IpLang program</h3>
+
+<p>The above extremes suggest some ways we can make using IpLang more interesting, or at least challenging. I propose the following metrics and bonuses:</p>
+
+<ul>
+<li><p><strong>Connectivity.</strong> Here we turn the constraints into a undirected graph, where the nodes are the <em>n</em> decision variables. We say an edge exists between nodes <em>i</em> and <em>j</em> if and only if the corresponding variables appear together in a constraint with non-zero coefficients. The goal is then to minimize the number of connected components in the graph, with 1 being the best you can do
+and <em>n</em> the worst (e.g. the second example above). We&#39;ll say that &quot;no constraints&quot; is equivalent to <em>n</em> components.</p></li>
+<li><p><strong>Importance of the objective.</strong> This is a have-it-or-don&#39;t kind of thing. In the first example above, the objective was critical - any change would change the solution. In the second, we didn&#39;t even have an objective - even if we did, it wouldn&#39;t change the solution. The first is more interesting, so we&#39;ll say that you get a bonus if the objective matters - that is, changing the objective changes the solution.</p></li>
+<li><p><strong>Fractionality, or effort to solve.</strong> This is a bit more subtle. Most integer programming solvers work by relaxing the binary restriction to \( 0 \leq x_j \leq 1 \) and solving the resulting linear program. They then check for any fractional values in the solution, and select one variable to &quot;branch&quot; on - they create two new linear programs, one where one of those fractional variables is fixed to 0, and in the other is fixed to 1. Eventually you&#39;ll solve a relaxation and everything will be integer - this is a feasible solution, but not necessarily optimal. In the worst case you are looking at an exponential number of relaxations, but by using bounding and some geometric tricks you can usually do much better. This suggests two similar metrics: the number of linear program relaxations required to find an optimal solution (the higher the better), or the percentage of variables that have a fractional value at the initial relaxation (the higher the better). You could definitely argue that lower is better for both of those though.</p></li>
+<li><p><strong>Aesthetics</strong>. If we were to turn the constraint matrix \( A \) for the second example into a black-and-white image, where 0 is white and 1 is black, we would get a diagonal strip. Points could be awarded for how good the sparsity pattern looks.</p></li>
+</ul>
+
+<h3>Trying it out</h3>
+
+<p>There isn&#39;t really an IpLang implementation right now, but its fairly easy to play with in Julia. First, add the required packages, e.g.</p>
+
+<div class="highlight"><pre><code class="julia"><span class="n">julia</span><span class="o">&gt;</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;JuMP&quot;</span><span class="p">)</span>  <span class="c"># Modeling</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;Cbc&quot;</span><span class="p">)</span>   <span class="c"># An integer programming solver</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="s">&quot;https://github.com/johnmyleswhite/Brainfuck.jl&quot;</span><span class="p">)</span>  <span class="c"># Brainfuck interpreter</span>
+</code></pre></div>
+
+<p>then you can write your IpLang program using JuMP (<a href="https://jump.readthedocs.org/en/release-0.5">manual</a>)</p>
+
+<div class="highlight"><pre><code class="julia"><span class="n">N</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c"># Number of instructions</span>
+<span class="k">using</span> <span class="n">JuMP</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">N</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>  <span class="c"># 60 binary variables</span>
+<span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="mi">5</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="p">)</span>  <span class="c"># ... and so on</span>
+<span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="c"># ...</span>
+<span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>  <span class="c"># Solve the problem</span>
+<span class="n">x_val</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c"># Values will be Float64s - not necessarily exactly 0 and 1</span>
+</code></pre></div>
+
+<p>and run it with <a href="http://www.johnmyleswhite.com/">John Myles White</a>&#39;s <a href="https://github.com/johnmyleswhite/Brainfuck.jl">Brainfuck.jl</a>:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="k">import</span> <span class="n">Brainfuck</span>
+
+<span class="k">function</span><span class="nf"> iplang_to_bf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span>  <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">int</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">N</span>  <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span>
+    <span class="n">ops</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP1</span><span class="p">)</span>  <span class="c"># &gt; right</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP2</span><span class="p">)</span>  <span class="c"># &lt; left</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP3</span><span class="p">)</span>  <span class="c"># + inc</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP4</span><span class="p">)</span>  <span class="c"># - dec</span>
+        <span class="c"># Note JMW&#39;s order is swapped for next two from IRD&#39;s</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP5</span><span class="p">)</span>  <span class="c"># , read</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP6</span><span class="p">)</span>  <span class="c"># . print </span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP7</span><span class="p">)</span>  <span class="c"># [ begin</span>
+        <span class="n">bits</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">Brainfuck</span><span class="o">.</span><span class="n">OP8</span><span class="p">)</span>  <span class="c"># ] end</span>
+    <span class="k">end</span>
+    <span class="n">Brainfuck</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">iplang_to_bf</span><span class="p">(</span><span class="n">x_val</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>IpLang program 1: knapsacks</h3>
+
+<p>This IpLang program, like the above program, prints out an exclamation mark. It takes the form of a triple-&quot;knapsack&quot; problem. I have three sets of items, and each item has a value and a weight. From each set of items I can take as many items as can fit in the sack for that set. Its not the most clever IpLang program, but it certainly works - try it out:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">60</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
+
+<span class="n">knapsack1_profits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">67</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="mi">61</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">97</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">42</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">64</span><span class="p">]</span>
+<span class="n">knapsack1_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">97</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">27</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">73</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">62</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">37</span><span class="p">,</span><span class="mi">59</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">30</span><span class="p">]</span>
+<span class="n">knapsack1_capacity</span> <span class="o">=</span> <span class="mi">325</span>
+
+<span class="n">knapsack2_profits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">33</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">59</span><span class="p">,</span><span class="mi">27</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+<span class="n">knapsack2_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">47</span><span class="p">,</span><span class="mi">87</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">53</span><span class="p">,</span><span class="mi">59</span><span class="p">,</span><span class="mi">57</span><span class="p">,</span><span class="mi">61</span><span class="p">,</span><span class="mi">47</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">73</span><span class="p">,</span><span class="mi">58</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">59</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">67</span><span class="p">,</span><span class="mi">57</span><span class="p">]</span>
+<span class="n">knapsack2_capacity</span> <span class="o">=</span> <span class="mi">335</span>
+
+<span class="n">knapsack3_profits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">53</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">34</span><span class="p">,</span><span class="mi">33</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">58</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="mi">62</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">33</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">26</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">37</span><span class="p">,</span><span class="mi">16</span><span class="p">]</span>
+<span class="n">knapsack3_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">41</span><span class="p">,</span><span class="mi">71</span><span class="p">,</span><span class="mi">73</span><span class="p">,</span><span class="mi">79</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">51</span><span class="p">,</span><span class="mi">58</span><span class="p">,</span><span class="mi">53</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">47</span><span class="p">,</span><span class="mi">51</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mi">42</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">74</span><span class="p">,</span><span class="mi">48</span><span class="p">]</span>
+<span class="n">knapsack3_capacity</span> <span class="o">=</span> <span class="mi">470</span>
+
+
+<span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">knapsack1_profits</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span> <span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">])</span> <span class="o">+</span>
+                      <span class="n">dot</span><span class="p">(</span><span class="n">knapsack2_profits</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">21</span><span class="p">:</span><span class="mi">40</span><span class="p">])</span> <span class="o">+</span>
+                      <span class="n">dot</span><span class="p">(</span><span class="n">knapsack3_profits</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">41</span><span class="p">:</span><span class="mi">60</span><span class="p">])</span> <span class="p">)</span>
+<span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">knapsack1_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span> <span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">knapsack1_capacity</span><span class="p">)</span>
+<span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">knapsack2_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">21</span><span class="p">:</span><span class="mi">40</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">knapsack2_capacity</span><span class="p">)</span>
+<span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">knapsack3_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">41</span><span class="p">:</span><span class="mi">60</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">knapsack3_capacity</span><span class="p">)</span>
+<span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+<span class="n">iplang_to_bf</span><span class="p">(</span><span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div>
+
+<h3>IpLang program 2: vertex cover</h3>
+
+<p><a href="http://en.wikipedia.org/wiki/Vertex_cover">Vertex cover</a> is a classic graph problem. We seek to select a subset of the nodes in a graph so that for every edge at least one of the nodes that define it are in the subset. We can model this an integer program, which is interesting, because we basically encode a program as a graph.</p>
+
+<p>The following graph has an optimal vertex cover which produces the same exclamation point program we have been looking at above:</p>
+
+<div class="photo"><img src="/images/iplanggraph.png" alt="Graph whose optimal vertex cover is a Brainfuck program"><p class="caption">Graph whose optimal vertex cover is a Brainfuck program</p></div>
+
+<p>Here is the code, which I created iteratively - which suggests the process could be automated:</p>
+
+<div class="highlight"><pre><code class="julia"><span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">60</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
+<span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+         <span class="p">(</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">),</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">),</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">17</span><span class="p">),</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">18</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">19</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">),</span> <span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="mi">23</span><span class="p">),</span> <span class="p">(</span><span class="mi">23</span><span class="p">,</span><span class="mi">24</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">26</span><span class="p">,</span><span class="mi">35</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">26</span><span class="p">,</span><span class="mi">27</span><span class="p">),</span> <span class="p">(</span><span class="mi">26</span><span class="p">,</span><span class="mi">28</span><span class="p">),</span> <span class="p">(</span><span class="mi">26</span><span class="p">,</span><span class="mi">57</span><span class="p">),</span> <span class="p">(</span><span class="mi">29</span><span class="p">,</span><span class="mi">26</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">31</span><span class="p">),</span> <span class="p">(</span><span class="mi">34</span><span class="p">,</span><span class="mi">35</span><span class="p">),</span> <span class="p">(</span><span class="mi">35</span><span class="p">,</span><span class="mi">36</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">37</span><span class="p">,</span><span class="mi">38</span><span class="p">),</span> <span class="p">(</span><span class="mi">38</span><span class="p">,</span><span class="mi">39</span><span class="p">),</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">41</span><span class="p">),</span> <span class="p">(</span><span class="mi">41</span><span class="p">,</span><span class="mi">42</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">44</span><span class="p">,</span><span class="mi">45</span><span class="p">),</span> <span class="p">(</span><span class="mi">45</span><span class="p">,</span><span class="mi">46</span><span class="p">),</span> <span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">38</span><span class="p">),</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">51</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">35</span><span class="p">,</span><span class="mi">32</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span><span class="mi">13</span><span class="p">),</span> <span class="p">(</span><span class="mi">41</span><span class="p">,</span><span class="mi">56</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">49</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="p">(</span><span class="mi">49</span><span class="p">,</span><span class="mi">16</span><span class="p">),</span> <span class="p">(</span><span class="mi">49</span><span class="p">,</span><span class="mi">18</span><span class="p">),</span> <span class="p">(</span><span class="mi">45</span><span class="p">,</span><span class="mi">46</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">19</span><span class="p">),</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">21</span><span class="p">),</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">22</span><span class="p">),</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">43</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">51</span><span class="p">,</span><span class="mi">52</span><span class="p">),</span> <span class="p">(</span><span class="mi">51</span><span class="p">,</span><span class="mi">53</span><span class="p">),</span> <span class="p">(</span><span class="mi">51</span><span class="p">,</span><span class="mi">33</span><span class="p">),</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">58</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">54</span><span class="p">),</span> <span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">55</span><span class="p">),</span> <span class="p">(</span><span class="mi">56</span><span class="p">,</span><span class="mi">23</span><span class="p">),</span> <span class="p">(</span><span class="mi">51</span><span class="p">,</span><span class="mi">45</span><span class="p">),</span>
+         <span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="mi">59</span><span class="p">),</span> <span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="mi">60</span><span class="p">),</span> <span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="mi">33</span><span class="p">),</span> <span class="p">(</span><span class="mi">35</span><span class="p">,</span><span class="mi">11</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">edge</span> <span class="k">in</span> <span class="n">edges</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">end</span>
+<span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+<span class="n">iplang_to_bf</span><span class="p">(</span><span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div>
+
+<h3>Next steps</h3>
+
+<p>I think the next step is to write some tools to take Brainfuck programs and generate IpLang programs. Trying to make even the simple programs above took quite a while, and while the vertex cover one had the fairly interesting graph aspect to it, the knapsack one is fairly basic.</p>
+
+<p>Let me know if you create an IpLang program of your own - I&#39;ll add it here.</p>
+
+</div>
+
+      <hr />
+    </div>
+    <aside class="four columns">
+      <h4>Projects</h4>
+      <div style="text-align: center; line-height: 100%; margin-bottom: 10px">
+        <a href="http://juliaopt.org">JuliaOpt<br><img src="/images/juliaopt86.png" alt="JuliaOpt"></a><br>
+        <small>Optimization software for/in <a href="http://julialang.org">Julia</a></small>
+        <br><br>
+        <a href="http://tenkicompare.com">TenkiCompare</a><br>
+        <small>Compare weather in different cities</small>
+        <br><br>
+        <a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a><br>
+        <small>Simplex+B&amp;B solver in pure Javascript</small>
+        <br><br>
+        <a href="http://opensolver.org">OpenSolver</a><br>
+        <small>Solve large MILPs in Excel</small>
+      </div>
+      <hr>
+      <h4>Related Sites</h4>
+      <a href="http://kellyheber.com/">Kelly Heber</a> <small>(env. management)</small><br>
+      <a href="http://www.racheldunning.com/">Rachel Dunning</a> <small>(legal star)</small><br>
+      <a href="http://kiaorane.com/">Kia Ora New England</a> <small>(Kiwis!)</small><br>
+      <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> <small>(OR ninja)</small><br>
+      <hr>
+      <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/iplang.html">IpLang - an optimization-based esolang</a></li>
+        
+          <li><a href="/2014/subs-battleships.html">Naval Warfare with JuMP + Julia</a></li>
+        
+          <li><a href="/2014/julia-unicode.html">Fun with Unicode and Julia</a></li>
+        
+          <li><a href="/2013/mip-callback.html">Using JuMP to Solve a TSP with Lazy Constraints</a></li>
+        
+          <li><a href="/2013/us-senate.html">Representation, Filibusters and the US Senate</a></li>
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
+        
+          <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/combination-locks.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>

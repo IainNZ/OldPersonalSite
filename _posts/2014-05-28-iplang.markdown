@@ -1,0 +1,236 @@
+---
+author: idunning
+date: 2014-05-28 12:00:00+00:00
+layout: post
+title: IpLang - an optimization-based esolang
+---
+
+In this post I present my new programming langauge, IpLang. The program is described as the solution to a binary optimization problem, and there are a large number of possible encodings for even the most simple program.
+
+### Esoteric Programming Languages
+
+After learning how to program in a couple of langauges, a fairly natural thing to want to do is to create your own. Some people believe that their new language is the solution to the worlds software development problem, but the reality seems to be that there are only so many programming languages that the world can handle at any one time, and most of these efforts die out. Some people walk a different path, and instead create languages not as "real" development tools but more as an exploration of the space possible ways to get tell a computer what we want it to do. These more quirky languages are sometimes called [esolangs](http://esolangs.org/wiki/Main_Page), and there have been many over the years. Some examples include:
+
+ * [INTERCAL](http://esolangs.org/wiki/Intercal) requires the user to be polite - if `PLEASE`, `PLEASE DO NOT` and so on do not appear enough in the program, it will not run.
+ * [Spleenmap](http://esolangs.org/wiki/Spleenmap) uses only 5 instructions, and is written as a two dimensional block of text.
+ * [Brainfuck](http://esolangs.org/wiki/Brainfuck) is probably the most famous (and copied). It uses 8 instructions, and strikes a fairly interesting sweet-spot between minimalism and complexity. Here is a program in Brainfuck that prints out *Hello World!*:
+
+```
+++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+```
+
+As you can tell from the Esolang listings, there have been a lot of esolangs made over the years. A large number are based on Brainfuck, either in that they extend it slightly or they can be directly transliterated to Brainfuck. A good one is [Ook!](http://esolangs.org/wiki/Ook!), where the 8 instructions are matched to different combinations of "ook" and punctuation, e.g. "increment" is `Ook. Ook.` and "decrement" is `Ook! Ook!`.
+
+Another simple transliteration of Brainfuck would be to simply use a binary encoding, e.g.
+
+  * `000` - `Move pointer right`
+  * `001` - `Move pointer left`
+  * `010` - `Increment memory cell under pointer`
+  * `011` - `Decrement memory cell under pointer`
+  * `100` - `Output character for memory cell under pointer`
+  * `101` - `Input character and store in memory cell under pointer`
+  * `110` - `Jump past matching 111 if cell under pointer is 0`
+  * `111` - `Jump back to matching 110 if cell under pointer isn't 0`
+
+I'll return to this in a moment. For now, let us take a detour into mathematics.
+
+### Integer (Linear) Programming
+
+[Linear programming](http://en.wikipedia.org/wiki/Linear_programming) (LP) is one of the core tools in the numerical optimization toolbox. In linear programming we are interested in the following problem:
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize} \quad & \sum_{j=1}^{n} c_j x_j \\
+\text{subject to} \quad & \sum_{j=1}^{n} A_{i,j} x_j \leq b_i \qquad \forall i \in \{1,\dots,m\}\\
+\end{alignat*}
+$$
+</div>
+
+In words, find the (real) values of \\( x\_{j} \\) that maximizes the value of a linear expression subject to a set of linear constraints. Note that we can make the constraints equality or greather-than-or-equal-to with simple transformations. This problem has some fantastic structure that allows us to solve it efficiently, and despite (because of?) everything being linear it has found a wide variety of uses. Note that "programming" is used in a very different sense to the modern "programming language", although they both share a common origin from the days when "computers" were people. To avoid confusion, some now use "linear optimization" instead.
+
+A natural extension of this problem is restrict all or some of the values of \\( x\_{j} \\) to the set of integers, or even just the values 0 and 1. This is often called "integer programming" (IP) and although it is a much tougher problem, large (\\( n \\) can be on the order of \\( 10^6 \\) ) integer programs can be solved (usually as a sequence of linear program relaxations).
+
+In real-world problems the constraint "data" \\( A\_{ij} \\) is very sparse - most of the values are 0, and most constraints involve very few of the variables. As a result, constructing the \\( A \\) matrix manually is painful, inefficient, and hard to maintain. Instead, people use algebraic modeling languages which can be though of as mathematical domain-specific languages, sometimes in embedded in other languages. One such language is [JuMP](https://github.com/JuliaOpt/JuMP.jl), which is embedded in the [Julia](http://julialang.org/) programming language. For an example of how a modeling language is used, check out my [Sudoku-as-a-Service](http://iaindunning.com/2013/sudoku-as-a-service.html) post.
+
+### IpLang
+
+Given that Brainfuck only has eight instructions, we can use 3 bits per instruction, and can encode an \\( n \\) - instruction-long Brainfuck program as a sequence of \\( 3n \\) bits. We can thus, for any Brainfuck program, create an integer optimization problem with \\( 3n \\) decision variables where the optimal solution is that program.
+
+Thus, **IpLang** is born. An IpLang program is written as integer programming problem, and is run by
+
+1. Solving the integer optimization problem (e.g. using [Cbc](https://github.com/JuliaOpt/Cbc.jl) or another solver from the [JuliaOpt collection](http://juliaopt.org/)).
+2. Treat the solution as a bit string and [transpile](http://en.wikipedia.org/wiki/Transpile) it to Brainfuck.
+3. Run the Brainfuck program.
+
+The interest comes from the multitude of ways to encode a problem. Consider the following very simple program which emits an exclamation mark then terminates:
+
+```
+++++++++[>++++<-]>+.
+```
+
+This program is 20 instructions long, or 60 bits, so we will need a 60 variable optimization problem. There are two simple problems that will always work that are also completely boring. In the first, define a vector \\( \\mathbf{c} \\in \\mathbb{R}^n \\) such that \\( c\_j \\) is positive if \\( x\_j \\) should be 1, and negative if it should be 0. Then our optimization problem is simply
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize}   \quad & \sum_{j=1}^{n} c_j x_j \\
+\text{subject to} \quad & x_j \in \left\{0,1\right\} \quad \forall j \in \{1,\dots,n\}\\
+\end{alignat*}
+$$
+</div>
+
+which is horribly dull. In the second, we don't even define an objective - instead we express the program as a vector \\( \\mathbf{b} \\in \\left\\{0,1\\right\\}^n \\) and define a constraint for each decision variable, i.e.
+
+<div>
+$$
+\begin{alignat*}{1}
+\text{maximize}   \quad & 0 \\
+\text{subject to} \quad & x_j = b_j \quad \forall j \in \{1,\dots,n\}\\
+                        & x_j \in \left\{0,1\right\} \quad \forall j \in \{1,\dots,n\}\\
+\end{alignat*}
+$$
+</div>
+
+which is also really dull.
+
+### Scoring an IpLang program
+
+The above extremes suggest some ways we can make using IpLang more interesting, or at least challenging. I propose the following metrics and bonuses:
+
+* **Connectivity.** Here we turn the constraints into a undirected graph, where the nodes are the *n* decision variables. We say an edge exists between nodes *i* and *j* if and only if the corresponding variables appear together in a constraint with non-zero coefficients. The goal is then to minimize the number of connected components in the graph, with 1 being the best you can do
+and *n* the worst (e.g. the second example above). We'll say that "no constraints" is equivalent to *n* components.
+
+* **Importance of the objective.** This is a have-it-or-don't kind of thing. In the first example above, the objective was critical - any change would change the solution. In the second, we didn't even have an objective - even if we did, it wouldn't change the solution. The first is more interesting, so we'll say that you get a bonus if the objective matters - that is, changing the objective changes the solution.
+
+* **Fractionality, or effort to solve.** This is a bit more subtle. Most integer programming solvers work by relaxing the binary restriction to \\( 0 \\leq x\_j \\leq 1 \\) and solving the resulting linear program. They then check for any fractional values in the solution, and select one variable to "branch" on - they create two new linear programs, one where one of those fractional variables is fixed to 0, and in the other is fixed to 1. Eventually you'll solve a relaxation and everything will be integer - this is a feasible solution, but not necessarily optimal. In the worst case you are looking at an exponential number of relaxations, but by using bounding and some geometric tricks you can usually do much better. This suggests two similar metrics: the number of linear program relaxations required to find an optimal solution (the higher the better), or the percentage of variables that have a fractional value at the initial relaxation (the higher the better). You could definitely argue that lower is better for both of those though.
+
+* **Aesthetics**. If we were to turn the constraint matrix \\( A \\) for the second example into a black-and-white image, where 0 is white and 1 is black, we would get a diagonal strip. Points could be awarded for how good the sparsity pattern looks.
+
+### Trying it out
+
+There isn't really an IpLang implementation right now, but its fairly easy to play with in Julia. First, add the required packages, e.g.
+
+{% highlight julia %}
+julia> Pkg.add("JuMP")  # Modeling
+julia> Pkg.add("Cbc")   # An integer programming solver
+julia> Pkg.clone("https://github.com/johnmyleswhite/Brainfuck.jl")  # Brainfuck interpreter
+{% endhighlight %}
+
+then you can write your IpLang program using JuMP ([manual](https://jump.readthedocs.org/en/release-0.5))
+
+{% highlight julia %}
+N = 20  # Number of instructions
+using JuMP
+m = Model()
+@defVar(m, x[1:3*N], Bin)  # 60 binary variables
+@setObjective(m, Max, 5x[1] + 2x[3] )  # ... and so on
+@addConstraint(m, x[1] + x[5] <= 1)
+# ...
+solve(m)  # Solve the problem
+x_val = getValue(x)  # Values will be Float64s - not necessarily exactly 0 and 1
+{% endhighlight %}
+
+and run it with [John Myles White](http://www.johnmyleswhite.com/)'s [Brainfuck.jl](https://github.com/johnmyleswhite/Brainfuck.jl):
+
+{% highlight julia %}
+import Brainfuck
+
+function iplang_to_bf(x)
+    x  = map(int, x)
+    N  = length(x)/3
+    ops = Int[]
+    for i = 0:N-1
+        bits = (x[3i+1], x[3i+2], x[3i+3])
+        bits == (0,0,0) && push!(ops, Brainfuck.OP1)  # > right
+        bits == (0,0,1) && push!(ops, Brainfuck.OP2)  # < left
+        bits == (0,1,0) && push!(ops, Brainfuck.OP3)  # + inc
+        bits == (0,1,1) && push!(ops, Brainfuck.OP4)  # - dec
+        # Note JMW's order is swapped for next two from IRD's
+        bits == (1,0,1) && push!(ops, Brainfuck.OP5)  # , read
+        bits == (1,0,0) && push!(ops, Brainfuck.OP6)  # . print 
+        bits == (1,1,0) && push!(ops, Brainfuck.OP7)  # [ begin
+        bits == (1,1,1) && push!(ops, Brainfuck.OP8)  # ] end
+    end
+    Brainfuck.interpret(ops)
+end
+
+iplang_to_bf(x_val)
+{% endhighlight %}
+
+
+### IpLang program 1: knapsacks
+
+This IpLang program, like the above program, prints out an exclamation mark. It takes the form of a triple-"knapsack" problem. I have three sets of items, and each item has a value and a weight. From each set of items I can take as many items as can fit in the sack for that set. Its not the most clever IpLang program, but it certainly works - try it out:
+
+{% highlight julia %}
+m = Model()
+@defVar(m, x[1:60], Bin)
+
+knapsack1_profits = [10,67,15,23,61,12,14,97,12,11,49,23,10,42,29,20,35,12,21,64]
+knapsack1_weights = [13,38,22,97,38,35,25,90,18,27,35,73,13,50,62,50,37,59,52,30]
+knapsack1_capacity = 325
+
+knapsack2_profits = [11, 2,60,13,50,33,11, 2,16, 5, 8,40,23, 7,49, 9,15,59,27,12]
+knapsack2_weights = [47,87,60,45,53,59,57,61,47,60,55,35,50,73,58,45,59,64,67,57]
+knapsack2_capacity = 335
+
+knapsack3_profits = [53,11,34,33,40,21,49,58,49,55,62,22,24,16,33,49,26,60,37,16]
+knapsack3_weights = [41,71,73,79,35,46,65,70,51,58,53,43,47,51,65,38,42,52,74,48]
+knapsack3_capacity = 470
+
+
+@setObjective(m, Max, dot(knapsack1_profits, x[ 1:20]) +
+                      dot(knapsack2_profits, x[21:40]) +
+                      dot(knapsack3_profits, x[41:60]) )
+@addConstraint(m, dot(knapsack1_weights, x[ 1:20]) <= knapsack1_capacity)
+@addConstraint(m, dot(knapsack2_weights, x[21:40]) <= knapsack2_capacity)
+@addConstraint(m, dot(knapsack3_weights, x[41:60]) <= knapsack3_capacity)
+solve(m)
+
+iplang_to_bf(getValue(x))
+{% endhighlight %}
+
+### IpLang program 2: vertex cover
+
+[Vertex cover](http://en.wikipedia.org/wiki/Vertex_cover) is a classic graph problem. We seek to select a subset of the nodes in a graph so that for every edge at least one of the nodes that define it are in the subset. We can model this an integer program, which is interesting, because we basically encode a program as a graph.
+
+The following graph has an optimal vertex cover which produces the same exclamation point program we have been looking at above:
+
+{% img /images/iplanggraph.png Graph whose optimal vertex cover is a Brainfuck program %}
+
+Here is the code, which I created iteratively - which suggests the process could be automated:
+
+{% highlight julia %}
+m = Model()
+@defVar(m, x[1:60], Bin)
+@setObjective(m, Min, sum(x))
+edges = [( 1, 2), ( 2, 3), ( 4, 5), ( 5, 6),
+         ( 7, 8), ( 8, 9), (10,11), (11,12),
+         (13,14), (14,15), (16,17), (17,18),
+         (19,20), (20,21), (22,23), (23,24),
+         (25, 1), (25, 3), (25, 4), (26,35),
+         (26,27), (26,28), (26,57), (29,26),
+         (32,30), (32,31), (34,35), (35,36),
+         (37,38), (38,39), (40,41), (41,42),
+         (44,45), (45,46), (56,38), (32,51),
+         (47, 6), (47, 7), (47, 9), (35,32),
+         (48,10), (48,12), (48,13), (41,56),
+         (49,15), (49,16), (49,18), (45,46),
+         (50,19), (50,21), (50,22), (50,43),
+         (51,52), (51,53), (51,33), (50,58),
+         (56,54), (56,55), (56,23), (51,45),
+         (58,59), (58,60), (58,33), (35,11)]
+for edge in edges
+    @addConstraint(m, x[edge[1]] + x[edge[2]] >= 1)
+end
+solve(m)
+
+iplang_to_bf(getValue(x))
+{% endhighlight %}
+
+### Next steps
+
+I think the next step is to write some tools to take Brainfuck programs and generate IpLang programs. Trying to make even the simple programs above took quite a while, and while the vertex cover one had the fairly interesting graph aspect to it, the knapsack one is fairly basic.
+
+Let me know if you create an IpLang program of your own - I'll add it here.
