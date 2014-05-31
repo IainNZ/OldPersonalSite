@@ -10,6 +10,8 @@
 				<title>IPLANG - an optimization-based esolang</title>
 				<description>&lt;p&gt;In this post I present my new programming language, &lt;strong&gt;IPLANG&lt;/strong&gt;, where the program is described (encoded?) as the solution to a &lt;a href=&quot;http://en.wikipedia.org/wiki/Integer_programming&quot;&gt;binary optimization problem&lt;/a&gt;, and there are a large number of possible encodings for even the most simple program - the art is in making the relationship between the optimization problem and the program as interesting as possible.&lt;/p&gt;
 
+&lt;p&gt;&lt;small&gt;&lt;a href=&quot;https://news.ycombinator.com/item?id=7826476&quot;&gt;HN discussion&lt;/a&gt;&lt;/small&gt;.&lt;/p&gt;
+
 &lt;h3&gt;Introduction to Esoteric Programming Languages&lt;/h3&gt;
 
 &lt;p&gt;After learning how to program in a couple of languages, a fairly natural thing to want to do is to create your own. Some people set out to create &amp;quot;serious&amp;quot; languages, believing that their new language is the solution to a/the world&amp;#39;s software development problem(s), but the reality seems to be that there are only so many programming languages that the world can handle at any one time, and most of these efforts die out. Some walk a different path and create languages not as &amp;quot;real&amp;quot; development tools but more as an exploration of the space possible ways to tell a computer what we want it to do. These more quirky languages are sometimes called &lt;a href=&quot;http://esolangs.org/wiki/Main_Page&quot;&gt;esolangs&lt;/a&gt;, and there have been many interesting ones over the years. Some examples include:&lt;/p&gt;
