@@ -7,7 +7,8 @@ title: IPLANG - an optimization-based esolang
 
 In this post I present my new programming language, **IPLANG**, where the program is described (encoded?) as the solution to a [binary optimization problem](http://en.wikipedia.org/wiki/Integer_programming), and there are a large number of possible encodings for even the most simple program - the art is in making the relationship between the optimization problem and the program as interesting as possible.
 
-<small><a href="https://news.ycombinator.com/item?id=7826476">HN discussion</a></small>.
+{% img /images/iplanggraph.png Solve integer progam to find the minimal vertex cover of this graph = compile an IPLANG program. %}
+
 
 ### Introduction to Esoteric Programming Languages
 
@@ -202,3 +203,5 @@ iplang_to_bf(getValue(x))  # Defined above
 The next steps are to write a tool to take Brainfuck programs and generate IPLANG programs, possibly by making a basic IPLANG program and mutating it. Another approach is pick an IP-solvable problem like the traveling salesman problem or max-cut and creating the graph that will encode the program. Trying to make even the simple program above manually took quite a while!
 
 Finally, let me know if you create an IPLANG program of your own - I'll add it here.
+
+<a href="https://news.ycombinator.com/item?id=7826476">HackerNews discussion</a>.

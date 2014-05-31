@@ -10,7 +10,7 @@
 				<title>IPLANG - an optimization-based esolang</title>
 				<description>&lt;p&gt;In this post I present my new programming language, &lt;strong&gt;IPLANG&lt;/strong&gt;, where the program is described (encoded?) as the solution to a &lt;a href=&quot;http://en.wikipedia.org/wiki/Integer_programming&quot;&gt;binary optimization problem&lt;/a&gt;, and there are a large number of possible encodings for even the most simple program - the art is in making the relationship between the optimization problem and the program as interesting as possible.&lt;/p&gt;
 
-&lt;p&gt;&lt;small&gt;&lt;a href=&quot;https://news.ycombinator.com/item?id=7826476&quot;&gt;HN discussion&lt;/a&gt;&lt;/small&gt;.&lt;/p&gt;
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/iplanggraph.png&quot; alt=&quot;Solve integer progam to find the minimal vertex cover of this graph = compile an IPLANG program.&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Solve integer progam to find the minimal vertex cover of this graph = compile an IPLANG program.&lt;/p&gt;&lt;/div&gt;
 
 &lt;h3&gt;Introduction to Esoteric Programming Languages&lt;/h3&gt;
 
@@ -198,6 +198,8 @@ $$
 &lt;p&gt;The next steps are to write a tool to take Brainfuck programs and generate IPLANG programs, possibly by making a basic IPLANG program and mutating it. Another approach is pick an IP-solvable problem like the traveling salesman problem or max-cut and creating the graph that will encode the program. Trying to make even the simple program above manually took quite a while!&lt;/p&gt;
 
 &lt;p&gt;Finally, let me know if you create an IPLANG program of your own - I&amp;#39;ll add it here.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://news.ycombinator.com/item?id=7826476&quot;&gt;HackerNews discussion&lt;/a&gt;.&lt;/p&gt;
 </description>
 				<pubDate>Wed, 28 May 2014 12:00:00 +0000</pubDate>
 				<link>http://iaindunning.com/2014/iplang.html</link>
