@@ -141,8 +141,7 @@
 <span class="lineno">38</span> 
 <span class="lineno">39</span>     <span class="k">return</span> <span class="n">sol</span>
 <span class="lineno">40</span>   <span class="k">end</span>
-<span class="lineno">41</span> <span class="k">end</span>
-</code></pre></div>
+<span class="lineno">41</span> <span class="k">end</span></code></pre></div>
 
 <p>Line 7 creates our variable <em>x</em> with three indices over the range 1 to 9, and enforces integrality. <code>@defVar</code> is a macro, not a function, which lets it create a variable <code>x</code> in the local scope. I have removed the other constraints for brevity and left the constraint that enforces that each cell contains only one value. Note the correspondance between the mathematical notation (&quot;for all rows, for all columns&quot;) and the <code>for</code> loops (lines 11 and 12). <code>@addConstraint</code> (line 13) is another macro that facilitates the efficient storage of the constraint as a sparse vector, and matches the mathematical description very closely. On line 19 we solve the model with the default solver <a href="https://projects.coin-or.org/Cbc">COIN-OR CBC</a> - an open-source integer programming solver. As a side note, Julia/JuMP also has interfaces to GLPK (open-source) and Gurobi (closed-source). Finally, we pull the solution back from the solver (if a feasible solution could be found) as a three-dimensional matrix of 0s and 1s which we convert to a two-dimensional vector of 1-to-9s (lines 27 to 36).</p>
 
@@ -219,8 +218,7 @@
 
 <span class="c"># Boot up the server</span>
 <span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">http</span><span class="p">)</span>
-<span class="n">run</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span>
-</code></pre></div>
+<span class="n">run</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span></code></pre></div>
 
 <h2>Try it yourself!</h2>
 
@@ -261,6 +259,8 @@
       <hr>
       <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
         
           <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
         

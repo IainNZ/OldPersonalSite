@@ -7,7 +7,7 @@
 
   <!-- Basic Page Needs -->
   <meta charset="utf-8">
-  <title>INFORMS 2013 and JuliaOpt - IainDunning.com</title>
+  <title>Julia Package Ecosystem Dependency Graphs - IainDunning.com</title>
   <meta name="description" content="Iain Dunning's personal website.">
   <meta name="author" content="Iain Dunning">
   <link rel="alternate" type="application/rss+xml" title="IainDunning.com" href="http://iaindunning.com/feed.xml">
@@ -55,29 +55,35 @@
       <hr />
     </div>
     <div class="twelve columns">
-      <h2>INFORMS 2013 and JuliaOpt</h2>
-<p class="meta">Posted on 12 Oct 2013</p>
+      <h2>Julia Package Ecosystem Dependency Graphs</h2>
+<p class="meta">Posted on 20 Jul 2014</p>
 
 <div class="post">
-<p>The <a href="http://meetings2.informs.org/minneapolis2013/index.php">INFORMS 2013</a> Annual Meeting took place this past week in Minneapolis, and I was lucky enough to have the chance to go. <a href="http://www.mit.edu/%7Emlubin/">Miles Lubin</a> and I were there to present a talk based on our paper &quot;Computing on Operations Research using Julia&quot; (<a href="http://www.optimization-online.org/DB_HTML/2013/05/3883.html">paper</a>, <a href="http://www.mit.edu/%7Emlubin/informs2013.pdf">slides</a>). I&#39;d never been to a conference like this before, so I wasn&#39;t sure what to expect - it turned out to be a bit overwhelming! There were four time slots per day, with up to 72 sessions running during each time slot. As a result it was impossible to see anything but a small fraction of the talks. The highlights for me would have to be:</p>
+<p><a href="http://julialang.org">Julia</a> is a relatively young programming language that is rising in popularity. I personally use heavily in my work, and try to contribute back to where I can. It has an <a href="http://docs.julialang.org/en/release-0.2/manual/packages/">in-built package manager</a> that is mostly used to access packages from the central repository, <a href="https://github.com/JuliaLang/METADATA.jl">METADATA.jl</a>, which contains a listing of packages and their dependencies. At the time of writing there 363 packages available compatible with the Julia 0.3 release candidate.</p>
 
-<ul>
-<li>Meeting with the team at <a href="http://forio.com/">Forio</a> to talk about the work they are doing with Julia, including their simulation products and their open-source Julia IDE <a href="http://forio.com/products/julia-studio">Julia Studio</a></li>
-<li>Seeing the <a href="https://www.informs.org/Recognize-Excellence/INFORMS-Prizes-Awards/George-Nicholson-Student-Paper-Competition">Nicholson Prize</a> contenders&#39; presentations on Sunday, including <a href="www.mit.edu/%7Evgupta1">Vishal Gupta</a>&#39;s fantastic talk on data-driven robust optimization.</li>
-<li>Hacking on <a href="http://github.com/JuliaOpt/JuMP.jl">JuMP</a> with Miles in our hotel room.</li>
-<li>Presenting the talk! We had a great, attentive audience, it was a real pleasure being there.</li>
-<li>Meeting the teams from <a href="http://www.mosek.com">MOSEK</a> and <a href="http://www.gurobi.com">Gurobi</a>, who were really enthusiastic about the work we are doing in Julia and want to be involved.</li>
-<li>Finally meeting the <a href="http://www.coin-or.org/">COIN-OR</a> team, especially <a href="http://coral.ie.lehigh.edu/%7Eted/">Ted Ralphs</a>.</li>
-<li>Celebrating Miles winning the <a href="http://www.coin-or.org/coinCup/coinCup.html">2013 COIN-OR Cup</a>!</li>
-</ul>
+<p>I recently wrote some code to analyze METADATA, available as part of <a href="https://github.com/IainNZ/PackageEvaluator.jl">PackageEval.jl</a> (funnily enough, this package isn&#39;t in METADATA). I have utilized that functionality to generate <em>dependency graphs</em> for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with <a href="https://github.com/IainNZ/GraphLayout.jl">GraphLayout.jl</a>, which does force-based graph layout in pure Julia, and <a href="https://github.com/dcjones/Compose.jl">Compose.jl</a>, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I&#39;ve implemented in GraphLayout is still pretty basic and doesn&#39;t do anything smart with labels or line avoidance.</p>
 
-<h2>JuliaOpt</h2>
+<p>The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is <a href="https://github.com/milktrader/Quandl.jl">Quandl.jl</a> with 30. Interestingly, it only directly depends on five packages itself.</p>
 
-<p>Miles and I put a lot of thought into whats next for the burgeoning collection of optimization software and interfaces in Julia, and felt it would be appropriate to emulate the example set by <a href="https://github.com/JuliaStats">JuliaStats</a> and pull all the code together in one place. We want to go further and make sure everything works together, is well documented, and well tested. One of the end goal is to make Julia <em>the</em> choice for people working with optimization problems.</p>
+<div class="photo"><img src="/images/Quandl.svg" alt="Quandl.jl dependency graph"><p class="caption">Quandl.jl dependency graph</p></div>
 
-<div class="photo"><img src="http://juliaopt.org/images/logo300.png" alt="JuliaOpt logo - top: LP, left: NLP, right: IP"><p class="caption">JuliaOpt logo - top: LP, left: NLP, right: IP</p></div>
+<p><a href="https://github.com">Gadfly.jl</a>, which many in the Julia community often think of as being the one of the most &quot;connected&quot;, is actually in sixth place with 21 dependencies, although perhaps has a more interesting dependency graph because it is quite diverse.</p>
 
-<p>We&#39;ve set up a <a href="https://github.com/JuliaOpt">JuliaOpt GitHub organization</a> and a <a href="http://juliaopt.org">JuliaOpt website</a> - check them out the projects, use it, report bugs, and contribute back - we&#39;d love to have you join us.</p>
+<div class="photo"><img src="/images/Gadfly.svg" alt="Gadfly.jl dependency graph"><p class="caption">Gadfly.jl dependency graph</p></div>
+
+<p>If we consider only packages with at least 1 dependency, we find that the median number of dependencies is 4, with an average of approximately 6.5.</p>
+
+<p>We can now reverse the direction of all the links in the graph to find the most-depended-on packages. The most-depended-on package is <a href="https://github.com/Keno/URIParser.jl">URIParser.jl</a> with 80 packages depending on it, closely followed by <a href="https://github.com/JuliaLang/BinDeps.jl">BinDeps.jl</a> (which provides binary dependency installation support for many packages).</p>
+
+<div class="photo"><img src="/images/URIParser.svg" alt="URIParser.jl reverse dependency graph"><p class="caption">URIParser.jl reverse dependency graph</p></div>
+
+<p>Fourth place is <a href="https://github.com/JuliaStats/StatsBase.jl">StatsBase.jl</a> with 62, which suggests that there is encouraging code re-use of basic statistical functionality.</p>
+
+<div class="photo"><img src="/images/StatsBase.svg" alt="StatsBase.jl reverse dependency graph"><p class="caption">StatsBase.jl reverse dependency graph</p></div>
+
+<p>If we consider only packages with at least 1 package depending on them, we find the median to be 3 dependent packages but the mean to be 10.5. This is due to the 15 or so packages with more than 30 dependent packages.</p>
+
+<p>One of the biggest problems with &quot;new&quot; languages is the bootstrapping problem of getting the size of the ecosystem of packages large enough to encourage new users, who in turn grow the ecosystem. Having high-quality packages that can be built upon and composed will reduce development time for new higher-level packages. There is a strong culture already developing in the Julia world that emphasizes shared interfaces between packages and smart abstraction of shared functionality, and I hope it continues into the future.</p>
 
 </div>
 

@@ -69,7 +69,7 @@
 <li>I started up a terminal (in case you were initially confused by the Unity interface, like me, you click the icon in the top left and type in what you want, in this case <em>terminal</em>) and installed xmonad through the package manager: <em>sudo apt-get install xmonad</em></li>
 <li>I then logged out. Now, to log-in with xmonad as my window manager, I click the little Ubuntu icon next to my name and selected &quot;XMonad&quot; (not &quot;GNOME with Xmonad&quot; - the subtleties escape me at the moment...). After typing in my password and hitting enter, nothing seem to happen except the log-in screen goes away.</li>
 <li>Its not broken - there is just nothing open. Hitting <em>alt-shift-enter</em> opens a terminal, and hitting it again opens another, putting them side-by-side. You can move the mouse to shift focus, or press <em>alt-j</em> and <em>alt-k</em> to cycle between windows. For more shortcuts, I found <a href="http://xmonad.org/tour.html">this tour</a> really helpful. Helpful tip, if you need to bail out of XMonad before going on: to log out, <em>alt-shift-q</em> will work.</li>
-<li>If you are anything like me, you&#39;ll find the idea of using alt for managing windows like this a bit unnatural. Given that the Windows key is on my keyboard, makes sense to me to use that instead. Fortunately this is pretty easy to do and is my first customization of xmonad. Apparently customization is another of the virtues of Xmonad, and you actually write the configuration file as a <a href="http://en.wikipedia.org/wiki/Haskell_(programming_language">Haskell</a>) script!
+<li>If you are anything like me, you&#39;ll find the idea of using alt for managing windows like this a bit unnatural. Given that the Windows key is on my keyboard, makes sense to me to use that instead. Fortunately this is pretty easy to do and is my first customization of xmonad. Apparently customization is another of the virtues of Xmonad, and you actually write the configuration file as a <a href="http://en.wikipedia.org/wiki/Haskell_(programming_language)">Haskell</a> script!
 
 <ul>
 <li>First we need a directory to store our configuration (<code>mkdir ~/.xmonad</code>), and to create and edit the config file itself (e.g. <code>nano ~/.xmonad/xmonad.hs</code>)</li>
@@ -81,8 +81,7 @@
 
 <span class="nf">main</span> <span class="ow">=</span> <span class="n">xmonad</span> <span class="n">defaultConfig</span>
          <span class="p">{</span> <span class="n">modMask</span> <span class="ow">=</span> <span class="n">mod4Mask</span>
-         <span class="p">}</span>
-</code></pre></div>
+         <span class="p">}</span></code></pre></div>
 
 <ul>
 <li>The above code says to run xmonad according to the default values except for the modifications listed in this key-value structure. <em>mod4Mask</em> indicates the Windows key for most keyboards. To use the new settings, press <em>alt-q</em> to reload xmonad.hs. Test it out by creating a new terminal with <em>win-shift-enter</em>, and close it with <em>win-shift-c</em></li>
@@ -131,8 +130,7 @@
     <span class="p">[</span> <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioLowerVolume</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master on &amp;&amp; amixer set Headphone on &amp;&amp; amixer set Master 2-&quot;</span><span class="p">),</span> 
       <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioRaiseVolume</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master on &amp;&amp; amixer set Headphone on &amp;&amp; amixer set Master 2+&quot;</span><span class="p">),</span>
       <span class="p">((</span><span class="mi">0</span> <span class="p">,</span> <span class="n">xF86XK_AudioMute</span><span class="p">),</span> <span class="n">spawn</span> <span class="s">&quot;amixer set Master toggle &amp;&amp; amixer set Headphone toggle&quot;</span><span class="p">)</span> <span class="p">]</span>
-    <span class="p">]</span>
-</code></pre></div>
+    <span class="p">]</span></code></pre></div>
 
 <ul>
 <li>The above is pretty complicated, but there is a reason: the problem seems to be that toggling the Master volume control turns Headphone off, but toggling it again does not turn it on, see <a href="http://ubuntuforums.org/showthread.php?t=1796713">here</a> or <a href="http://askubuntu.com/questions/65764/how-do-i-toggle-sound-with-amixer">here</a>. Something is still not totally right with the unmute button, it seems to work after after a random time, but pressing a volume key to unmute works fine.</li>
@@ -164,8 +162,7 @@
 <div class="highlight"><pre><code class="haskell"><span class="nf">myManagementHooks</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">ManageHook</span><span class="p">]</span>
 <span class="nf">myManagementHooks</span> <span class="ow">=</span> <span class="p">[</span>
   <span class="n">resource</span> <span class="o">=?</span> <span class="s">&quot;stalonetray&quot;</span> <span class="o">--&gt;</span> <span class="n">doIgnore</span>
-  <span class="p">]</span>
-</code></pre></div>
+  <span class="p">]</span></code></pre></div>
 
 <ul>
 <li>... and add change the <code>manageHook</code> line to <code>manageHook = manageDocks &lt;+&gt; manageHook defaultConfig &lt;+&gt; composeAll myManagementHooks</code></li>
@@ -185,8 +182,7 @@ skip_taskbar
 icon_size 12
 kludges force_icons_size
 <span class="c"># Tell xmonad &quot;Stand back, I got this&quot;</span>
-window_strut none
-</code></pre></div>
+window_strut none</code></pre></div>
 
 <ul>
 <li>Now we have a tray program, we want it to run automatically after we log in along with Dropbox and nm-applet (the wireless management applet). The file <code>/usr/share/xsessions/xmonad.desktop</code> is what determines what logging in with Xmonad selected actually does. The line <code>exec=xmonad</code> currently launches xmonad directly. We will replace this a bash script that launches the programs we want first before launching xmonad. Create a new file, e.g. <code>startxmonad.sh</code>:</li>
@@ -196,8 +192,7 @@ window_strut none
 stalonetray <span class="p">&amp;</span>
 nm-applet <span class="p">&amp;</span>
 dropbox start
-<span class="nb">exec </span>xmonad
-</code></pre></div>
+<span class="nb">exec </span>xmonad</code></pre></div>
 
 <ul>
 <li>Make it executable with <code>chmod +x startxmonad.sh</code>. Now we have this file, we can modify the .desktop file, e.g. <code>sudo /usr/share/xsessions/xmonad.desktop</code> and change the <code>exec=xmonad</code> line to, e.g. <code>exec=/home/idunning/.xmonad/startxmonad.sh</code></li>
@@ -236,6 +231,8 @@ dropbox start
       <hr>
       <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
         
           <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
         

@@ -1,0 +1,32 @@
+---
+author: idunning
+date: 2014-07-20 12:00:00+00:00
+layout: post
+title: Julia Package Ecosystem Dependency Graphs
+---
+
+[Julia](http://julialang.org) is a relatively young programming language that is rising in popularity. I personally use heavily in my work, and try to contribute back to where I can. It has an [in-built package manager](http://docs.julialang.org/en/release-0.2/manual/packages/) that is mostly used to access packages from the central repository, [METADATA.jl](https://github.com/JuliaLang/METADATA.jl), which contains a listing of packages and their dependencies. At the time of writing there 363 packages available compatible with the Julia 0.3 release candidate.
+
+I recently wrote some code to analyze METADATA, available as part of [PackageEval.jl](https://github.com/IainNZ/PackageEvaluator.jl) (funnily enough, this package isn't in METADATA). I have utilized that functionality to generate *dependency graphs* for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl), which does force-based graph layout in pure Julia, and [Compose.jl](https://github.com/dcjones/Compose.jl), a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I've implemented in GraphLayout is still pretty basic and doesn't do anything smart with labels or line avoidance.
+
+The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is [Quandl.jl](https://github.com/milktrader/Quandl.jl) with 30. Interestingly, it only directly depends on five packages itself.
+
+{% img /images/Quandl.svg Quandl.jl dependency graph %}
+
+[Gadfly.jl](https://github.com), which many in the Julia community often think of as being the one of the most "connected", is actually in sixth place with 21 dependencies, although perhaps has a more interesting dependency graph because it is quite diverse.
+
+{% img /images/Gadfly.svg Gadfly.jl dependency graph %}
+
+If we consider only packages with at least 1 dependency, we find that the median number of dependencies is 4, with an average of approximately 6.5.
+
+We can now reverse the direction of all the links in the graph to find the most-depended-on packages. The most-depended-on package is [URIParser.jl](https://github.com/Keno/URIParser.jl) with 80 packages depending on it, closely followed by [BinDeps.jl](https://github.com/JuliaLang/BinDeps.jl) (which provides binary dependency installation support for many packages).
+
+{% img /images/URIParser.svg URIParser.jl reverse dependency graph %}
+
+Fourth place is [StatsBase.jl](https://github.com/JuliaStats/StatsBase.jl) with 62, which suggests that there is encouraging code re-use of basic statistical functionality.
+
+{% img /images/StatsBase.svg StatsBase.jl reverse dependency graph %}
+
+If we consider only packages with at least 1 package depending on them, we find the median to be 3 dependent packages but the mean to be 10.5. This is due to the 15 or so packages with more than 30 dependent packages.
+
+One of the biggest problems with "new" languages is the bootstrapping problem of getting the size of the ecosystem of packages large enough to encourage new users, who in turn grow the ecosystem. Having high-quality packages that can be built upon and composed will reduce development time for new higher-level packages. There is a strong culture already developing in the Julia world that emphasizes shared interfaces between packages and smart abstraction of shared functionality, and I hope it continues into the future.

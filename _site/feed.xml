@@ -7,6 +7,39 @@
 		<atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Julia Package Ecosystem Dependency Graphs</title>
+				<description>&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use heavily in my work, and try to contribute back to where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there 363 packages available compatible with the Julia 0.3 release candidate.&lt;/p&gt;
+
+&lt;p&gt;I recently wrote some code to analyze METADATA, available as part of &lt;a href=&quot;https://github.com/IainNZ/PackageEvaluator.jl&quot;&gt;PackageEval.jl&lt;/a&gt; (funnily enough, this package isn&amp;#39;t in METADATA). I have utilized that functionality to generate &lt;em&gt;dependency graphs&lt;/em&gt; for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with &lt;a href=&quot;https://github.com/IainNZ/GraphLayout.jl&quot;&gt;GraphLayout.jl&lt;/a&gt;, which does force-based graph layout in pure Julia, and &lt;a href=&quot;https://github.com/dcjones/Compose.jl&quot;&gt;Compose.jl&lt;/a&gt;, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I&amp;#39;ve implemented in GraphLayout is still pretty basic and doesn&amp;#39;t do anything smart with labels or line avoidance.&lt;/p&gt;
+
+&lt;p&gt;The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is &lt;a href=&quot;https://github.com/milktrader/Quandl.jl&quot;&gt;Quandl.jl&lt;/a&gt; with 30. Interestingly, it only directly depends on five packages itself.&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Quandl.svg&quot; alt=&quot;Quandl.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Quandl.jl dependency graph&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com&quot;&gt;Gadfly.jl&lt;/a&gt;, which many in the Julia community often think of as being the one of the most &amp;quot;connected&amp;quot;, is actually in sixth place with 21 dependencies, although perhaps has a more interesting dependency graph because it is quite diverse.&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Gadfly.svg&quot; alt=&quot;Gadfly.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Gadfly.jl dependency graph&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;If we consider only packages with at least 1 dependency, we find that the median number of dependencies is 4, with an average of approximately 6.5.&lt;/p&gt;
+
+&lt;p&gt;We can now reverse the direction of all the links in the graph to find the most-depended-on packages. The most-depended-on package is &lt;a href=&quot;https://github.com/Keno/URIParser.jl&quot;&gt;URIParser.jl&lt;/a&gt; with 80 packages depending on it, closely followed by &lt;a href=&quot;https://github.com/JuliaLang/BinDeps.jl&quot;&gt;BinDeps.jl&lt;/a&gt; (which provides binary dependency installation support for many packages).&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/URIParser.svg&quot; alt=&quot;URIParser.jl reverse dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;URIParser.jl reverse dependency graph&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;Fourth place is &lt;a href=&quot;https://github.com/JuliaStats/StatsBase.jl&quot;&gt;StatsBase.jl&lt;/a&gt; with 62, which suggests that there is encouraging code re-use of basic statistical functionality.&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/StatsBase.svg&quot; alt=&quot;StatsBase.jl reverse dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;StatsBase.jl reverse dependency graph&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;If we consider only packages with at least 1 package depending on them, we find the median to be 3 dependent packages but the mean to be 10.5. This is due to the 15 or so packages with more than 30 dependent packages.&lt;/p&gt;
+
+&lt;p&gt;One of the biggest problems with &amp;quot;new&amp;quot; languages is the bootstrapping problem of getting the size of the ecosystem of packages large enough to encourage new users, who in turn grow the ecosystem. Having high-quality packages that can be built upon and composed will reduce development time for new higher-level packages. There is a strong culture already developing in the Julia world that emphasizes shared interfaces between packages and smart abstraction of shared functionality, and I hope it continues into the future.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 20 Jul 2014 08:00:00 -0400</pubDate>
+				<link>http://iaindunning.com/2014/pkg-deps.html</link>
+				<guid isPermaLink="true">http://iaindunning.com/2014/pkg-deps.html</guid>
+			</item>
+		
+			<item>
 				<title>IPLANG - an optimization-based esolang</title>
 				<description>&lt;p&gt;In this post I present my new programming language, &lt;strong&gt;IPLANG&lt;/strong&gt;, where the program is described (encoded?) as the solution to a &lt;a href=&quot;http://en.wikipedia.org/wiki/Integer_programming&quot;&gt;binary optimization problem&lt;/a&gt;, and there are a large number of possible encodings for even the most simple program - the art is in making the relationship between the optimization problem and the program as interesting as possible.&lt;/p&gt;
 
@@ -21,7 +54,7 @@
 &lt;li&gt;&lt;a href=&quot;http://esolangs.org/wiki/Spleenmap&quot;&gt;Spleenmap&lt;/a&gt; uses only 5 instructions, and is written as a two dimensional block of text, resulting in something like &amp;quot;ASCII art&amp;quot;.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;http://esolangs.org/wiki/Brainfuck&quot;&gt;Brainfuck&lt;/a&gt; is probably the most famous (and copied). It uses 8 instructions, and strikes a fairly interesting sweet-spot between minimalism and complexity. Here is a program in Brainfuck that prints out &lt;em&gt;Hello World!&lt;/em&gt;:&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;++++++++[&amp;gt;++++[&amp;gt;++&amp;gt;+++&amp;gt;+++&amp;gt;+&amp;lt;&amp;lt;&amp;lt;&amp;lt;-]&amp;gt;+&amp;gt;+&amp;gt;-&amp;gt;&amp;gt;+[&amp;lt;]&amp;lt;-]&amp;gt;&amp;gt;.&amp;gt;---.+++++++..+++.&amp;gt;&amp;gt;.&amp;lt;-.&amp;lt;.+++.------.--------.&amp;gt;&amp;gt;+.&amp;gt;++.
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;++++++++[&amp;gt;++++[&amp;gt;++&amp;gt;+++&amp;gt;+++&amp;gt;+&amp;lt;&amp;lt;&amp;lt;&amp;lt;-]&amp;gt;+&amp;gt;+&amp;gt;-&amp;gt;&amp;gt;+[&amp;lt;]&amp;lt;-]&amp;gt;&amp;gt;.&amp;gt;---.+++++++..+++.&amp;gt;&amp;gt;.&amp;lt;-.&amp;lt;.+++.------.--------.&amp;gt;&amp;gt;+.&amp;gt;++.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;As you can tell from the listings on Esolang.org, there have been many esolangs made over the years. A large number seem to be based on Brainfuck, either in that they extend/reduce it slightly or can be trivially transliterated to Brainfuck. I am fond of &lt;a href=&quot;http://esolangs.org/wiki/Ook!&quot;&gt;Ook!&lt;/a&gt;, where the 8 instructions are matched to different combinations of &amp;quot;Ook&amp;quot; and punctuation, e.g. &amp;quot;increment&amp;quot; is &lt;code&gt;Ook. Ook.&lt;/code&gt; and &amp;quot;decrement&amp;quot; is &lt;code&gt;Ook! Ook!&lt;/code&gt;. Instead of ooks and punctuation though, we could be dull and simply use a binary encoding, e.g.&lt;/p&gt;
 
@@ -70,7 +103,7 @@ $$
 &lt;/ol&gt;
 
 &lt;p&gt;The interest comes from the multitude of ways to encode a problem. Consider the following very simple program which emits an exclamation mark then terminates:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;++++++++[&amp;gt;++++&amp;lt;-]&amp;gt;+.
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;++++++++[&amp;gt;++++&amp;lt;-]&amp;gt;+.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This program is 20 instructions long, or 60 bits, so we will need a 60 variable optimization problem. There are two simple problems that will always work that are also completely boring. In the first, define a vector \( \mathbf{c} \in \mathbb{R}^n \) such that \( c_j \) is positive if \( x_j \) should be 1, and negative if it should be 0. Then our optimization problem is simply&lt;/p&gt;
 
@@ -114,8 +147,7 @@ $$
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;JuMP&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Modeling language&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Cbc&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Integer programming solver&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;https://github.com/johnmyleswhite/Brainfuck.jl&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Brainfuck interpreter&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clone&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;https://github.com/johnmyleswhite/Brainfuck.jl&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Brainfuck interpreter&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;then you can write your IPLANG program using JuMP (&lt;a href=&quot;https://jump.readthedocs.org/en/release-0.5&quot;&gt;manual&lt;/a&gt;)&lt;/p&gt;
 
@@ -127,8 +159,7 @@ $$
 &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;addConstraint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Solve the problem&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;x_val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Values will be Float64s - not necessarily exactly 0 and 1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;x_val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Values will be Float64s - not necessarily exactly 0 and 1&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;and run it with &lt;a href=&quot;http://www.johnmyleswhite.com/&quot;&gt;John Myles White&lt;/a&gt;&amp;#39;s &lt;a href=&quot;https://github.com/johnmyleswhite/Brainfuck.jl&quot;&gt;Brainfuck.jl&lt;/a&gt; (thanks John!):&lt;/p&gt;
 
@@ -153,8 +184,7 @@ $$
     &lt;span class=&quot;n&quot;&gt;Brainfuck&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;interpret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ops&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;iplang_to_bf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;iplang_to_bf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Example IPLANG program: minimum vertex cover&lt;/h3&gt;
 
@@ -190,8 +220,7 @@ $$
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;iplang_to_bf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Defined above&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;iplang_to_bf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Defined above&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Next steps&lt;/h3&gt;
 
@@ -201,7 +230,7 @@ $$
 
 &lt;p&gt;&lt;a href=&quot;https://news.ycombinator.com/item?id=7826476&quot;&gt;HackerNews discussion&lt;/a&gt;.&lt;/p&gt;
 </description>
-				<pubDate>Wed, 28 May 2014 12:00:00 +0000</pubDate>
+				<pubDate>Wed, 28 May 2014 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2014/iplang.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2014/iplang.html</guid>
 			</item>
@@ -216,7 +245,7 @@ $$
 
 &lt;p&gt;In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.&lt;/p&gt;
 
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/submarines.png&quot; alt=&quot;Those battleships don't stand a chance!&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Those battleships don't stand a chance!&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/submarines.png&quot; alt=&quot;Those battleships don&#39;t stand a chance!&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Those battleships don&#39;t stand a chance!&lt;/p&gt;&lt;/div&gt;
 
 &lt;h3&gt;Modeling the Problem&lt;/h3&gt;
 
@@ -289,8 +318,7 @@ $$
       &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The code is a fairly direct translation of our mathematical model. Our function takes into two lists of ship locations - we&amp;#39;ll describe their format more precisely in a moment. First we create a new model object, and define binary variables for each possible combination of submarine and battleship. We set our objective to minimize total distance, and add our two groups of constraints. Finally we solve and process the output.&lt;/p&gt;
 
@@ -320,21 +348,19 @@ $$
               &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
               &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;solveSubBattle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;solveSubBattle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Plotting the solution&lt;/h3&gt;
 
 &lt;p&gt;There are many plotting solutions available in Julia but today I&amp;#39;m going to use &lt;a href=&quot;https://github.com/stevengj/PyPlot.jl&quot;&gt;PyPlot.jl&lt;/a&gt;, a wrapper around the versatile &lt;a href=&quot;http://matplotlib.org/&quot;&gt;Matplotlib&lt;/a&gt;. First, we need to modify our solve routine to return pairs of submarines and battleships:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;  &lt;span class=&quot;n&quot;&gt;pairs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;n&quot;&gt;pairs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;
     &lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
       &lt;span class=&quot;n&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pairs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
     &lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pairs&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pairs&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;then the plotting code follows pretty naturally from that - not much to say!&lt;/p&gt;
 
@@ -362,8 +388,7 @@ $$
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
 &lt;span class=&quot;n&quot;&gt;fig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;canvas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;draw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;readline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Stop the program from exiting until we&amp;#39;ve seen it!&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;readline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Stop the program from exiting until we&amp;#39;ve seen it!&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The result looks pretty sensible too - see the image at the top of the post.&lt;/p&gt;
 
@@ -380,7 +405,7 @@ $$
 &lt;li&gt;&lt;p&gt;&lt;em&gt;(hard)&lt;/em&gt; How would could you model uncertainty in the locations of the battleships?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-				<pubDate>Fri, 11 Apr 2014 12:00:00 +0000</pubDate>
+				<pubDate>Fri, 11 Apr 2014 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2014/subs-battleships.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2014/subs-battleships.html</guid>
 			</item>
@@ -410,8 +435,7 @@ $$
 &lt;span class=&quot;n&quot;&gt;zval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;μ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;abs2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;φ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Normal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Real&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;φ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;σ&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We could even dream up our own (substantially less useful) code:&lt;/p&gt;
 
@@ -420,8 +444,7 @@ $$
 &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;./&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;√&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;∑&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.^&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting or add-ins (e.g. &lt;a href=&quot;https://github.com/mvoidex/UnicodeMath&quot;&gt;Sublime Text&lt;/a&gt;). I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.&lt;/p&gt;
 
@@ -457,8 +480,7 @@ $$
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** juli# #nd UNIco## ****BOOM****&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** J#L## aND unICODE ****BOOM****&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** julIa And UniC#dE ****BOOM****&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;爆発&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Julia and Unicode&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# ****BOOM**** julIa And UniC#dE ****BOOM****&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Fun-for-some: Optimization variables names&lt;/h3&gt;
 
@@ -487,8 +509,7 @@ $$
 &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♣&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♣&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♥&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♥&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;♦&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.99&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;♦&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;]&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Selected hand: [♠♣]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;]&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# Selected hand: [♠♣]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Here-be-dragons-fun: Visually similar symbols&lt;/h3&gt;
 
@@ -500,14 +521,13 @@ $$
 &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
 
 &lt;span class=&quot;n&quot;&gt;julia&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;µ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;µ&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;µ&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;The problem is that we are using &lt;code&gt;μ&lt;/code&gt; (&amp;quot;micro sign&amp;quot;) and &lt;code&gt;µ&lt;/code&gt; (&amp;quot;Greek small letter mu&amp;quot;), an easy mistake to make in practice. This was discussed at length in &lt;a href=&quot;https://github.com/JuliaLang/julia/issues/5434&quot;&gt;Issue #5434&lt;/a&gt;. To summarize the outcome, it turns out that there is a &lt;a href=&quot;https://en.wikipedia.org/wiki/Unicode_equivalence&quot;&gt;whole Wikipedia page&lt;/a&gt; dedicated to the various degrees of equivalences one can draw. The decision to be made is what degree of conservativeness you want to apply. At one end of the spectrum is making almost everything possible equivalent, e.g. treat &lt;code&gt;ℍ&lt;/code&gt; and &lt;code&gt;H&lt;/code&gt; as the same. At the other end is basically doing nothing (or maybe only for a strict subset of &amp;quot;common&amp;quot; mistakes.) In the end the discussion settled on using the &amp;quot;NFC&amp;quot; normalization, with any further issues addressed as they arise. Python3 seems to have &lt;a href=&quot;http://legacy.python.org/dev/peps/pep-3131/#implementation&quot;&gt;selected NFC as well&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The ability to use Unicode in identifiers is not a widely used one for general purpose computing, and with the exception of non-English identifiers this is probably a good thing for maintainability. I do hope to see it used with more confidence in technical computing, if it aids understanding of algorithm implementation.&lt;/p&gt;
 </description>
-				<pubDate>Sat, 22 Feb 2014 12:00:00 +0000</pubDate>
+				<pubDate>Sat, 22 Feb 2014 07:00:00 -0500</pubDate>
 				<link>http://iaindunning.com/2014/julia-unicode.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2014/julia-unicode.html</guid>
 			</item>
@@ -544,8 +564,7 @@ $$
 
 &lt;span class=&quot;c&quot;&gt;# CPLEX (experimental!)&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# https://github.com/joehuchette/CPLEXLink.jl&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;CPLEXLink&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;Pkg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;CPLEXLink&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h3&gt;Formulating the TSP integer program&lt;/h3&gt;
@@ -590,8 +609,7 @@ $$
 &lt;span class=&quot;c&quot;&gt;# But it should be&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;#    /--+-----------+--\&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;#   +                   +&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#    \--+-----------+--/&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;c&quot;&gt;#    \--+-----------+--/&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;We can remove these &amp;quot;incorrect&amp;quot; solutions using so-called &amp;quot;subtour-elimination constraints&amp;quot; (see again the &lt;a href=&quot;http://www.tsp.gatech.edu/methods/opt/subtour.htm&quot;&gt;Georgia Tech&lt;/a&gt; website). These constraints essentially say that for any given set of cities, if you treat that set as a black box there must be at least one trip into that set and one trip out. Unfortunately there are an &lt;strong&gt;exponential number of subsets of cities&lt;/strong&gt;, and so an exponential number of constraints. We could generate them all but you will find that, in practice, very few are actually needed. The secret is to add them &amp;quot;lazily&amp;quot; - only when they are needed. You only need one constraint to &amp;quot;correct&amp;quot; the solution to our example problem above.&lt;/p&gt;
 
@@ -668,8 +686,7 @@ $$
           &lt;span class=&quot;mi&quot;&gt;550&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;tour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solveTSP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cities&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Solution: &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;As you can see, there is pretty much a line-to-line correspondence between the JuMP constraint and objective definitions and the mathematical statement of the problem.&lt;/p&gt;
 
@@ -713,8 +730,7 @@ $$
 
     &lt;span class=&quot;c&quot;&gt;# Add the new subtour elimination constraint we built&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;addLazyConstraint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arcs_from_subtour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Again, nothing too fancy. There are a few key things to understand here:&lt;/p&gt;
 
@@ -727,7 +743,7 @@ $$
 
 &lt;p&gt;All that is left is for us to tell JuMP to use our &lt;code&gt;subtour&lt;/code&gt; callback, as in the following snippet:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;    &lt;span class=&quot;c&quot;&gt;# ......&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;c&quot;&gt;# ......&lt;/span&gt;
         &lt;span class=&quot;c&quot;&gt;# Add the new subtour elimination constraint we built&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;addLazyConstraint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arcs_from_subtour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# End function subtour&lt;/span&gt;
@@ -738,8 +754,7 @@ $$
 
     &lt;span class=&quot;c&quot;&gt;# Return best tour&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;extractTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# end solveTSP&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# end solveTSP&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3&gt;Go try it!&lt;/h3&gt;
 
@@ -758,8 +773,7 @@ $$
 &lt;span class=&quot;c&quot;&gt;# CPLEX&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CPLEXLink&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# ...&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CplexSolver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+    &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CplexSolver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Let us know how it goes. If you have issues open a report at the &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl/issues?state=open&quot;&gt;JuMP issues page&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/iaindunning&quot;&gt;Tweet at me&lt;/a&gt;, or email me (idunning AT mit DOT edu).&lt;/p&gt;
 
@@ -767,7 +781,7 @@ $$
 
 &lt;p&gt;We hope to add support in JuMP for other common callbacks such as heuristics, cuts, and branching rules in the near future. Also on our mind is adding support for &lt;a href=&quot;http://scip.zib.de/&quot;&gt;SCIP&lt;/a&gt; (which has a wide variety of callbacks) and &lt;a href=&quot;http://www.sulumoptimization.com/&quot;&gt;Sulum&lt;/a&gt; (callbacks are coming soon).&lt;/p&gt;
 </description>
-				<pubDate>Sun, 15 Dec 2013 12:00:00 +0000</pubDate>
+				<pubDate>Sun, 15 Dec 2013 07:00:00 -0500</pubDate>
 				<link>http://iaindunning.com/2013/mip-callback.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/mip-callback.html</guid>
 			</item>
@@ -901,7 +915,7 @@ even without the filibuster.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;The Senate does not represent the voices of the people. The argument for its existence and creation is usually claimed to be a check against the &amp;quot;tyranny of the majority&amp;quot; (the House, being a more representative body, represents the &amp;quot;majority&amp;quot; in this case). However, one must question whether this notion makes sense in the modern day and, even if it does, whether the degree to which a minority can block measures (with or without the even more &amp;quot;unrepresentative&amp;quot; filibuster) is a price worth paying.&lt;/p&gt;
 </description>
-				<pubDate>Fri, 22 Nov 2013 12:00:00 +0000</pubDate>
+				<pubDate>Fri, 22 Nov 2013 07:00:00 -0500</pubDate>
 				<link>http://iaindunning.com/2013/us-senate.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/us-senate.html</guid>
 			</item>
@@ -928,7 +942,7 @@ even without the filibuster.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;We&amp;#39;ve set up a &lt;a href=&quot;https://github.com/JuliaOpt&quot;&gt;JuliaOpt GitHub organization&lt;/a&gt; and a &lt;a href=&quot;http://juliaopt.org&quot;&gt;JuliaOpt website&lt;/a&gt; - check them out the projects, use it, report bugs, and contribute back - we&amp;#39;d love to have you join us.&lt;/p&gt;
 </description>
-				<pubDate>Sat, 12 Oct 2013 12:00:00 +0000</pubDate>
+				<pubDate>Sat, 12 Oct 2013 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2013/informs-juliaopt.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/informs-juliaopt.html</guid>
 			</item>
@@ -1138,8 +1152,7 @@ $$
   &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;SolveUrban&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;SolveUrban&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Try it yourself to see what the solution is. Do you believe the solution is correct, does it match your intuition?&lt;/p&gt;
 
@@ -1154,7 +1167,7 @@ $$
 
 &lt;p&gt;The problem size here is so small that a solution is found almost instantly. However these are real issues for &amp;quot;real-world&amp;quot; problems and a lot of research is devoted to both improving solvers and studying the implications of different formulations.&lt;/p&gt;
 </description>
-				<pubDate>Mon, 30 Sep 2013 12:00:00 +0000</pubDate>
+				<pubDate>Mon, 30 Sep 2013 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2013/urban-planning.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/urban-planning.html</guid>
 			</item>
@@ -1237,13 +1250,12 @@ $$
      &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;54&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;66&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;22&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
      &lt;span class=&quot;mi&quot;&gt;49&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;41&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
      &lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;63&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;83&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;46&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;SolveCombination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;SolveCombination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;br&gt;
 An extension question: what happens if relax constraint 2? How many locks would we need to make the sum 419 if we didn&amp;#39;t need to set all 6 locks?&lt;/p&gt;
 </description>
-				<pubDate>Sat, 21 Sep 2013 12:00:00 +0000</pubDate>
+				<pubDate>Sat, 21 Sep 2013 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2013/combination-locks.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/combination-locks.html</guid>
 			</item>
@@ -1332,8 +1344,7 @@ An extension question: what happens if relax constraint 2? How many locks would 
 &lt;span class=&quot;lineno&quot;&gt;38&lt;/span&gt; 
 &lt;span class=&quot;lineno&quot;&gt;39&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt;
 &lt;span class=&quot;lineno&quot;&gt;40&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Line 7 creates our variable &lt;em&gt;x&lt;/em&gt; with three indices over the range 1 to 9, and enforces integrality. &lt;code&gt;@defVar&lt;/code&gt; is a macro, not a function, which lets it create a variable &lt;code&gt;x&lt;/code&gt; in the local scope. I have removed the other constraints for brevity and left the constraint that enforces that each cell contains only one value. Note the correspondance between the mathematical notation (&amp;quot;for all rows, for all columns&amp;quot;) and the &lt;code&gt;for&lt;/code&gt; loops (lines 11 and 12). &lt;code&gt;@addConstraint&lt;/code&gt; (line 13) is another macro that facilitates the efficient storage of the constraint as a sparse vector, and matches the mathematical description very closely. On line 19 we solve the model with the default solver &lt;a href=&quot;https://projects.coin-or.org/Cbc&quot;&gt;COIN-OR CBC&lt;/a&gt; - an open-source integer programming solver. As a side note, Julia/JuMP also has interfaces to GLPK (open-source) and Gurobi (closed-source). Finally, we pull the solution back from the solver (if a feasible solution could be found) as a three-dimensional matrix of 0s and 1s which we convert to a two-dimensional vector of 1-to-9s (lines 27 to 36).&lt;/p&gt;
 
@@ -1410,8 +1421,7 @@ An extension question: what happens if relax constraint 2? How many locks would 
 
 &lt;span class=&quot;c&quot;&gt;# Boot up the server&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2&gt;Try it yourself!&lt;/h2&gt;
 
@@ -1424,333 +1434,9 @@ An extension question: what happens if relax constraint 2? How many locks would 
 
 &lt;p&gt;Let me know how that goes by contacting me at idunning AT mit.edu or &lt;a href=&quot;https://www.twitter.com/iaindunning&quot;&gt;@iaindunning&lt;/a&gt;.&lt;/p&gt;
 </description>
-				<pubDate>Sun, 15 Sep 2013 12:00:00 +0000</pubDate>
+				<pubDate>Sun, 15 Sep 2013 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2013/sudoku-as-a-service.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/sudoku-as-a-service.html</guid>
-			</item>
-		
-			<item>
-				<title>SimplexJS</title>
-				<description>&lt;p&gt;&lt;strong&gt;SimplexJS&lt;/strong&gt; is a Javascript library that solves &lt;a href=&quot;http://en.wikipedia.org/wiki/Linear_programming&quot;&gt;linear programming problems&lt;/a&gt; (LPs) and &lt;a href=&quot;http://en.wikipedia.org/wiki/Linear_programming#Integer_unknowns&quot;&gt;mixed-integer linear programming problems&lt;/a&gt; (MILPs) right in your browser. I&amp;#39;m not sure if this is particularily useful for any industrial application, but was fun to make, and could be used for teaching. It solves linear programs using the &lt;a href=&quot;http://en.wikipedia.org/wiki/Simplex_algorithm&quot;&gt;Simplex&lt;/a&gt; method, and uses branch-and-bound to solve problems with integer variables. LPs must be provided as dense matrices and vectors, in the following form:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;minimize &lt;strong&gt;c&lt;/strong&gt; . &lt;strong&gt;x&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;subject to A &lt;strong&gt;x&lt;/strong&gt; = &lt;strong&gt;b&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;and &lt;strong&gt;l&lt;/strong&gt; &amp;lt;= &lt;strong&gt;x&lt;/strong&gt; &amp;lt;= &lt;strong&gt;u&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This implementation is about as basic as it gets, but is hopefully &amp;quot;correct&amp;quot;. The branch-and-bound solver might not be, and is certainly not very efficient. &lt;/p&gt;
-
-&lt;h2&gt;Demo: Travelling Salesman Problem&lt;/h2&gt;
-
-&lt;h3&gt;What is a &amp;quot;TSP&amp;quot;?&lt;/h3&gt;
-
-&lt;p&gt;From the &lt;a href=&quot;http://www.tsp.gatech.edu/problem/index.html&quot;&gt;Georgia Institue of Technology website&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Given a collection of cities and the cost of travel between each pair of them, the traveling salesman problem, or TSP for short, is to find the cheapest way of visiting all of the cities and returning to your starting point. In the standard version we study, the travel costs are symmetric in the sense that traveling from city X to city Y costs just as much as traveling from Y to X.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3&gt;Integer Programming Formulation&lt;/h3&gt;
-
-&lt;p&gt;Given our definition of a TSP from above, we can start formulating the problem as an integer program:&lt;/p&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/simplextspobj.png&quot; alt=&quot;Minimize&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Minimize&lt;/p&gt;&lt;/div&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/simplextspcon1.png&quot; alt=&quot;Must enter every city&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Must enter every city&lt;/p&gt;&lt;/div&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/simplextspcon2.png&quot; alt=&quot;Must leave every city&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Must leave every city&lt;/p&gt;&lt;/div&gt;
-
-&lt;p&gt;where our &lt;em&gt;xij&lt;/em&gt; is a binary (0 or 1) variable that says if we will go from city &lt;em&gt;i&lt;/em&gt; to city &lt;em&gt;j&lt;/em&gt; on our tour. We are dealing with just the case where the costs between cities are symmetric, that is &lt;em&gt;cij = cji&lt;/em&gt;, so this can be simplified considerably. The simplified IP for a 4 city problem would have:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;A variable xij for each link: (1,2) (1,3) (1,4) (2,3) (2,4) (3,4)&lt;/li&gt;
-&lt;li&gt;A constraint for each city, that says each city must be visited and left:
-
-&lt;ul&gt;
-&lt;li&gt;x1,2 + x1,3 + x1,4 = 2&lt;/li&gt;
-&lt;li&gt;x1,2 + x2,3 + x2,4 = 2&lt;/li&gt;
-&lt;li&gt;x1,3 + x2,3 + x3,4 = 2&lt;/li&gt;
-&lt;li&gt;x1,4 + x2,4 + x3,4 = 2&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3&gt;Try it out&lt;/h3&gt;
-
-&lt;p&gt;So now we&amp;#39;ve got our integer programming formulation, let&amp;#39;s try it out on a problem. Click the Reset button below - the default configuration of cities should (magically) appear.&lt;/p&gt;
-
-&lt;div style=&quot;text-align: center;&quot;&gt;
-
-&lt;canvas id=&quot;cityContainer&quot; width=&quot;400&quot; height=&quot;400&quot;
-        onmousemove=&quot;moveHandler(event);&quot;
-        onmousedown=&quot;mouseDownHandler(event);&quot;
-        onmouseup=&quot;mouseUpHandler(event);&quot;
-        onmouseout=&quot;mouseUpHandler(event);&quot;&gt;&lt;/canvas&gt;
-&lt;br&gt;
-&lt;input type=&quot;button&quot; value=&quot;Solve TSP using branch-and-bound&quot; onclick=&quot;javascript:SolveTSP()&quot;&gt;
-&lt;input type=&quot;button&quot; value=&quot;Add city&quot; onclick=&quot;javascript:AddCity()&quot;&gt;
-&lt;input type=&quot;button&quot; value=&quot;Reset&quot; onclick=&quot;javascript:ResetCities();&quot;&gt;
-
-&lt;/div&gt;
-
-&lt;p&gt;You can drag the cities around and re-solve, or add cities to make it more complex. When you are ready to move on, click the Reset button.&lt;/p&gt;
-
-&lt;p&gt;You may notice that the solution is not quite right for certain arrangements. While each city is visited and left, the optimal solution was not a path through all the cities but instead two smaller paths. We can call these smaller tours &lt;em&gt;subtours&lt;/em&gt;, and the constraints necessary to eliminate them are called &lt;em&gt;subtour-elimination constraints&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h3&gt;Subtour-Elimination Constraints&lt;/h3&gt;
-
-&lt;p&gt;For a better and more detailed explanation of this, check out the &lt;a href=&quot;http://www.tsp.gatech.edu/methods/opt/subtour.htm&quot;&gt;Georgia Tech&lt;/a&gt; website.&lt;/p&gt;
-
-&lt;p&gt;To complete our integer programming formulation we need to add these subtour-elimination constraints. An example of a subtour elimination constraint for the 6 city problem shown above would be:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;x0,1 + x1,2 + x0,2 &amp;lt;= 2&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This says that no more than two of the arcs between the nodes (0,1,2) are allowed to be in the solution. Here is something to try: how many possible subtour-elimination constraints are there for this problem? The answer is big, and keeps getting bigger as the number of cities grows. It&amp;#39;d take a long time to just write out all those constraints, let alone solve it. And yet, people solve TSPs with integer programming - so whats the secret?&lt;/p&gt;
-
-&lt;p&gt;Lets try adding that subtour-elimination constraint we worked out before:&lt;/p&gt;
-
-&lt;p&gt;&lt;textarea id=&quot;subtoursEntry&quot; cols=&quot;80&quot; rows=&quot;10&quot;&gt;
-// Insert subtour elimination constraints here. The model building code in 
-// this webpage will evaluate the code in this box before solving, allowing
-// use to tell it to add some extra constraints by saying which arcs are in
-// each subtour.
-// Remove the // from the start of the next line to add a constraint.
-// subtours.push([ [[0,1], [0,2], [1,2]], 2 ]) // Adds  x01 + x02 + x12 &amp;lt;= 2
-&lt;/textarea&gt;&lt;/p&gt;
-
-&lt;p&gt;Have you followed the above instructions? Now re-solve the TSP above. Perfect!&lt;/p&gt;
-
-&lt;p&gt;We only need one of the many possible subtour-elimination constraints to change our nearly-correct solution into the optimal solution. A very similar method was first used &lt;a href=&quot;http://www.tsp.gatech.edu/methods/dfj/index.html&quot;&gt;quite some time ago, in 1954&lt;/a&gt; to solve a problem with 49 cities! This way of solving a problem, by first solving a relaxed version of it and then adding constraints (or &amp;quot;cuts&amp;quot;) to improve the relaxation, is one of the techniques used to solve all sorts of integer programs.&lt;/p&gt;
-
-&lt;h3&gt;Output from the Integer Progamming Solver&lt;/h3&gt;
-
-&lt;p&gt;We can see what the solver is doing by looking at the output that appears below when we hit &amp;quot;Solve&amp;quot;.&lt;/p&gt;
-
-&lt;p id=&quot;output&quot; style=&quot;font-family: monospace&quot;&gt;
-
-&lt;/p&gt;
-
-&lt;script type=&quot;text/javascript&quot; src=&quot;/images/SimplexJS.js&quot;&gt;&lt;/script&gt;
-
-&lt;script type=&quot;text/javascript&quot;&gt;
-var numCities = 6;
-var cities = [  [ 50, 200],
-                [100, 100],
-                [100, 300],
-                [300, 100],
-                [300, 300],
-                [350, 200]  ];
-var curSolution = [];
-var dragging = false;
-var draggingIndex = -1;
-var lastX = -1, lastY = -1;
-var subtours = [];
-
-function ResetCities(e)
-{
-    numCities = 6;
-    cities = [  [ 50, 200],
-                [100, 100],
-                [100, 300],
-                [300, 100],
-                [300, 300],
-                [350, 200]  ];
-    curSolution = [];
-    dragging = false;
-    draggingIndex = -1;
-    lastX = -1, lastY = -1;
-    subtours = [];
-    DrawCities();
-}
-
-function mouseDownHandler(e)
-{
-    var x = e.pageX - e.target.offsetLeft;
-    var y = e.pageY - e.target.offsetTop;
-    for(var i = 0; i &lt; numCities; i++) {
-        var dist = (cities[i][0]-x)*(cities[i][0]-x) + (cities[i][1]-y)*(cities[i][1]-y);
-        if (dist &lt;= 25*25) {
-            dragging = true;
-            lastX = x;
-            lastY = y;
-            draggingIndex = i;
-        }
-    }
-}
-
-function mouseUpHandler(e)
-{
-    dragging = false;
-    lastX = -1;
-    lastY = -1;
-}
-
-function moveHandler(e) {
-    if (dragging) {
-        var x = e.pageX - e.target.offsetLeft;
-        var y = e.pageY - e.target.offsetTop;
-        var deltaX = x - lastX;
-        var deltaY = y - lastY;
-
-        cities[draggingIndex][0] += deltaX;
-        cities[draggingIndex][1] += deltaY;
- 
-        lastX = x;
-        lastY = y;
-        DrawCities();
-    }
-}
-
-function AddCity() {
-    numCities += 1;
-    cities.push([Math.random()*400, Math.random()*400]);
-    DrawCities();
-}
-
-
-function DrawCities() {
-    var canv = document.getElementById(&quot;cityContainer&quot;);
-    var ctxt = canv.getContext(&quot;2d&quot;);
-    ctxt.fillStyle = &quot;#DDDDDD&quot;;
-    ctxt.fillRect(0, 0, canv.width, canv.height);
-    for (i = 0; i &lt; curSolution.length; i++) {
-        ctxt.beginPath();
-        ctxt.moveTo(cities[curSolution[i][0]][0], cities[curSolution[i][0]][1]);
-        ctxt.lineTo(cities[curSolution[i][1]][0], cities[curSolution[i][1]][1]);
-        ctxt.closePath();
-        ctxt.strokeStyle = &quot;#FF0000&quot;;
-        ctxt.stroke();
-
-    }
-    for (i = 0; i &lt; numCities; i++) {
-        ctxt.beginPath();
-        ctxt.arc(cities[i][0], cities[i][1], 20, 0, Math.PI * 2, false);
-        ctxt.closePath();
-        ctxt.strokeStyle = &quot;#000000&quot;;
-        ctxt.stroke();
-        ctxt.fillStyle = &quot;#0000FF&quot;;
-        ctxt.fill();
-        ctxt.fillStyle = &quot;#FFFFFF&quot;;
-        ctxt.font = &quot;bold 12px sans-serif&quot;;
-        ctxt.fillText(i.toString(), cities[i][0]-5, cities[i][1]+5);
-    }
-}
-
-function SolveTSP() {
-
-    document.getElementById(&quot;output&quot;).innerHTML = &quot;Starting SolveTSP()&lt;br&gt;&quot;
-
-    // Load city locations, and calculate distances
-    var Cij = new Array(numCities);
-    for (i = 0; i &lt; numCities; i++) {
-        Cij[i] = new Array(numCities);
-        for (j = 0; j &lt; numCities; j++) {
-            Cij[i][j] = Math.sqrt( (cities[i][0] - cities[j][0]) * (cities[i][0] - cities[j][0])
-                                  +(cities[i][1] - cities[j][1]) * (cities[i][1] - cities[j][1]))
-        }
-    }
-
-    // Create the IP
-    var tsp = {};
-
-    // Create cost vector, map arc to column
-    // x00 x01 x02 x03 x04 x05 x10 x11 ...
-    tsp.n = (numCities)*(numCities-1)/2;
-    tsp.c = new Array(tsp.n);
-    var col = new Array(), z=0;
-    for (i = 0; i &lt; numCities; i++) {
-        for (j = i+1; j &lt; numCities; j++) {
-            col[[i,j]] = z;
-            col[[j,i]] = z;
-            tsp.c[z] = Cij[i][j];
-            z++;
-        }
-    }
-
-    // Create each row of A and b
-    tsp.m = numCities;
-    tsp.A = new Array(tsp.m);
-    tsp.b = new Array(tsp.m);
-    // Degree of each city = 2 (no constraint for last city)
-    for (i = 0; i &lt; numCities; i++) {
-        tsp.A[i] = new Array(tsp.n);
-        for (j = 0; j &lt; tsp.n; j++) tsp.A[i][j] = 0;
-        for (j = 0; j &lt; numCities; j++) {
-            if (i!=j) tsp.A[i][col[[i,j]]] = 1;
-        }
-        tsp.b[i] = 2;
-    }
-
-    // Set variable bounds and type
-    tsp.xLB = new Array(tsp.n);
-    tsp.xUB = new Array(tsp.n);
-    tsp.xINT = new Array(tsp.n);
-    for (i = 0; i &lt; tsp.n; i++) {
-        tsp.xLB[i] = 0; tsp.xUB[i] = 1; tsp.xINT[i] = true;
-    }
-
-
-    // Add subtours
-    subtours = []
-    eval(document.getElementById(&quot;subtoursEntry&quot;).value);
-    for (st = 0; st &lt; subtours.length; st++) {
-        stArcs = subtours[st][0];
-        stSize = subtours[st][1];
-        // Add the slack for this subtour
-        tsp.n += 1;
-        tsp.xLB.push(0);
-        tsp.xUB.push(Infinity);
-        tsp.c.push(0);
-        tsp.xINT.push(false);
-        // Modify existing constraints
-        for (i = 0; i &lt; tsp.m; i++) tsp.A[i].push(0);
-        // Add new constraint
-        tsp.m += 1;
-        tsp.b.push(stSize);
-        tsp.A.push(new Array());
-        for (i = 0; i &lt; tsp.n; i++) tsp.A[tsp.m-1][i] = 0;
-        for (starc = 0; starc &lt; stArcs.length; starc++) {
-            i = stArcs[starc][0];
-            j = stArcs[starc][1];
-            tsp.A[tsp.m-1][col[[i,j]]] = 1;
-        }
-        tsp.A[tsp.m-1][tsp.n-1] = 1; // slack
-    }
-
-    // Solve
-    var log = [];
-    SimplexJS.MAXITERATIONS = 1000;
-    SimplexJS.SolveMILP(tsp, 20, log);
-    var logstr = &quot;&quot;;
-    for (i = 0; i &lt; log.length; i++) logstr += log[i] + &quot;&lt;br&gt;&quot;
-    document.getElementById(&quot;output&quot;).innerHTML = logstr
-
-    // Display answer
-    if (tsp.status == SimplexJS.OPTIMAL) {
-        //var out = &quot;Solved!&lt;br&gt;Size of branch-and-bound tree was &quot; + tsp.nodeCount.toString() + &quot; (limit: 20)&lt;br&gt;&quot;;
-        //out += tsp.n.toString() + &quot; variables, &quot; + tsp.m.toString() + &quot; constraints.&lt;br&gt;&quot;;
-        curSolution = [];
-        for (i = 0; i &lt; numCities; i++) {
-            for (j = i+1; j &lt; numCities; j++) {
-                if (tsp.x[col[[i,j]]]) {
-                    //out += &quot;Arc from City &quot; + (i+1).toString() + &quot; to City &quot; + (j+1).toString() + &quot;&lt;br&gt;&quot;;
-                    curSolution.push([i,j]);
-                }
-            }
-        }
-    }
-    DrawCities();
-
-}
-
-DrawCities();
-&lt;/script&gt;
-</description>
-				<pubDate>Sun, 08 Sep 2013 12:00:00 +0000</pubDate>
-				<link>http://iaindunning.com/2013/simplexjs.html</link>
-				<guid isPermaLink="true">http://iaindunning.com/2013/simplexjs.html</guid>
 			</item>
 		
 	</channel>

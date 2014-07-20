@@ -89,8 +89,7 @@
 
 <span class="c"># CPLEX (experimental!)</span>
 <span class="c"># https://github.com/joehuchette/CPLEXLink.jl</span>
-<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;CPLEXLink&quot;</span><span class="p">)</span>
-</code></pre></div>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;CPLEXLink&quot;</span><span class="p">)</span></code></pre></div>
 
 
 <h3>Formulating the TSP integer program</h3>
@@ -135,8 +134,7 @@ $$
 <span class="c"># But it should be</span>
 <span class="c">#    /--+-----------+--\</span>
 <span class="c">#   +                   +</span>
-<span class="c">#    \--+-----------+--/</span>
-</code></pre></div>
+<span class="c">#    \--+-----------+--/</span></code></pre></div>
 
 <p>We can remove these &quot;incorrect&quot; solutions using so-called &quot;subtour-elimination constraints&quot; (see again the <a href="http://www.tsp.gatech.edu/methods/opt/subtour.htm">Georgia Tech</a> website). These constraints essentially say that for any given set of cities, if you treat that set as a black box there must be at least one trip into that set and one trip out. Unfortunately there are an <strong>exponential number of subsets of cities</strong>, and so an exponential number of constraints. We could generate them all but you will find that, in practice, very few are actually needed. The secret is to add them &quot;lazily&quot; - only when they are needed. You only need one constraint to &quot;correct&quot; the solution to our example problem above.</p>
 
@@ -213,8 +211,7 @@ $$
           <span class="mi">550</span> <span class="mi">200</span><span class="p">]</span>
 <span class="n">tour</span> <span class="o">=</span> <span class="n">solveTSP</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cities</span><span class="p">)</span>
 <span class="n">println</span><span class="p">(</span><span class="s">&quot;Solution: &quot;</span><span class="p">)</span>
-<span class="n">println</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span>
-</code></pre></div>
+<span class="n">println</span><span class="p">(</span><span class="n">tour</span><span class="p">)</span></code></pre></div>
 
 <p>As you can see, there is pretty much a line-to-line correspondence between the JuMP constraint and objective definitions and the mathematical statement of the problem.</p>
 
@@ -258,8 +255,7 @@ $$
 
     <span class="c"># Add the new subtour elimination constraint we built</span>
     <span class="n">addLazyConstraint</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">arcs_from_subtour</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span>
-<span class="k">end</span>
-</code></pre></div>
+<span class="k">end</span></code></pre></div>
 
 <p>Again, nothing too fancy. There are a few key things to understand here:</p>
 
@@ -272,7 +268,7 @@ $$
 
 <p>All that is left is for us to tell JuMP to use our <code>subtour</code> callback, as in the following snippet:</p>
 
-<div class="highlight"><pre><code class="julia">    <span class="c"># ......</span>
+<div class="highlight"><pre><code class="julia"><span class="c"># ......</span>
         <span class="c"># Add the new subtour elimination constraint we built</span>
         <span class="n">addLazyConstraint</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">arcs_from_subtour</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">end</span>  <span class="c"># End function subtour</span>
@@ -283,8 +279,7 @@ $$
 
     <span class="c"># Return best tour</span>
     <span class="k">return</span> <span class="n">extractTour</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-<span class="k">end</span>  <span class="c"># end solveTSP</span>
-</code></pre></div>
+<span class="k">end</span>  <span class="c"># end solveTSP</span></code></pre></div>
 
 <h3>Go try it!</h3>
 
@@ -303,8 +298,7 @@ $$
 <span class="c"># CPLEX</span>
 <span class="k">using</span> <span class="n">CPLEXLink</span>
 <span class="c"># ...</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">CplexSolver</span><span class="p">())</span>
-</code></pre></div>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">CplexSolver</span><span class="p">())</span></code></pre></div>
 
 <p>Let us know how it goes. If you have issues open a report at the <a href="https://github.com/JuliaOpt/JuMP.jl/issues?state=open">JuMP issues page</a>, <a href="https://twitter.com/iaindunning">Tweet at me</a>, or email me (idunning AT mit DOT edu).</p>
 
@@ -340,6 +334,8 @@ $$
       <hr>
       <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
         
           <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
         

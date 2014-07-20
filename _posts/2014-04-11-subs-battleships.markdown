@@ -3,6 +3,7 @@ author: idunning
 date: 2014-04-11 12:00:00+00:00
 layout: post
 title: Naval Warfare with JuMP + Julia
+tag: julia
 ---
 
 [The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).

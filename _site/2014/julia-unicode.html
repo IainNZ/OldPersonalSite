@@ -82,8 +82,7 @@
 <span class="n">zval</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">d</span><span class="o">.</span><span class="err">μ</span><span class="p">)</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span>
 <span class="n">var</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">abs2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span><span class="p">)</span>
 <span class="n">std</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">)</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="err">σ</span>
-<span class="n">pdf</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="err">φ</span><span class="p">(</span><span class="n">zval</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span>
-</code></pre></div>
+<span class="n">pdf</span><span class="p">(</span><span class="n">d</span><span class="p">::</span><span class="n">Normal</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Real</span><span class="p">)</span> <span class="o">=</span> <span class="err">φ</span><span class="p">(</span><span class="n">zval</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="err">σ</span></code></pre></div>
 
 <p>We could even dream up our own (substantially less useful) code:</p>
 
@@ -92,8 +91,7 @@
 <span class="k">function</span><span class="nf"> normalize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">./</span> <span class="err">√</span><span class="p">(</span><span class="err">∑</span><span class="p">(</span><span class="n">x</span><span class="o">.^</span><span class="mi">2</span><span class="p">))</span>
 <span class="k">end</span>
-<span class="n">println</span><span class="p">(</span><span class="n">normalize</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
-</code></pre></div>
+<span class="n">println</span><span class="p">(</span><span class="n">normalize</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span></code></pre></div>
 
 <p>The only (and not insubstantial) downside to this is that this is difficult to write/edit in most text editors without a lot of copy-pasting or add-ins (e.g. <a href="https://github.com/mvoidex/UnicodeMath">Sublime Text</a>). I would argue though that in limited cases like in Distributions.jl it is worth it - the code is not going to change, and is going to be read many more times than it will be edited.</p>
 
@@ -129,8 +127,7 @@
 <span class="k">end</span>
 <span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** juli# #nd UNIco## ****BOOM****</span>
 <span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** J#L## aND unICODE ****BOOM****</span>
-<span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** julIa And UniC#dE ****BOOM****</span>
-</code></pre></div>
+<span class="n">println</span><span class="p">(</span> <span class="err">爆発</span><span class="s">&quot;Julia and Unicode&quot;</span> <span class="p">)</span>  <span class="c"># ****BOOM**** julIa And UniC#dE ****BOOM****</span></code></pre></div>
 
 <h3>Fun-for-some: Optimization variables names</h3>
 
@@ -159,8 +156,7 @@
 <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♣</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♣&quot;</span><span class="p">)</span>
 <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♥</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♥&quot;</span><span class="p">)</span>
 <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="err">♦</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">&amp;&amp;</span> <span class="n">print</span><span class="p">(</span><span class="s">&quot;♦&quot;</span><span class="p">)</span>
-<span class="n">println</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)</span>  <span class="c"># Selected hand: [♠♣]</span>
-</code></pre></div>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)</span>  <span class="c"># Selected hand: [♠♣]</span></code></pre></div>
 
 <h3>Here-be-dragons-fun: Visually similar symbols</h3>
 
@@ -172,8 +168,7 @@
 <span class="mi">3</span>
 
 <span class="n">julia</span><span class="o">&gt;</span> <span class="err">µ</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="n">ERROR</span><span class="p">:</span> <span class="err">µ</span> <span class="n">not</span> <span class="n">defined</span>
-</code></pre></div>
+<span class="n">ERROR</span><span class="p">:</span> <span class="err">µ</span> <span class="n">not</span> <span class="n">defined</span></code></pre></div>
 
 <p>The problem is that we are using <code>μ</code> (&quot;micro sign&quot;) and <code>µ</code> (&quot;Greek small letter mu&quot;), an easy mistake to make in practice. This was discussed at length in <a href="https://github.com/JuliaLang/julia/issues/5434">Issue #5434</a>. To summarize the outcome, it turns out that there is a <a href="https://en.wikipedia.org/wiki/Unicode_equivalence">whole Wikipedia page</a> dedicated to the various degrees of equivalences one can draw. The decision to be made is what degree of conservativeness you want to apply. At one end of the spectrum is making almost everything possible equivalent, e.g. treat <code>ℍ</code> and <code>H</code> as the same. At the other end is basically doing nothing (or maybe only for a strict subset of &quot;common&quot; mistakes.) In the end the discussion settled on using the &quot;NFC&quot; normalization, with any further issues addressed as they arise. Python3 seems to have <a href="http://legacy.python.org/dev/peps/pep-3131/#implementation">selected NFC as well</a>.</p>
 
@@ -207,6 +202,8 @@
       <hr>
       <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
         
           <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
         

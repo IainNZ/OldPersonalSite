@@ -140,8 +140,7 @@ $$
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div>
+<span class="k">end</span></code></pre></div>
 
 <p>The code is a fairly direct translation of our mathematical model. Our function takes into two lists of ship locations - we&#39;ll describe their format more precisely in a moment. First we create a new model object, and define binary variables for each possible combination of submarine and battleship. We set our objective to minimize total distance, and add our two groups of constraints. Finally we solve and process the output.</p>
 
@@ -171,21 +170,19 @@ $$
               <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
               <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
 
-<span class="n">solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span>
-</code></pre></div>
+<span class="n">solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span></code></pre></div>
 
 <h3>Plotting the solution</h3>
 
 <p>There are many plotting solutions available in Julia but today I&#39;m going to use <a href="https://github.com/stevengj/PyPlot.jl">PyPlot.jl</a>, a wrapper around the versatile <a href="http://matplotlib.org/">Matplotlib</a>. First, we need to modify our solve routine to return pairs of submarines and battleships:</p>
 
-<div class="highlight"><pre><code class="julia">  <span class="n">pairs</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="highlight"><pre><code class="julia"><span class="n">pairs</span> <span class="o">=</span> <span class="p">{}</span>
   <span class="k">for</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
     <span class="c"># ...</span>
       <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
     <span class="c"># ...</span>
   <span class="k">end</span>
-  <span class="k">return</span> <span class="n">pairs</span>
-</code></pre></div>
+  <span class="k">return</span> <span class="n">pairs</span></code></pre></div>
 
 <p>then the plotting code follows pretty naturally from that - not much to say!</p>
 
@@ -213,8 +210,7 @@ $$
 <span class="k">end</span>
 
 <span class="n">fig</span><span class="p">[:</span><span class="n">canvas</span><span class="p">][:</span><span class="n">draw</span><span class="p">]()</span>
-<span class="n">readline</span><span class="p">()</span>  <span class="c"># Stop the program from exiting until we&#39;ve seen it!</span>
-</code></pre></div>
+<span class="n">readline</span><span class="p">()</span>  <span class="c"># Stop the program from exiting until we&#39;ve seen it!</span></code></pre></div>
 
 <p>The result looks pretty sensible too - see the image at the top of the post.</p>
 
@@ -259,6 +255,8 @@ $$
       <hr>
       <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
       <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
         
           <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
         
