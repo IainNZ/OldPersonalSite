@@ -8,7 +8,7 @@
 		
 			<item>
 				<title>Julia Package Ecosystem Dependency Graphs</title>
-				<description>&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use heavily in my work, and try to contribute back to where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there 363 packages available compatible with the Julia 0.3 release candidate.&lt;/p&gt;
+				<description>&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use it heavily in my work, and try to contribute back where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there were 363 packages available that are compatible with the Julia 0.3 release candidate.&lt;/p&gt;
 
 &lt;p&gt;I recently wrote some code to analyze METADATA, available as part of &lt;a href=&quot;https://github.com/IainNZ/PackageEvaluator.jl&quot;&gt;PackageEval.jl&lt;/a&gt; (funnily enough, this package isn&amp;#39;t in METADATA). I have utilized that functionality to generate &lt;em&gt;dependency graphs&lt;/em&gt; for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with &lt;a href=&quot;https://github.com/IainNZ/GraphLayout.jl&quot;&gt;GraphLayout.jl&lt;/a&gt;, which does force-based graph layout in pure Julia, and &lt;a href=&quot;https://github.com/dcjones/Compose.jl&quot;&gt;Compose.jl&lt;/a&gt;, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I&amp;#39;ve implemented in GraphLayout is still pretty basic and doesn&amp;#39;t do anything smart with labels or line avoidance.&lt;/p&gt;
 
@@ -16,7 +16,7 @@
 
 &lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Quandl.svg&quot; alt=&quot;Quandl.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Quandl.jl dependency graph&lt;/p&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://github.com&quot;&gt;Gadfly.jl&lt;/a&gt;, which many in the Julia community often think of as being the one of the most &amp;quot;connected&amp;quot;, is actually in sixth place with 21 dependencies, although perhaps has a more interesting dependency graph because it is quite diverse.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com&quot;&gt;Gadfly.jl&lt;/a&gt;, which many in the Julia community often think of as being the one of the most &amp;quot;connected&amp;quot;, is actually in sixth place with 21 dependencies, despite not relying on any of the binary dependency packages.&lt;/p&gt;
 
 &lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Gadfly.svg&quot; alt=&quot;Gadfly.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Gadfly.jl dependency graph&lt;/p&gt;&lt;/div&gt;
 

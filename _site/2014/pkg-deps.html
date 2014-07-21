@@ -59,7 +59,7 @@
 <p class="meta">Posted on 20 Jul 2014</p>
 
 <div class="post">
-<p><a href="http://julialang.org">Julia</a> is a relatively young programming language that is rising in popularity. I personally use heavily in my work, and try to contribute back to where I can. It has an <a href="http://docs.julialang.org/en/release-0.2/manual/packages/">in-built package manager</a> that is mostly used to access packages from the central repository, <a href="https://github.com/JuliaLang/METADATA.jl">METADATA.jl</a>, which contains a listing of packages and their dependencies. At the time of writing there 363 packages available compatible with the Julia 0.3 release candidate.</p>
+<p><a href="http://julialang.org">Julia</a> is a relatively young programming language that is rising in popularity. I personally use it heavily in my work, and try to contribute back where I can. It has an <a href="http://docs.julialang.org/en/release-0.2/manual/packages/">in-built package manager</a> that is mostly used to access packages from the central repository, <a href="https://github.com/JuliaLang/METADATA.jl">METADATA.jl</a>, which contains a listing of packages and their dependencies. At the time of writing there were 363 packages available that are compatible with the Julia 0.3 release candidate.</p>
 
 <p>I recently wrote some code to analyze METADATA, available as part of <a href="https://github.com/IainNZ/PackageEvaluator.jl">PackageEval.jl</a> (funnily enough, this package isn&#39;t in METADATA). I have utilized that functionality to generate <em>dependency graphs</em> for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with <a href="https://github.com/IainNZ/GraphLayout.jl">GraphLayout.jl</a>, which does force-based graph layout in pure Julia, and <a href="https://github.com/dcjones/Compose.jl">Compose.jl</a>, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I&#39;ve implemented in GraphLayout is still pretty basic and doesn&#39;t do anything smart with labels or line avoidance.</p>
 
@@ -67,7 +67,7 @@
 
 <div class="photo"><img src="/images/Quandl.svg" alt="Quandl.jl dependency graph"><p class="caption">Quandl.jl dependency graph</p></div>
 
-<p><a href="https://github.com">Gadfly.jl</a>, which many in the Julia community often think of as being the one of the most &quot;connected&quot;, is actually in sixth place with 21 dependencies, although perhaps has a more interesting dependency graph because it is quite diverse.</p>
+<p><a href="https://github.com">Gadfly.jl</a>, which many in the Julia community often think of as being the one of the most &quot;connected&quot;, is actually in sixth place with 21 dependencies, despite not relying on any of the binary dependency packages.</p>
 
 <div class="photo"><img src="/images/Gadfly.svg" alt="Gadfly.jl dependency graph"><p class="caption">Gadfly.jl dependency graph</p></div>
 
