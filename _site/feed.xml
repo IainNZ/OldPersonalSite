@@ -16,6 +16,8 @@
 
 &lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Quandl.svg&quot; alt=&quot;Quandl.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Quandl.jl dependency graph&lt;/p&gt;&lt;/div&gt;
 
+&lt;!--break--&gt;
+
 &lt;p&gt;&lt;a href=&quot;https://github.com&quot;&gt;Gadfly.jl&lt;/a&gt;, which many in the Julia community often think of as being the one of the most &amp;quot;connected&amp;quot;, is actually in sixth place with 21 dependencies, despite not relying on any of the binary dependency packages.&lt;/p&gt;
 
 &lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Gadfly.svg&quot; alt=&quot;Gadfly.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Gadfly.jl dependency graph&lt;/p&gt;&lt;/div&gt;

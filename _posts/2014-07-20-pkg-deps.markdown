@@ -2,6 +2,7 @@
 author: idunning
 date: 2014-07-20 12:00:00+00:00
 layout: post
+category: julia
 title: Julia Package Ecosystem Dependency Graphs
 ---
 
@@ -12,6 +13,8 @@ I recently wrote some code to analyze METADATA, available as part of [PackageEva
 The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is [Quandl.jl](https://github.com/milktrader/Quandl.jl) with 30. Interestingly, it only directly depends on five packages itself.
 
 {% img /images/Quandl.svg Quandl.jl dependency graph %}
+
+<!--break-->
 
 [Gadfly.jl](https://github.com), which many in the Julia community often think of as being the one of the most "connected", is actually in sixth place with 21 dependencies, despite not relying on any of the binary dependency packages.
 

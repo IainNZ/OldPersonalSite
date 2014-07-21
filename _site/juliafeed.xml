@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>IainDunning.com</title>
+		<description>Experiences, thoughts, and technical notes.</description>		
+		<link>http://iaindunning.com</link>
+		<atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Julia Package Ecosystem Dependency Graphs</title>
+				<description>
+					&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use it heavily in my work, and try to contribute back where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there were 363 packages available that are compatible with the Julia 0.3 release candidate.&lt;/p&gt;
+
+&lt;p&gt;I recently wrote some code to analyze METADATA, available as part of &lt;a href=&quot;https://github.com/IainNZ/PackageEvaluator.jl&quot;&gt;PackageEval.jl&lt;/a&gt; (funnily enough, this package isn&amp;#39;t in METADATA). I have utilized that functionality to generate &lt;em&gt;dependency graphs&lt;/em&gt; for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with &lt;a href=&quot;https://github.com/IainNZ/GraphLayout.jl&quot;&gt;GraphLayout.jl&lt;/a&gt;, which does force-based graph layout in pure Julia, and &lt;a href=&quot;https://github.com/dcjones/Compose.jl&quot;&gt;Compose.jl&lt;/a&gt;, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I&amp;#39;ve implemented in GraphLayout is still pretty basic and doesn&amp;#39;t do anything smart with labels or line avoidance.&lt;/p&gt;
+
+&lt;p&gt;The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is &lt;a href=&quot;https://github.com/milktrader/Quandl.jl&quot;&gt;Quandl.jl&lt;/a&gt; with 30. Interestingly, it only directly depends on five packages itself.&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Quandl.svg&quot; alt=&quot;Quandl.jl dependency graph&quot;&gt;&lt;p class=&quot;caption&quot;&gt;Quandl.jl dependency graph&lt;/p&gt;&lt;/div&gt;
+
+
+					
+						&lt;br&gt;&lt;a href=&quot;http://iaindunning.com/2014/pkg-deps.html&quot;&gt;Read more at iaindunning.com&lt;/a&gt;
+					
+				</description>
+				<pubDate>Sun, 20 Jul 2014 08:00:00 -0400</pubDate>
+				<link>http://iaindunning.com/2014/pkg-deps.html</link>
+				<guid isPermaLink="true">http://iaindunning.com/2014/pkg-deps.html</guid>
+			</item>
+		
+	</channel>
+</rss>
