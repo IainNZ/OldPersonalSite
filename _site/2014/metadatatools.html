@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>MetadataTools.jl - IainDunning.com</title>
+  <meta name="description" content="Iain Dunning's personal website.">
+  <meta name="author" content="Iain Dunning">
+  <link rel="alternate" type="application/rss+xml" title="IainDunning.com" href="http://iaindunning.com/feed.xml">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- Google Analytics -->        
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-33856541-3', 'iaindunning.com');
+    ga('send', 'pageview');
+  </script>
+
+  <!-- MathJax -->
+  <script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="sixteen columns">
+      <h1 class="remove-bottom" style="margin-top: 40px; color: #6d97b7;">
+        <a style="color: inherit; text-decoration: inherit;" href="/">Iain Dunning</a>
+      </h1>
+      <h5>
+        Experiences, thoughts, and technical notes.
+        <a href="/">More about me</a>.
+        <a href="https://twitter.com/iaindunning">@iaindunning</a>
+      </h5>
+      <hr />
+    </div>
+    <div class="twelve columns">
+      <h2>MetadataTools.jl</h2>
+<p class="meta">Posted on 05 Sep 2014</p>
+
+<div class="post">
+<p>This is my first attempt at turning an <a href="https://github.com/JuliaLang/IJulia.jl">IJulia Notebook</a> into a blog post. I gave a lightning talk at the <a href="http://www.meetup.com/julia-cajun/">Cambridge Area Julia Users Group (CAJUN)</a> on Sept. 4th 2014 about some fun things you can do with <a href="https://github.com/IainNZ/MetadataTools.jl">MetadataTools.jl</a> and used the following notebook as my &quot;slides&quot;. Here is that notebook, converted to Markdown for my site. It works fairly well, although I&#39;ve had to a little bit of manual editing to make it look correct.</p>
+
+<h2>MetadataTools.jl Demo</h2>
+<div class="highlight"><pre><code class="language-text" data-lang="text">using MetadataTools
+</code></pre></div>
+<h3>Getting information about packages</h3>
+
+<p><code>MetadataTools</code> defines a <code>PkgMeta</code> type that represents a package&#39;s METADATA entry, and contains a <code>PkgMetaVersion</code> for each tagged version.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">pkgs = get_all_pkg()  # Returns a Dict{String,PkgMeta}
+pkgs[&quot;DataArrays&quot;]
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">DataArrays   git://github.com/JuliaStats/DataArrays.jl.git
+  0.0.0,a6ce00,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.1,0001ff,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.2,7a61d2,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.3,613ca1,julia 0.2- 0.3-,StatsBase 0.3.8-
+  0.1.0,ae7d82,julia 0.3-,StatsBase 0.3-,SortingAlgorithms
+  0.1.1,3fe861,julia 0.3-,StatsBase 0.3
+  0.1.2,d0a0b3,julia 0.3-,StatsBase 0.3
+  0.1.3,d9ad97,julia 0.3-,StatsBase 0.3
+  0.1.4,4742f2,julia 0.3.0-prerelease+1942,StatsBase 0.3
+  0.1.5,833e53,julia 0.3.0-,StatsBase 0.3
+  0.1.6,4be6c8,julia 0.3.0-,StatsBase 0.3
+  0.1.7,fc8a8a,julia 0.3.0-,StatsBase 0.3
+  0.1.8,511e2c,julia 0.3.0-,StatsBase 0.3
+  0.1.9,9c281b,julia 0.3.0-,StatsBase 0.3
+  0.1.10,440fb0,julia 0.3.0-,StatsBase 0.3
+  0.1.11,623147,julia 0.3.0-,StatsBase 0.3
+  0.1.12,e0e4a7,julia 0.3.0-,StatsBase 0.3
+  0.2.0,d78a6d,julia 0.3.0-,StatsBase 0.3
+</code></pre></div>
+<p>We can check that maximum supported Julia version using <code>get_upper_limit</code> - useful for checking if a package is deprecated.</p>
+
+<p>Input:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">get_upper_limit(get_pkg(&quot;Monads&quot;))
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">v&quot;0.3.0&quot;
+</code></pre></div>
+<p>Input:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">get_upper_limit(get_pkg(&quot;DataFrames&quot;))
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">v&quot;0.0.0&quot;
+</code></pre></div>
+<p>We can also request information about a package from GitHub (or wherever it is hosted - only GitHub needed right now!)</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">gadfly_info = get_pkg_info(get_pkg(&quot;Gadfly&quot;))
+Base.isless(a::MetadataTools.Contributor,b::MetadataTools.Contributor) =
+    isless(a.username,b.username)
+sort(gadfly_info.contributors, rev=true)[1:10]
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">10-element Array{(Int64,Contributor),1}:
+ (428,Contributor(&quot;dcjones&quot;,&quot;https://github.com/dcjones&quot;))        
+ (8,Contributor(&quot;dchudz&quot;,&quot;https://github.com/dchudz&quot;))            
+ (7,Contributor(&quot;darwindarak&quot;,&quot;https://github.com/darwindarak&quot;))  
+ (6,Contributor(&quot;timholy&quot;,&quot;https://github.com/timholy&quot;))          
+ (5,Contributor(&quot;kleinschmidt&quot;,&quot;https://github.com/kleinschmidt&quot;))
+ (5,Contributor(&quot;aviks&quot;,&quot;https://github.com/aviks&quot;))              
+ (5,Contributor(&quot;Keno&quot;,&quot;https://github.com/Keno&quot;))                
+ (4,Contributor(&quot;jverzani&quot;,&quot;https://github.com/jverzani&quot;))        
+ (4,Contributor(&quot;inq&quot;,&quot;https://github.com/inq&quot;))                  
+ (4,Contributor(&quot;IainNZ&quot;,&quot;https://github.com/IainNZ&quot;))            
+</code></pre></div>
+<p>I pulled all the data about a week ago and serialized it for later use.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">f = open(&quot;metadata.jldata&quot;,&quot;r&quot;)
+pkg_info = deserialize(f)
+close(f)
+pkg_info[&quot;Dates&quot;]
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">PkgInfo(&quot;https://github.com/quinnj/Dates.jl&quot;,&quot;Date/DateTime Implementation for the Julia Language; Successor to Datetime.jl&quot;,&quot;&quot;,5,2,[(2,Contributor(&quot;jiahao&quot;,&quot;https://github.com/jiahao&quot;)),(131,Contributor(&quot;quinnj&quot;,&quot;https://github.com/quinnj&quot;))])
+</code></pre></div>
+<p>Input:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text"># Calculate commits stats
+total_coms = Dict()
+total_pkgs = Dict()
+
+for pkg in values(pkg_info)
+    for contrib in pkg.contributors
+        commits, c = contrib
+        total_coms[c.username] = get(total_coms,c.username,0) + commits
+        total_pkgs[c.username] = get(total_pkgs,c.username,0) + 1
+    end
+end
+
+# Turn dicts into sorted (num,username) vectors
+total_pkgs = sort([(total_pkgs[n],n) for n in keys(total_pkgs)],rev=true)
+total_coms = sort([(total_coms[n],n) for n in keys(total_coms)],rev=true)
+
+println(&quot;Number of packages contributed to&quot;)
+map(println, total_pkgs[1:20])
+
+println(&quot;Number of commits across all packages&quot;)
+map(println, total_coms[1:20]);
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Number of packages contributed to
+(51,&quot;timholy&quot;)
+(45,&quot;johnmyleswhite&quot;)
+(40,&quot;kmsquire&quot;)
+(37,&quot;StefanKarpinski&quot;)
+(35,&quot;Keno&quot;)
+(34,&quot;lindahua&quot;)
+(30,&quot;simonster&quot;)
+(29,&quot;IainNZ&quot;)
+(25,&quot;mlubin&quot;)
+(24,&quot;staticfloat&quot;)
+(24,&quot;aviks&quot;)
+(21,&quot;vtjnash&quot;)
+(20,&quot;stevengj&quot;)
+(20,&quot;ihnorton&quot;)
+(18,&quot;quinnj&quot;)
+(17,&quot;tanmaykm&quot;)
+(17,&quot;dcjones&quot;)
+(17,&quot;carlobaldassi&quot;)
+(16,&quot;tkelman&quot;)
+(16,&quot;powerdistribution&quot;)
+
+Number of commits across all packages
+(1734,&quot;lindahua&quot;)
+(1427,&quot;jakebolewski&quot;)
+(1178,&quot;timholy&quot;)
+(893,&quot;johnmyleswhite&quot;)
+(821,&quot;dcjones&quot;)
+(788,&quot;simonster&quot;)
+(749,&quot;mlubin&quot;)
+(678,&quot;milktrader&quot;)
+(462,&quot;stevengj&quot;)
+(435,&quot;dmbates&quot;)
+(415,&quot;nolta&quot;)
+(402,&quot;one-more-minute&quot;)
+(398,&quot;quinnj&quot;)
+(397,&quot;IainNZ&quot;)
+(372,&quot;joehuchette&quot;)
+(353,&quot;powerdistribution&quot;)
+(350,&quot;WestleyArgentum&quot;)
+(340,&quot;Keno&quot;)
+(336,&quot;scidom&quot;)
+(330,&quot;tanmaykm&quot;)
+</code></pre></div>
+<h3>Package Ecosystem</h3>
+
+<p><code>MetadataTools</code> has a dependency on <code>Graphs</code> to enable an analysis of how
+packages rely on each other.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">using Graphs
+# Get a directed graph where PkgA -&gt; PkgB iff 
+# PkgA directly requires PkgB
+g = get_pkgs_dep_graph(get_all_pkg())
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Directed Graph (418 vertices, 496 edges)
+</code></pre></div>
+<p>Input:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">g_gadfly = get_pkg_dep_graph(get_pkg(&quot;Gadfly&quot;),g)
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Directed Graph (24 vertices, 36 edges)
+</code></pre></div>
+<p>To plot the dependency graph for a package, we can use my GraphLayout.jl package which uses Compose.jl internally for drawing. I haven&#39;t got around to adding Graphs.jl support to GraphLayout.jl just yet though...</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">using GraphLayout
+for pkg_name in [&quot;Gadfly&quot;,&quot;QuantEcon&quot;,&quot;JuMP&quot;,&quot;Twitter&quot;]
+    # Extract graph
+    g_pkg = get_pkg_dep_graph(get_pkg(pkg_name),g)
+    # Extract adjacency matrix
+    adj_mat = adjacency_matrix(g_pkg)
+    # Build layout
+    locs_x,locs_y = layout_spring_adj(adj_mat)
+    # Extract name for each vertex
+    vert_names = map(pm-&gt;pm.name, vertices(g_pkg))
+    # Draw as an SVG
+    draw_layout_adj(adj_mat, locs_x, locs_y, labels=vert_names)
+end
+</code></pre></div>
+<div class="photo"><img src="/images/metadatatools_16_0.svg" alt=""><p class="caption"></p></div>
+
+<div class="photo"><img src="/images/metadatatools_16_1.svg" alt=""><p class="caption"></p></div>
+
+<div class="photo"><img src="/images/metadatatools_16_2.svg" alt=""><p class="caption"></p></div>
+
+<div class="photo"><img src="/images/metadatatools_16_3.svg" alt=""><p class="caption"></p></div>
+
+<p>We can also look at which packages depend on the most packages</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&quot;Top 10 packages by number of packages depended on:&quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&quot; &quot;), num_pkg_req[i][1]-1)
+end
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Top 10 packages by number of packages depended on:
+RobustStats         30
+MachineLearning     30
+Quandl              26
+Twitter             25
+Lumira              24
+Gadfly              23
+QuantEcon           22
+ProfileView         22
+ImageView           21
+Etcd                21
+</code></pre></div>
+<p>We can also reverse the graph - now an arc from PkgA to PkgB means PkgB requires PkgA</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">g_rev = get_pkgs_dep_graph(pkgs, reverse=true)
+# Count size of every subgraphs like above
+num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g_rev)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&quot;Top 10 packages by number of packages that depend on them:&quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&quot; &quot;), num_pkg_req[i][1]-1)
+end
+</code></pre></div>
+<p>Output:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Top 10 packages by number of packages that depend on them:
+URIParser           89
+SHA                 88
+BinDeps             87
+ArrayViews          76
+JSON                71
+StatsBase           66
+Homebrew            58
+Zlib                49
+URLParse            40
+Reexport            40
+</code></pre></div>
+</div>
+
+      <hr />
+    </div>
+    <aside class="four columns">
+      <h4>Projects</h4>
+      <div style="text-align: center; line-height: 100%; margin-bottom: 10px">
+        <a href="http://juliaopt.org">JuliaOpt<br><img src="/images/juliaopt86.png" alt="JuliaOpt"></a><br>
+        <small>Optimization software for/in <a href="http://julialang.org">Julia</a></small>
+        <br><br>
+        <a href="http://tenkicompare.com">TenkiCompare</a><br>
+        <small>Compare weather in different cities</small>
+        <br><br>
+        <a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a><br>
+        <small>Simplex+B&amp;B solver in pure Javascript</small>
+        <br><br>
+        <a href="http://opensolver.org">OpenSolver</a><br>
+        <small>Solve large MILPs in Excel</small>
+      </div>
+      <hr>
+      <h4>Related Sites</h4>
+      <a href="http://kellyheber.com/">Kelly Heber</a> <small>(env. management)</small><br>
+      <a href="http://www.racheldunning.com/">Rachel Dunning</a> <small>(legal star)</small><br>
+      <a href="http://kiaorane.com/">Kia Ora New England</a> <small>(Kiwis!)</small><br>
+      <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> <small>(OR ninja)</small><br>
+      <hr>
+      <h4>Posts <a href="/feed.xml"><img src="/images/rss-icon.png"></a></h4>
+      <ul style="list-style: none outside;">
+        
+          <li><a href="/2014/metadatatools.html">MetadataTools.jl</a></li>
+        
+          <li><a href="/2014/pkg-deps.html">Julia Package Ecosystem Dependency Graphs</a></li>
+        
+          <li><a href="/2014/iplang.html">IPLANG - an optimization-based esolang</a></li>
+        
+          <li><a href="/2014/subs-battleships.html">Naval Warfare with JuMP + Julia</a></li>
+        
+          <li><a href="/2014/julia-unicode.html">Fun with Unicode and Julia</a></li>
+        
+          <li><a href="/2013/mip-callback.html">Using JuMP to Solve a TSP with Lazy Constraints</a></li>
+        
+          <li><a href="/2013/us-senate.html">Representation, Filibusters and the US Senate</a></li>
+        
+          <li><a href="/2013/informs-juliaopt.html">INFORMS 2013 and JuliaOpt</a></li>
+        
+          <li><a href="/2013/urban-planning.html">Solving an Urban Planning Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/combination-locks.html">Solving a Combination Lock Puzzle with JuMP + Julia</a></li>
+        
+          <li><a href="/2013/sudoku-as-a-service.html">Sudoku-as-a-Service with Julia</a></li>
+        
+          <li><a href="/2013/simplexjs.html">SimplexJS</a></li>
+        
+          <li><a href="/2013/an-icelandic-adventure.html">An Icelandic Adventure</a></li>
+        
+          <li><a href="/2013/simulation-study-of-a-laundry-room.html">Simulation Study of a Laundry Room</a></li>
+        
+          <li><a href="/2013/experiences-with-xmonad-and-ubuntu-12.html">Experiences with Setting Up Xmonad on Ubuntu 12</a></li>
+        
+          <li><a href="/2013/mit-iap-2013.html">MIT IAP 2013</a></li>
+        
+          <li><a href="/2013/comparing-the-weather-of-different-cities.html">Comparing the Weather of Different Cities</a></li>
+        
+          <li><a href="/2012/implementing-second-order-cone-constraints-in-gurobi.html">Implementing Second-order Cone Constraints in Gurobi</a></li>
+        
+      </ul>
+    </aside>
+    <div class="sixteen columns">
+      <hr />
+      © 2013 Iain Dunning<br>
+      Contact me by email (idunning AT mit DOT edu), <a href="https://www.twitter.com/iaindunning">@iaindunning</a>, <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>, <a href="https://github.com/IainNZ">GitHub</a><br>
+      This website was made with <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://www.getskeleton.com">Skeleton</a>.
+    </div>
+  </div><!-- container -->
+
+</body>
+</html>

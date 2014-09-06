@@ -7,6 +7,244 @@
 		<atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>MetadataTools.jl</title>
+				<description>&lt;p&gt;This is my first attempt at turning an &lt;a href=&quot;https://github.com/JuliaLang/IJulia.jl&quot;&gt;IJulia Notebook&lt;/a&gt; into a blog post. I gave a lightning talk at the &lt;a href=&quot;http://www.meetup.com/julia-cajun/&quot;&gt;Cambridge Area Julia Users Group (CAJUN)&lt;/a&gt; on Sept. 4th 2014 about some fun things you can do with &lt;a href=&quot;https://github.com/IainNZ/MetadataTools.jl&quot;&gt;MetadataTools.jl&lt;/a&gt; and used the following notebook as my &amp;quot;slides&amp;quot;. Here is that notebook, converted to Markdown for my site. It works fairly well, although I&amp;#39;ve had to a little bit of manual editing to make it look correct.&lt;/p&gt;
+
+&lt;h2&gt;MetadataTools.jl Demo&lt;/h2&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;using MetadataTools
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Getting information about packages&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MetadataTools&lt;/code&gt; defines a &lt;code&gt;PkgMeta&lt;/code&gt; type that represents a package&amp;#39;s METADATA entry, and contains a &lt;code&gt;PkgMetaVersion&lt;/code&gt; for each tagged version.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;pkgs = get_all_pkg()  # Returns a Dict{String,PkgMeta}
+pkgs[&amp;quot;DataArrays&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;DataArrays   git://github.com/JuliaStats/DataArrays.jl.git
+  0.0.0,a6ce00,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.1,0001ff,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.2,7a61d2,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.3,613ca1,julia 0.2- 0.3-,StatsBase 0.3.8-
+  0.1.0,ae7d82,julia 0.3-,StatsBase 0.3-,SortingAlgorithms
+  0.1.1,3fe861,julia 0.3-,StatsBase 0.3
+  0.1.2,d0a0b3,julia 0.3-,StatsBase 0.3
+  0.1.3,d9ad97,julia 0.3-,StatsBase 0.3
+  0.1.4,4742f2,julia 0.3.0-prerelease+1942,StatsBase 0.3
+  0.1.5,833e53,julia 0.3.0-,StatsBase 0.3
+  0.1.6,4be6c8,julia 0.3.0-,StatsBase 0.3
+  0.1.7,fc8a8a,julia 0.3.0-,StatsBase 0.3
+  0.1.8,511e2c,julia 0.3.0-,StatsBase 0.3
+  0.1.9,9c281b,julia 0.3.0-,StatsBase 0.3
+  0.1.10,440fb0,julia 0.3.0-,StatsBase 0.3
+  0.1.11,623147,julia 0.3.0-,StatsBase 0.3
+  0.1.12,e0e4a7,julia 0.3.0-,StatsBase 0.3
+  0.2.0,d78a6d,julia 0.3.0-,StatsBase 0.3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;We can check that maximum supported Julia version using &lt;code&gt;get_upper_limit&lt;/code&gt; - useful for checking if a package is deprecated.&lt;/p&gt;
+
+&lt;p&gt;Input:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;get_upper_limit(get_pkg(&amp;quot;Monads&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;v&amp;quot;0.3.0&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Input:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;get_upper_limit(get_pkg(&amp;quot;DataFrames&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;v&amp;quot;0.0.0&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;We can also request information about a package from GitHub (or wherever it is hosted - only GitHub needed right now!)&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;gadfly_info = get_pkg_info(get_pkg(&amp;quot;Gadfly&amp;quot;))
+Base.isless(a::MetadataTools.Contributor,b::MetadataTools.Contributor) =
+    isless(a.username,b.username)
+sort(gadfly_info.contributors, rev=true)[1:10]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;10-element Array{(Int64,Contributor),1}:
+ (428,Contributor(&amp;quot;dcjones&amp;quot;,&amp;quot;https://github.com/dcjones&amp;quot;))        
+ (8,Contributor(&amp;quot;dchudz&amp;quot;,&amp;quot;https://github.com/dchudz&amp;quot;))            
+ (7,Contributor(&amp;quot;darwindarak&amp;quot;,&amp;quot;https://github.com/darwindarak&amp;quot;))  
+ (6,Contributor(&amp;quot;timholy&amp;quot;,&amp;quot;https://github.com/timholy&amp;quot;))          
+ (5,Contributor(&amp;quot;kleinschmidt&amp;quot;,&amp;quot;https://github.com/kleinschmidt&amp;quot;))
+ (5,Contributor(&amp;quot;aviks&amp;quot;,&amp;quot;https://github.com/aviks&amp;quot;))              
+ (5,Contributor(&amp;quot;Keno&amp;quot;,&amp;quot;https://github.com/Keno&amp;quot;))                
+ (4,Contributor(&amp;quot;jverzani&amp;quot;,&amp;quot;https://github.com/jverzani&amp;quot;))        
+ (4,Contributor(&amp;quot;inq&amp;quot;,&amp;quot;https://github.com/inq&amp;quot;))                  
+ (4,Contributor(&amp;quot;IainNZ&amp;quot;,&amp;quot;https://github.com/IainNZ&amp;quot;))            
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I pulled all the data about a week ago and serialized it for later use.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;f = open(&amp;quot;metadata.jldata&amp;quot;,&amp;quot;r&amp;quot;)
+pkg_info = deserialize(f)
+close(f)
+pkg_info[&amp;quot;Dates&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;PkgInfo(&amp;quot;https://github.com/quinnj/Dates.jl&amp;quot;,&amp;quot;Date/DateTime Implementation for the Julia Language; Successor to Datetime.jl&amp;quot;,&amp;quot;&amp;quot;,5,2,[(2,Contributor(&amp;quot;jiahao&amp;quot;,&amp;quot;https://github.com/jiahao&amp;quot;)),(131,Contributor(&amp;quot;quinnj&amp;quot;,&amp;quot;https://github.com/quinnj&amp;quot;))])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Input:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;# Calculate commits stats
+total_coms = Dict()
+total_pkgs = Dict()
+
+for pkg in values(pkg_info)
+    for contrib in pkg.contributors
+        commits, c = contrib
+        total_coms[c.username] = get(total_coms,c.username,0) + commits
+        total_pkgs[c.username] = get(total_pkgs,c.username,0) + 1
+    end
+end
+
+# Turn dicts into sorted (num,username) vectors
+total_pkgs = sort([(total_pkgs[n],n) for n in keys(total_pkgs)],rev=true)
+total_coms = sort([(total_coms[n],n) for n in keys(total_coms)],rev=true)
+
+println(&amp;quot;Number of packages contributed to&amp;quot;)
+map(println, total_pkgs[1:20])
+
+println(&amp;quot;Number of commits across all packages&amp;quot;)
+map(println, total_coms[1:20]);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Number of packages contributed to
+(51,&amp;quot;timholy&amp;quot;)
+(45,&amp;quot;johnmyleswhite&amp;quot;)
+(40,&amp;quot;kmsquire&amp;quot;)
+(37,&amp;quot;StefanKarpinski&amp;quot;)
+(35,&amp;quot;Keno&amp;quot;)
+(34,&amp;quot;lindahua&amp;quot;)
+(30,&amp;quot;simonster&amp;quot;)
+(29,&amp;quot;IainNZ&amp;quot;)
+(25,&amp;quot;mlubin&amp;quot;)
+(24,&amp;quot;staticfloat&amp;quot;)
+(24,&amp;quot;aviks&amp;quot;)
+(21,&amp;quot;vtjnash&amp;quot;)
+(20,&amp;quot;stevengj&amp;quot;)
+(20,&amp;quot;ihnorton&amp;quot;)
+(18,&amp;quot;quinnj&amp;quot;)
+(17,&amp;quot;tanmaykm&amp;quot;)
+(17,&amp;quot;dcjones&amp;quot;)
+(17,&amp;quot;carlobaldassi&amp;quot;)
+(16,&amp;quot;tkelman&amp;quot;)
+(16,&amp;quot;powerdistribution&amp;quot;)
+
+Number of commits across all packages
+(1734,&amp;quot;lindahua&amp;quot;)
+(1427,&amp;quot;jakebolewski&amp;quot;)
+(1178,&amp;quot;timholy&amp;quot;)
+(893,&amp;quot;johnmyleswhite&amp;quot;)
+(821,&amp;quot;dcjones&amp;quot;)
+(788,&amp;quot;simonster&amp;quot;)
+(749,&amp;quot;mlubin&amp;quot;)
+(678,&amp;quot;milktrader&amp;quot;)
+(462,&amp;quot;stevengj&amp;quot;)
+(435,&amp;quot;dmbates&amp;quot;)
+(415,&amp;quot;nolta&amp;quot;)
+(402,&amp;quot;one-more-minute&amp;quot;)
+(398,&amp;quot;quinnj&amp;quot;)
+(397,&amp;quot;IainNZ&amp;quot;)
+(372,&amp;quot;joehuchette&amp;quot;)
+(353,&amp;quot;powerdistribution&amp;quot;)
+(350,&amp;quot;WestleyArgentum&amp;quot;)
+(340,&amp;quot;Keno&amp;quot;)
+(336,&amp;quot;scidom&amp;quot;)
+(330,&amp;quot;tanmaykm&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Package Ecosystem&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MetadataTools&lt;/code&gt; has a dependency on &lt;code&gt;Graphs&lt;/code&gt; to enable an analysis of how
+packages rely on each other.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;using Graphs
+# Get a directed graph where PkgA -&amp;gt; PkgB iff 
+# PkgA directly requires PkgB
+g = get_pkgs_dep_graph(get_all_pkg())
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Directed Graph (418 vertices, 496 edges)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Input:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;g_gadfly = get_pkg_dep_graph(get_pkg(&amp;quot;Gadfly&amp;quot;),g)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Directed Graph (24 vertices, 36 edges)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To plot the dependency graph for a package, we can use my GraphLayout.jl package which uses Compose.jl internally for drawing. I haven&amp;#39;t got around to adding Graphs.jl support to GraphLayout.jl just yet though...&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;using GraphLayout
+for pkg_name in [&amp;quot;Gadfly&amp;quot;,&amp;quot;QuantEcon&amp;quot;,&amp;quot;JuMP&amp;quot;,&amp;quot;Twitter&amp;quot;]
+    # Extract graph
+    g_pkg = get_pkg_dep_graph(get_pkg(pkg_name),g)
+    # Extract adjacency matrix
+    adj_mat = adjacency_matrix(g_pkg)
+    # Build layout
+    locs_x,locs_y = layout_spring_adj(adj_mat)
+    # Extract name for each vertex
+    vert_names = map(pm-&amp;gt;pm.name, vertices(g_pkg))
+    # Draw as an SVG
+    draw_layout_adj(adj_mat, locs_x, locs_y, labels=vert_names)
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_0.svg&quot; alt=&quot;&quot;&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_1.svg&quot; alt=&quot;&quot;&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_2.svg&quot; alt=&quot;&quot;&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_3.svg&quot; alt=&quot;&quot;&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;We can also look at which packages depend on the most packages&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&amp;quot;Top 10 packages by number of packages depended on:&amp;quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&amp;quot; &amp;quot;), num_pkg_req[i][1]-1)
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Top 10 packages by number of packages depended on:
+RobustStats         30
+MachineLearning     30
+Quandl              26
+Twitter             25
+Lumira              24
+Gadfly              23
+QuantEcon           22
+ProfileView         22
+ImageView           21
+Etcd                21
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;We can also reverse the graph - now an arc from PkgA to PkgB means PkgB requires PkgA&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;g_rev = get_pkgs_dep_graph(pkgs, reverse=true)
+# Count size of every subgraphs like above
+num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g_rev)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&amp;quot;Top 10 packages by number of packages that depend on them:&amp;quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&amp;quot; &amp;quot;), num_pkg_req[i][1]-1)
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;Top 10 packages by number of packages that depend on them:
+URIParser           89
+SHA                 88
+BinDeps             87
+ArrayViews          76
+JSON                71
+StatsBase           66
+Homebrew            58
+Zlib                49
+URLParse            40
+Reexport            40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+				<pubDate>Fri, 05 Sep 2014 08:00:00 -0400</pubDate>
+				<link>http://iaindunning.com/2014/metadatatools.html</link>
+				<guid isPermaLink="true">http://iaindunning.com/2014/metadatatools.html</guid>
+			</item>
+		
+			<item>
 				<title>Julia Package Ecosystem Dependency Graphs</title>
 				<description>&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use it heavily in my work, and try to contribute back where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there were 363 packages available that are compatible with the Julia 0.3 release candidate.&lt;/p&gt;
 
@@ -1260,185 +1498,6 @@ An extension question: what happens if relax constraint 2? How many locks would 
 				<pubDate>Sat, 21 Sep 2013 08:00:00 -0400</pubDate>
 				<link>http://iaindunning.com/2013/combination-locks.html</link>
 				<guid isPermaLink="true">http://iaindunning.com/2013/combination-locks.html</guid>
-			</item>
-		
-			<item>
-				<title>Sudoku-as-a-Service with Julia</title>
-				<description>&lt;p&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Sudoku&quot;&gt;Sudoku&lt;/a&gt; is (was?) an extremely popular number puzzle. Players are presented with a 9 by 9 grid, with some of the cells filled in with a number between 1 and 9. The goal is to complete the grid while respecting these rules:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Each row of the grid must contain each of the numbers 1 to 9 exactly once.&lt;/li&gt;
-&lt;li&gt;Each column of the grid must contain each of the numbers 1 to 9 exactly once.&lt;/li&gt;
-&lt;li&gt;Divide the grid into 9 3-by-3 non-overlapping subgrids. Each of these 3-by-3 grids must contain each of the numbers 1 to 9 exactly once.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/sudokupuzzle.png&quot; alt=&quot;An unsolved sudoku puzzle (Wikimedia Commons)&quot;&gt;&lt;p class=&quot;caption&quot;&gt;An unsolved sudoku puzzle (Wikimedia Commons)&lt;/p&gt;&lt;/div&gt;
-
-&lt;p&gt;In this post I&amp;#39;m going to&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;walk through one way to solve sudoku puzzles, and &lt;/li&gt;
-&lt;li&gt;show how you can offer that functionality as an online service&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;using the &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; programming language.&lt;/p&gt;
-
-&lt;h2&gt;Solving Sudoku puzzles with integer programming&lt;/h2&gt;
-
-&lt;p&gt;The rules of sudoku can be expressed as an &lt;a href=&quot;http://en.wikipedia.org/wiki/Integer_programming&quot;&gt;integer programming problem&lt;/a&gt; which can be solved by any of the many linear and integer programming solvers out there. Of course there are algorithms designed to solve sudoku problems directly that are probably more efficient than integer programming, but stay with me for a moment - I&amp;#39;ll justify it later on! We will start our model by defining a variable &lt;em&gt;x(i,j,k)&lt;/em&gt; that equals 1 if and only if cell &lt;em&gt;(i,j)&lt;/em&gt; is set to value &lt;em&gt;k&lt;/em&gt;, and is 0 otherwise.  This can be written mathematically (with constraints to enforce the fixed cells omitted) as:&lt;/p&gt;
-
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/sudokuform.png&quot; alt=&quot;MIP formulation of sudoku problem&quot;&gt;&lt;p class=&quot;caption&quot;&gt;MIP formulation of sudoku problem&lt;/p&gt;&lt;/div&gt;
-
-&lt;p&gt;Lets break down how these constraints translate back to the rules above. In the first set of constraints we enforce that for every row &lt;em&gt;i&lt;/em&gt;, across the columns &lt;em&gt;j&lt;/em&gt; the value &lt;em&gt;k&lt;/em&gt; must appear once and once only. For example, for value 5 and row 3, we say that &lt;em&gt;x(3,1,5) + x(3,2,5) + x(3,3,5) + ... + x(3,9,5) == 1&lt;/em&gt;. We can check: if a 5 appeared in row 3 column 2 and row 3 column 6, the sum on the left hand side would be 2. If 5 doesn&amp;#39;t appear in row 3 at all, the sum would be 0. Note that &lt;em&gt;x(3,1,5) = 0.5, x(3,2,5) = 0.5&lt;/em&gt; would be feasible with respect to this constraint, but that we are enforcing the constraint (not shown) that &lt;em&gt;x&lt;/em&gt; can only be 0 or 1.&lt;/p&gt;
-
-&lt;p&gt;The second set of constraints is very similar to the first, and enforces the second &amp;#39;rule&amp;#39; above regarding columns. The third set of constraints is not so obvious. This set of constraints enforces that any given position &lt;em&gt;i,j&lt;/em&gt; can only contain one digit by summing across all values. This is kinda self-evident for a human so I didn&amp;#39;t even mention it above. Finally, the fourth set of constraints corresponds to the third rule. Its the most complex notationally, but is conceptually the same as the previous two. On the right side of the equations we iterate over the 9 3-by-3 subgrids, where (0,0) is the top left subgrid and (2,2) is the bottom subgrid. The sum is then over the 9 cells inside that subgrid. Lets pick an example subgrid, e.g. &lt;em&gt;(i,j)=(0,1)&lt;/em&gt; and &lt;em&gt;k=5&lt;/em&gt;, which corresponds to the left-center subgrid. We then sum over &lt;em&gt;a&lt;/em&gt; and &lt;em&gt;b&lt;/em&gt;: &lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;x(3*0+1,3*1+1,5) + x(3*0+2,3*1+1,5) + x(3*0+3,3*1+1,5) + x(3*0+1,3*1+2,5) + x(3*0+2,3*1+2,5) + ... == 1&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;x(1,4,5) + x(2,4,5) + x(3,4,5) + x(1,5,5) + x(2,5,5) + ... == 1&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As I mentioned above, we have ommitted constraints that would fix particular &lt;em&gt;x(i,j,k)&lt;/em&gt; based on the provided cells, but there is no clean way to write that above. The question now is, how do we implement this model in an expressive and maintainable way in code?&lt;/p&gt;
-
-&lt;h2&gt;JuMPing Julia!&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a fantastic up-and-coming dynamic language that emphasises high-performance scientific computing that is extensible and easy to read and write. It doesn&amp;#39;t reinvent the wheel: it utilizes the &lt;a href=&quot;http://llvm.org/&quot;&gt;LLVM compiler&lt;/a&gt; to generate fast code, open-source linear algebra packages to provide fast number crunching, and the &lt;a href=&quot;https://github.com/joyent/libuv&quot;&gt;libuv&lt;/a&gt; library to provide excellent cross-platform IO. libuv is the library that powers the popular &lt;a href=&quot;http://nodejs.org&quot;&gt;node.js&lt;/a&gt; environment that has become very popular over the past couple of years for web development. Being a web development language is not an official goal of Julia, but there is certainly no reason it can&amp;#39;t be used. For example, if server-side number crunching is one of the features your site needs, that part could be implemented in Julia and the rest of the application logic in node.js or your tool of choice.&lt;/p&gt;
-
-&lt;p&gt;But back to sudoku. The Julia package &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt; is an algebraic modeling language for linear (and integer and quadratic) programming created by myself and the very talented &lt;a href=&quot;http://www.mit.edu/%7Emlubin/&quot;&gt;Miles Lubin&lt;/a&gt;. You should compare JuMP with tools like &lt;a href=&quot;http://code.google.com/p/pulp-or/&quot;&gt;PuLP&lt;/a&gt; and &lt;a href=&quot;http://www.ampl.com&quot;&gt;AMPL&lt;/a&gt;. If you aren&amp;#39;t familiar with algebraic modeling languages embedded in other languages, you can think of them as an embedded &lt;a href=&quot;http://en.wikipedia.org/wiki/Domain_specific_language&quot;&gt;domain specific language (DSL)&lt;/a&gt;. Julia&amp;#39;s fantastic &lt;a href=&quot;http://docs.julialang.org/en/latest/manual/metaprogramming/&quot;&gt;metaprogramming functionality&lt;/a&gt; has allowed us to create a particularily fast and expressive modeling language. I encourage you to read to the &lt;a href=&quot;https://jump.readthedocs.org/en/latest/jump.html&quot;&gt;documentation&lt;/a&gt;, but here is a taste of what it looks like.&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Assuming a solver has been previously installed, e.g. Cbc &lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JuMP&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; SolveModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initgrid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Create the variables&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# ... snip other constraints ...&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Constraint 4 - Only one value in each cell&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;addConstraint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# ... snip initial solution constraints ...&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Solve it (default solver is CBC)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;21&lt;/span&gt;   
-&lt;span class=&quot;lineno&quot;&gt;22&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# Check solution&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;23&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Infeasible&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;24&lt;/span&gt;     &lt;span class=&quot;nb&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;No solution found!&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;25&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;26&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;mipSol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;27&lt;/span&gt;     
-&lt;span class=&quot;lineno&quot;&gt;28&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;29&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;30&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;31&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;32&lt;/span&gt;           &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mipSol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.9&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# mipSol is stored as floats&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;33&lt;/span&gt;             &lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;34&lt;/span&gt;           &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;35&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;36&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;37&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;38&lt;/span&gt; 
-&lt;span class=&quot;lineno&quot;&gt;39&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;40&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;lineno&quot;&gt;41&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;Line 7 creates our variable &lt;em&gt;x&lt;/em&gt; with three indices over the range 1 to 9, and enforces integrality. &lt;code&gt;@defVar&lt;/code&gt; is a macro, not a function, which lets it create a variable &lt;code&gt;x&lt;/code&gt; in the local scope. I have removed the other constraints for brevity and left the constraint that enforces that each cell contains only one value. Note the correspondance between the mathematical notation (&amp;quot;for all rows, for all columns&amp;quot;) and the &lt;code&gt;for&lt;/code&gt; loops (lines 11 and 12). &lt;code&gt;@addConstraint&lt;/code&gt; (line 13) is another macro that facilitates the efficient storage of the constraint as a sparse vector, and matches the mathematical description very closely. On line 19 we solve the model with the default solver &lt;a href=&quot;https://projects.coin-or.org/Cbc&quot;&gt;COIN-OR CBC&lt;/a&gt; - an open-source integer programming solver. As a side note, Julia/JuMP also has interfaces to GLPK (open-source) and Gurobi (closed-source). Finally, we pull the solution back from the solver (if a feasible solution could be found) as a three-dimensional matrix of 0s and 1s which we convert to a two-dimensional vector of 1-to-9s (lines 27 to 36).&lt;/p&gt;
-
-&lt;p&gt;If you are interested in how macros and metaprogramming offer up new possibilities for optimization, operations research, and modelling languages, check out our &lt;a href=&quot;http://www.optimization-online.org/DB_FILE/2013/05/3883.pdf&quot;&gt;paper&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2&gt;SaaS == Sudoku-as-a-service?&lt;/h2&gt;
-
-&lt;p&gt;Now we can solve sudoku puzzles, we should share this functionality with the world. The best way to get started with creating a web service is to use the &lt;a href=&quot;https://github.com/hackerschool/HttpServer.jl&quot;&gt;HttpServer.jl&lt;/a&gt; package, a package made at &lt;a href=&quot;https://www.hackerschool.com/&quot;&gt;Hacker School&lt;/a&gt;. Documentation is pretty scarce at this point, but hopefully by inspecting the relatively short code and looking at some examples you can get started. &lt;/p&gt;
-
-&lt;p&gt;I bundled my sudoku solver with a server in &lt;a href=&quot;https://github.com/IainNZ/SudokuService&quot;&gt;SudokuService&lt;/a&gt;. This kinda brings me back to why I used integer programming - to demonstrate that you can make pretty complex web-capable number crunching applications with relative ease. Check out &lt;code&gt;server.jl&lt;/code&gt; in the repository - its pretty straightforward and most of the work is input validation. The form of a query is &lt;code&gt;/sudoku/123...123&lt;/code&gt; or &lt;code&gt;/sudoku/123...123/pretty&lt;/code&gt; for human-readable response. There should be 81 numbers, one for each cell of the 9x9 sudoku board, row-wise. A zero indicates a blank. Heres a taster of the server code:&lt;/p&gt;
-
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;julia&quot;&gt;&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HttpServer&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# Load the Sudoku solver&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;sudoku.jl&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# Build the request handler&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HttpHandler&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ismatch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;^/sudoku/&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# Expecting 81 numbers between 0 and 9&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;reqsplit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# ...snip validation...#&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;probstr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reqsplit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;probstr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;81&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Error: expected 81 numbers.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-    
-    &lt;span class=&quot;c&quot;&gt;# Convert string into numbers, and place in matrix&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# Return error if any non-numbers or numbers out of range detected&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;prob&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;probstr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-          &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;422&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Error: number out of range 0:9.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-          &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;422&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Error: couldn&amp;#39;t parse numbers.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-
-    &lt;span class=&quot;c&quot;&gt;# Attempt to solve the problem using integer programming&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SolveModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prettyoutput&lt;/span&gt;
-        &lt;span class=&quot;c&quot;&gt;# Human readable output&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;table&amp;gt;&amp;quot;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;tr&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-          &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;td&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;/td&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-          &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-          &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;/tr&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;lt;/table&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
-        &lt;span class=&quot;c&quot;&gt;# Return solution like input&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;422&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Error: coudn&amp;#39;t solve puzzle.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
-    &lt;span class=&quot;c&quot;&gt;# Not a valid URL&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;404&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# Boot up the server&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;h2&gt;Try it yourself!&lt;/h2&gt;
-
-&lt;p&gt;Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! You may also see some warnings regarding deprecation - hopefully they&amp;#39;ll be cleaned up soon once we reach version 0.2 for Julia and have a chance to go back and tidy up all the packages. Instructions for installing everything are in &lt;code&gt;README.md&lt;/code&gt;. I encourage you to check it out for yourself, and maybe extend it.  Some ideas:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Implement a pure-Julia sudoku solver and benchmark performance against the MIP solver.&lt;/li&gt;
-&lt;li&gt;Generalize the code to accept and solve n-by-n sudoku problems&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Let me know how that goes by contacting me at idunning AT mit.edu or &lt;a href=&quot;https://www.twitter.com/iaindunning&quot;&gt;@iaindunning&lt;/a&gt;.&lt;/p&gt;
-</description>
-				<pubDate>Sun, 15 Sep 2013 08:00:00 -0400</pubDate>
-				<link>http://iaindunning.com/2013/sudoku-as-a-service.html</link>
-				<guid isPermaLink="true">http://iaindunning.com/2013/sudoku-as-a-service.html</guid>
 			</item>
 		
 	</channel>
