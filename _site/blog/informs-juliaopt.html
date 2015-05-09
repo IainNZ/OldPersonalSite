@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- HTML+CSS based on Skeleton: http://getskeleton.com/ -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title> INFORMS 2013 and JuliaOpt |  Iain Dunning</title>
+  <meta name="description" content="">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+</head>
+<body>
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+    <div class="row">
+  <div class="twelve columns" style="margin-top: 5%">
+    <h1><a href="/" class="hidelink">Iain Dunning</a></h1>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2>&rsaquo; INFORMS 2013 and JuliaOpt</h2>
+    
+    <h6>First posted: Oct 12, 2013</h6>
+
+    <p>The <a href="http://meetings2.informs.org/minneapolis2013/index.php">INFORMS 2013</a> Annual Meeting took place this past week in Minneapolis, and I was lucky enough to have the chance to go. <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> and I were there to present a talk based on our paper “Computing on Operations Research using Julia” (<a href="http://www.optimization-online.org/DB_HTML/2013/05/3883.html">paper</a>, <a href="http://www.mit.edu/~mlubin/informs2013.pdf">slides</a>). I’d never been to a conference like this before, so I wasn’t sure what to expect - it turned out to be a bit overwhelming! There were four time slots per day, with up to 72 sessions running during each time slot. As a result it was impossible to see anything but a small fraction of the talks. The highlights for me would have to be:</p>
+
+<ul>
+  <li>Meeting with the team at <a href="http://forio.com/">Forio</a> to talk about the work they are doing with Julia, including their simulation products and their open-source Julia IDE <a href="http://forio.com/products/julia-studio">Julia Studio</a></li>
+  <li>Seeing the <a href="https://www.informs.org/Recognize-Excellence/INFORMS-Prizes-Awards/George-Nicholson-Student-Paper-Competition">Nicholson Prize</a> contenders’ presentations on Sunday, including <a href="www.mit.edu/~vgupta1">Vishal Gupta</a>’s fantastic talk on data-driven robust optimization.</li>
+  <li>Hacking on <a href="http://github.com/JuliaOpt/JuMP.jl">JuMP</a> with Miles in our hotel room.</li>
+  <li>Presenting the talk! We had a great, attentive audience, it was a real pleasure being there.</li>
+  <li>Meeting the teams from <a href="http://www.mosek.com">MOSEK</a> and <a href="http://www.gurobi.com">Gurobi</a>, who were really enthusiastic about the work we are doing in Julia and want to be involved.</li>
+  <li>Finally meeting the <a href="http://www.coin-or.org/">COIN-OR</a> team, especially <a href="http://coral.ie.lehigh.edu/~ted/">Ted Ralphs</a>.</li>
+  <li>Celebrating Miles winning the <a href="http://www.coin-or.org/coinCup/coinCup.html">2013 COIN-OR Cup</a>!</li>
+</ul>
+
+<h2 id="juliaopt">JuliaOpt</h2>
+
+<p>Miles and I put a lot of thought into whats next for the burgeoning collection of optimization software and interfaces in Julia, and felt it would be appropriate to emulate the example set by <a href="https://github.com/JuliaStats">JuliaStats</a> and pull all the code together in one place. We want to go further and make sure everything works together, is well documented, and well tested. One of the end goal is to make Julia <em>the</em> choice for people working with optimization problems.</p>
+
+<div class="photo"><img src="http://juliaopt.org/images/logo300.png" alt="JuliaOpt logo - top: LP, left: NLP, right: IP" /><p class="caption">JuliaOpt logo - top: LP, left: NLP, right: IP</p></div>
+
+<p>We’ve set up a <a href="https://github.com/JuliaOpt">JuliaOpt GitHub organization</a> and a <a href="http://juliaopt.org">JuliaOpt website</a> - check them out the projects, use it, report bugs, and contribute back - we’d love to have you join us.</p>
+
+  </div>
+</div>
+
+
+
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 1%">
+        <hr>
+        &copy; Iain Dunning, 2015. CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+      </div>
+    </div>
+  </div>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+  $("#abouttoggle").click( function() { $("#aboutcontent").toggle(); return false; });
+  $("#blogtoggle").click( function() { $("#blogcontent").toggle(); return false; });
+  $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
+  $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
+  $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

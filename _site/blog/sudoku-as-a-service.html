@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- HTML+CSS based on Skeleton: http://getskeleton.com/ -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title> Sudoku-as-a-Service with Julia |  Iain Dunning</title>
+  <meta name="description" content="">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+</head>
+<body>
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+    <div class="row">
+  <div class="twelve columns" style="margin-top: 5%">
+    <h1><a href="/" class="hidelink">Iain Dunning</a></h1>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2>&rsaquo; Sudoku-as-a-Service with Julia</h2>
+    
+    <h6>First posted: Sep 15, 2013</h6>
+
+    <p><a href="http://en.wikipedia.org/wiki/Sudoku">Sudoku</a> is (was?) an extremely popular number puzzle. Players are presented with a 9 by 9 grid, with some of the cells filled in with a number between 1 and 9. The goal is to complete the grid while respecting these rules:</p>
+
+<ul>
+  <li>Each row of the grid must contain each of the numbers 1 to 9 exactly once.</li>
+  <li>Each column of the grid must contain each of the numbers 1 to 9 exactly once.</li>
+  <li>Divide the grid into 9 3-by-3 non-overlapping subgrids. Each of these 3-by-3 grids must contain each of the numbers 1 to 9 exactly once.</li>
+</ul>
+
+<div class="photo"><img src="/images/sudokupuzzle.png" alt="An unsolved sudoku puzzle (Wikimedia Commons)" /><p class="caption">An unsolved sudoku puzzle (Wikimedia Commons)</p></div>
+
+<p>In this post I’m going to</p>
+
+<ul>
+  <li>walk through one way to solve sudoku puzzles, and</li>
+  <li>show how you can offer that functionality as an online service</li>
+</ul>
+
+<p>using the <a href="http://julialang.org">Julia</a> programming language.</p>
+
+<h2 id="solving-sudoku-puzzles-with-integer-programming">Solving Sudoku puzzles with integer programming</h2>
+
+<p>The rules of sudoku can be expressed as an <a href="http://en.wikipedia.org/wiki/Integer_programming">integer programming problem</a> which can be solved by any of the many linear and integer programming solvers out there. Of course there are algorithms designed to solve sudoku problems directly that are probably more efficient than integer programming, but stay with me for a moment - I’ll justify it later on! We will start our model by defining a variable <em>x(i,j,k)</em> that equals 1 if and only if cell <em>(i,j)</em> is set to value <em>k</em>, and is 0 otherwise.  This can be written mathematically (with constraints to enforce the fixed cells omitted) as:</p>
+
+<div class="photo"><img src="/images/sudokuform.png" alt="MIP formulation of sudoku problem" /><p class="caption">MIP formulation of sudoku problem</p></div>
+
+<p>Lets break down how these constraints translate back to the rules above. In the first set of constraints we enforce that for every row <em>i</em>, across the columns <em>j</em> the value <em>k</em> must appear once and once only. For example, for value 5 and row 3, we say that <em>x(3,1,5) + x(3,2,5) + x(3,3,5) + … + x(3,9,5) == 1</em>. We can check: if a 5 appeared in row 3 column 2 and row 3 column 6, the sum on the left hand side would be 2. If 5 doesn’t appear in row 3 at all, the sum would be 0. Note that <em>x(3,1,5) = 0.5, x(3,2,5) = 0.5</em> would be feasible with respect to this constraint, but that we are enforcing the constraint (not shown) that <em>x</em> can only be 0 or 1.</p>
+
+<p>The second set of constraints is very similar to the first, and enforces the second ‘rule’ above regarding columns. The third set of constraints is not so obvious. This set of constraints enforces that any given position <em>i,j</em> can only contain one digit by summing across all values. This is kinda self-evident for a human so I didn’t even mention it above. Finally, the fourth set of constraints corresponds to the third rule. Its the most complex notationally, but is conceptually the same as the previous two. On the right side of the equations we iterate over the 9 3-by-3 subgrids, where (0,0) is the top left subgrid and (2,2) is the bottom subgrid. The sum is then over the 9 cells inside that subgrid. Lets pick an example subgrid, e.g. <em>(i,j)=(0,1)</em> and <em>k=5</em>, which corresponds to the left-center subgrid. We then sum over <em>a</em> and <em>b</em>:</p>
+
+<ul>
+  <li><code>x(3*0+1,3*1+1,5) + x(3*0+2,3*1+1,5) + x(3*0+3,3*1+1,5) + x(3*0+1,3*1+2,5) + x(3*0+2,3*1+2,5) + ... == 1</code></li>
+  <li><code>x(1,4,5) + x(2,4,5) + x(3,4,5) + x(1,5,5) + x(2,5,5) + ... == 1</code></li>
+</ul>
+
+<p>As I mentioned above, we have ommitted constraints that would fix particular <em>x(i,j,k)</em> based on the provided cells, but there is no clean way to write that above. The question now is, how do we implement this model in an expressive and maintainable way in code?</p>
+
+<h2 id="jumping-julia">JuMPing Julia!</h2>
+
+<p><a href="http://julialang.org">Julia</a> is a fantastic up-and-coming dynamic language that emphasises high-performance scientific computing that is extensible and easy to read and write. It doesn’t reinvent the wheel: it utilizes the <a href="http://llvm.org/">LLVM compiler</a> to generate fast code, open-source linear algebra packages to provide fast number crunching, and the <a href="https://github.com/joyent/libuv">libuv</a> library to provide excellent cross-platform IO. libuv is the library that powers the popular <a href="http://nodejs.org">node.js</a> environment that has become very popular over the past couple of years for web development. Being a web development language is not an official goal of Julia, but there is certainly no reason it can’t be used. For example, if server-side number crunching is one of the features your site needs, that part could be implemented in Julia and the rest of the application logic in node.js or your tool of choice.</p>
+
+<p>But back to sudoku. The Julia package <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a> is an algebraic modeling language for linear (and integer and quadratic) programming created by myself and the very talented <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a>. You should compare JuMP with tools like <a href="http://code.google.com/p/pulp-or/">PuLP</a> and <a href="http://www.ampl.com">AMPL</a>. If you aren’t familiar with algebraic modeling languages embedded in other languages, you can think of them as an embedded <a href="http://en.wikipedia.org/wiki/Domain_specific_language">domain specific language (DSL)</a>. Julia’s fantastic <a href="http://docs.julialang.org/en/latest/manual/metaprogramming/">metaprogramming functionality</a> has allowed us to create a particularily fast and expressive modeling language. I encourage you to read to the <a href="https://jump.readthedocs.org/en/latest/jump.html">documentation</a>, but here is a taste of what it looks like.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="lineno"> 1</span> <span class="c"># Assuming a solver has been previously installed, e.g. Cbc </span>
+<span class="lineno"> 2</span> <span class="k">using</span> <span class="n">JuMP</span>
+<span class="lineno"> 3</span> 
+<span class="lineno"> 4</span> <span class="k">function</span><span class="nf"> SolveModel</span><span class="p">(</span><span class="n">initgrid</span><span class="p">)</span>
+<span class="lineno"> 5</span>   <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="c"># Create the variables</span>
+<span class="lineno"> 8</span>   <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+<span class="lineno"> 9</span> 
+<span class="lineno">10</span>   <span class="c"># ... snip other constraints ...</span>
+<span class="lineno">11</span>   <span class="c"># Constraint 4 - Only one value in each cell</span>
+<span class="lineno">12</span>   <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">13</span>     <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">14</span>       <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">9</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="lineno">15</span>     <span class="k">end</span>
+<span class="lineno">16</span>   <span class="k">end</span>
+<span class="lineno">17</span> 
+<span class="lineno">18</span>   <span class="c"># ... snip initial solution constraints ...</span>
+<span class="lineno">19</span>   <span class="c"># Solve it (default solver is CBC)</span>
+<span class="lineno">20</span>   <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="lineno">21</span>   
+<span class="lineno">22</span>   <span class="c"># Check solution</span>
+<span class="lineno">23</span>   <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+<span class="lineno">24</span>     <span class="nb">error</span><span class="p">(</span><span class="s">&quot;No solution found!&quot;</span><span class="p">)</span>
+<span class="lineno">25</span>   <span class="k">else</span>
+<span class="lineno">26</span>     <span class="n">mipSol</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="lineno">27</span>     
+<span class="lineno">28</span>     <span class="n">sol</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="lineno">29</span>     <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">30</span>       <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">31</span>         <span class="k">for</span> <span class="n">val</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+<span class="lineno">32</span>           <span class="k">if</span> <span class="n">mipSol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.9</span>  <span class="c"># mipSol is stored as floats</span>
+<span class="lineno">33</span>             <span class="n">sol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+<span class="lineno">34</span>           <span class="k">end</span>
+<span class="lineno">35</span>         <span class="k">end</span>
+<span class="lineno">36</span>       <span class="k">end</span>
+<span class="lineno">37</span>     <span class="k">end</span>
+<span class="lineno">38</span> 
+<span class="lineno">39</span>     <span class="k">return</span> <span class="n">sol</span>
+<span class="lineno">40</span>   <span class="k">end</span>
+<span class="lineno">41</span> <span class="k">end</span></code></pre></div>
+
+<p>Line 7 creates our variable <em>x</em> with three indices over the range 1 to 9, and enforces integrality. <code>@defVar</code> is a macro, not a function, which lets it create a variable <code>x</code> in the local scope. I have removed the other constraints for brevity and left the constraint that enforces that each cell contains only one value. Note the correspondance between the mathematical notation (“for all rows, for all columns”) and the <code>for</code> loops (lines 11 and 12). <code>@addConstraint</code> (line 13) is another macro that facilitates the efficient storage of the constraint as a sparse vector, and matches the mathematical description very closely. On line 19 we solve the model with the default solver <a href="https://projects.coin-or.org/Cbc">COIN-OR CBC</a> - an open-source integer programming solver. As a side note, Julia/JuMP also has interfaces to GLPK (open-source) and Gurobi (closed-source). Finally, we pull the solution back from the solver (if a feasible solution could be found) as a three-dimensional matrix of 0s and 1s which we convert to a two-dimensional vector of 1-to-9s (lines 27 to 36).</p>
+
+<p>If you are interested in how macros and metaprogramming offer up new possibilities for optimization, operations research, and modelling languages, check out our <a href="http://www.optimization-online.org/DB_FILE/2013/05/3883.pdf">paper</a>.</p>
+
+<h2 id="saas--sudoku-as-a-service">SaaS == Sudoku-as-a-service?</h2>
+
+<p>Now we can solve sudoku puzzles, we should share this functionality with the world. The best way to get started with creating a web service is to use the <a href="https://github.com/hackerschool/HttpServer.jl">HttpServer.jl</a> package, a package made at <a href="https://www.hackerschool.com/">Hacker School</a>. Documentation is pretty scarce at this point, but hopefully by inspecting the relatively short code and looking at some examples you can get started.</p>
+
+<p>I bundled my sudoku solver with a server in <a href="https://github.com/IainNZ/SudokuService">SudokuService</a>. This kinda brings me back to why I used integer programming - to demonstrate that you can make pretty complex web-capable number crunching applications with relative ease. Check out <code>server.jl</code> in the repository - its pretty straightforward and most of the work is input validation. The form of a query is <code>/sudoku/123...123</code> or <code>/sudoku/123...123/pretty</code> for human-readable response. There should be 81 numbers, one for each cell of the 9x9 sudoku board, row-wise. A zero indicates a blank. Heres a taster of the server code:</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="k">using</span> <span class="n">HttpServer</span>
+
+<span class="c"># Load the Sudoku solver</span>
+<span class="n">require</span><span class="p">(</span><span class="s">&quot;sudoku.jl&quot;</span><span class="p">)</span>
+
+<span class="c"># Build the request handler</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">HttpHandler</span><span class="p">()</span> <span class="k">do</span> <span class="n">req</span><span class="p">::</span><span class="n">Request</span><span class="p">,</span> <span class="n">res</span><span class="p">::</span><span class="n">Response</span>
+  <span class="k">if</span> <span class="n">ismatch</span><span class="p">(</span><span class="n">r</span><span class="s">&quot;^/sudoku/&quot;</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+    <span class="c"># Expecting 81 numbers between 0 and 9</span>
+    <span class="n">reqsplit</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="s">&quot;/&quot;</span><span class="p">)</span>
+    <span class="c"># ...snip validation...#</span>
+    <span class="n">probstr</span> <span class="o">=</span> <span class="n">reqsplit</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">length</span><span class="p">(</span><span class="n">probstr</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">81</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s">&quot;Error: expected 81 numbers.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="c"># Convert string into numbers, and place in matrix</span>
+    <span class="c"># Return error if any non-numbers or numbers out of range detected</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">try</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+          <span class="n">val</span> <span class="o">=</span> <span class="n">int</span><span class="p">(</span><span class="n">probstr</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span><span class="p">])</span>
+          <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">10</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="s">&quot;Error: number out of range 0:9.&quot;</span><span class="p">)</span>
+          <span class="k">end</span>
+          <span class="n">prob</span><span class="p">[</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+          <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">catch</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="s">&quot;Error: couldn&#39;t parse numbers.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="c"># Attempt to solve the problem using integer programming</span>
+    <span class="k">try</span>
+      <span class="n">sol</span> <span class="o">=</span> <span class="n">SolveModel</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">prettyoutput</span>
+        <span class="c"># Human readable output</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&quot;&lt;table&gt;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+          <span class="n">out</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="s">&quot;&lt;tr&gt;&quot;</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">9</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="s">&quot;&lt;td&gt;&quot;</span><span class="p">,</span><span class="n">sol</span><span class="p">[</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">],</span><span class="s">&quot;&lt;/td&gt;&quot;</span><span class="p">)</span>
+          <span class="k">end</span>
+          <span class="n">out</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="s">&quot;&lt;/tr&gt;&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">string</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="s">&quot;&lt;/table&gt;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="c"># Return solution like input</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">))</span>
+      <span class="k">end</span>
+    <span class="k">catch</span>
+      <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="s">&quot;Error: coudn&#39;t solve puzzle.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">else</span>
+    <span class="c"># Not a valid URL</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c"># Boot up the server</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">http</span><span class="p">)</span>
+<span class="n">run</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="mi">8000</span><span class="p">)</span></code></pre></div>
+
+<h2 id="try-it-yourself">Try it yourself!</h2>
+
+<p>Julia is still growing (rapidly) - I suggest grabbing the 0.2 pre-release and having a bit of patience in case of strange errors! You may also see some warnings regarding deprecation - hopefully they’ll be cleaned up soon once we reach version 0.2 for Julia and have a chance to go back and tidy up all the packages. Instructions for installing everything are in <code>README.md</code>. I encourage you to check it out for yourself, and maybe extend it.  Some ideas:</p>
+
+<ul>
+  <li>Implement a pure-Julia sudoku solver and benchmark performance against the MIP solver.</li>
+  <li>Generalize the code to accept and solve n-by-n sudoku problems</li>
+</ul>
+
+<p>Let me know how that goes by contacting me at idunning AT mit.edu or <a href="https://www.twitter.com/iaindunning">@iaindunning</a>.</p>
+
+  </div>
+</div>
+
+
+
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 1%">
+        <hr>
+        &copy; Iain Dunning, 2015. CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+      </div>
+    </div>
+  </div>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+  $("#abouttoggle").click( function() { $("#aboutcontent").toggle(); return false; });
+  $("#blogtoggle").click( function() { $("#blogcontent").toggle(); return false; });
+  $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
+  $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
+  $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

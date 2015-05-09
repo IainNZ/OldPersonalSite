@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- HTML+CSS based on Skeleton: http://getskeleton.com/ -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title> Solving an Urban Planning Puzzle with JuMP + Julia |  Iain Dunning</title>
+  <meta name="description" content="">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+</head>
+<body>
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+    <div class="row">
+  <div class="twelve columns" style="margin-top: 5%">
+    <h1><a href="/" class="hidelink">Iain Dunning</a></h1>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2>&rsaquo; Solving an Urban Planning Puzzle with JuMP + Julia</h2>
+    
+    <h6>First posted: Sep 30, 2013</h6>
+
+    <p><a href="http://puzzlor.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
+
+<h2 id="urban-planning-august-2013">Urban Planning (August 2013)</h2>
+
+<p><a href="http://puzzlor.com/2013-08_UrbanPlanning.html">(Link to full problem statement)</a></p>
+
+<p>In this problem we have a 5x5 grid with two possibilities for each lot: residential or commercial. Let’s define a binary variable  \( x_{ij} \) that is 1 if and only if lot \( (i,j) \) is residential. The challenge now is to express the objective. For each row and column there are the following possibilities:</p>
+
+<ul>
+  <li>Five residential \( \sum_{j=1}^5 x_{ij} = 5 \) is +5 points</li>
+  <li>Four residential \( \sum_{j=1}^5 x_{ij} = 4 \) is +4 points</li>
+  <li>Three residential \( \sum_{j=1}^5 x_{ij} = 3 \) is +3 points</li>
+  <li>Two residential \( \sum_{j=1}^5 x_{ij} = 2 \) is -3 points</li>
+  <li>One residential \( \sum_{j=1}^5 x_{ij} = 1 \) is -4 points</li>
+  <li>Zero residential \( \sum_{j=1}^5 x_{ij} = 0 \) is -5 points</li>
+</ul>
+
+<p>We will need additional variables that don’t directly correspond to a decision in the original problem, commonly referred to as auxiliary variables, to model this problem. Before we talk about that let’s first review some integer programming modelling “tricks”.</p>
+
+<h3 id="modeling-logical-constraints-with-binary-variables">Modeling Logical Constraints with Binary Variables</h3>
+
+<p>In linear integer programming, all constraints must be linear in the decision variables. Solving non-linear integer programming problems is possible, but is significantly more difficult. The challenge of integer programming modeling then is to “linearize” all the logic of the problem. Consider the following constraints:</p>
+
+<div>
+$$
+y \geq 0.5 \\
+y \in {0,1}
+$$
+</div>
+
+<p>Because \( y \) is a binary variable, the effect of these two constraints is to force \( y = 1 \). Consider the following extension, where \( z_1, z_2, z_3 \) are all binary variables:</p>
+
+<div>
+$$
+y \geq \frac{1}{3} \left( z_1 + z_2 + z_3 \right) \\
+y \in {0,1}
+$$
+</div>
+
+<p>If any of the three \( z \) variables is 1, \( y \) is forced to equal one. This is equivalent to the logical statement <em>y = z1 or z2 or z3</em>. Another way to write this for binary \( z \) is</p>
+
+<div>
+$$
+y \geq z_1 \\
+y \geq z_2 \\
+y \geq z_3 \\
+y \in {0,1}
+$$
+</div>
+
+<p>Let’s apply this to the problem at hand.</p>
+
+<h3 id="modeling-the-positive-point-cases">Modeling the positive point cases</h3>
+
+<p>Define new variables</p>
+
+<ul>
+  <li>\( y_{R,i}^5 = 1 \) iff row \( i \) has 5 residential,</li>
+  <li>\( y_{R,i}^4 = 1 \) iff row \( i \) has 4 or more residential,</li>
+  <li>\( y_{R,i}^3 = 1 \) iff row \( i \) has 3 or more residential</li>
+</ul>
+
+<p>and equivalent \( y_{C,i} \) for columns. The objective function of our problem, for the positive parts at least, can be written as</p>
+
+<div>
+$$
+(\max) \sum_{i=1}^5 (3 (y_{R,i}^3 + y_{C,i}^3) + 1 (y_{R,i}^4 + y_{C,i}^4) + 1 (y_{R,i}^5 + y_{C,i}^5))
+$$
+</div>
+
+<p>Note that \( x \) does not appear in the objective, and that the optimizer will want to set these \( y \) variables to one if at all possible to drive the objective function value higher. Knowing that, we simply need to restrict these variables from being 1 if the condition is not met. The following constraints achieve this goal:</p>
+
+<div>
+$$
+y_{R,i}^5 \leq \frac{1}{5} \sum_{j=1}^5 x_{ij} \\
+y_{R,i}^4 \leq \frac{1}{4} \sum_{j=1}^5 x_{ij} \\
+y_{R,i}^3 \leq \frac{1}{3} \sum_{j=1}^5 x_{ij}
+$$
+</div>
+
+<p>To understand why, consider the case where \( \sum_{j=1}^5 x_{ij} = 4 \). If we plug that in to the right-hand-side of each constraint we obtain:</p>
+
+<div>
+$$
+y_{R,i}^5 \leq \frac{4}{5} \rightarrow y_{R,i}^5 = 0 \\
+y_{R,i}^4 \leq \frac{4}{4} \rightarrow y_{R,i}^4 \leq 1 \\
+y_{R,i}^3 \leq \frac{4}{3} \rightarrow y_{R,i}^3 \leq 1
+$$
+</div>
+
+<p>When combined with the objective sense, the \( \leq \) is effectively an equality. Note also that if the sum of the \( x \) variables is zero on the right-hand-side, the problem is still feasible - that is, we don’t force the \( y \) variables to satisfy mutually exclusive constraints like</p>
+
+<div>
+$$
+y_{R,i}^3 \leq -0.5 \\
+y_{R,i}^3 \in {0,1}
+$$
+</div>
+
+<h3 id="modeling-the-negative-point-cases">Modeling the negative point cases</h3>
+
+<p>We can use a similar approach for the negative point cases, but the constraints are perhaps less intuitive. As before, define variables</p>
+
+<ul>
+  <li>\( y_{R,i}^{-3} = 1 \) iff row \( i \) has 2 residential or less,</li>
+  <li>\( y_{R,i}^{-4} = 1 \) iff row \( i \) has 1 residential or less,</li>
+  <li>\( y_{R,i}^{-5} = 1 \) iff row \( i \) has 0 residential.</li>
+</ul>
+
+<p>The objective function “contribution” from these variables can be written as</p>
+
+<div>
+$$
+(\max) \sum_{i=1}^5 (-3 (y_{R,i}^{-3} + y_{C,i}^{-3}) - 1 (y_{R,i}^{-4} + y_{C,i}^{-4}) - 1 (y_{R,i}^{-5} + y_{C,i}^{-5}))
+$$
+</div>
+
+<p>The optimizer tries to drive these variables towards zero. Before we were restricting variables away from one, but now we will restrict them <em>away</em> from zero with the following constraints:</p>
+
+<div>
+$$
+y_{R,i}^{-3} \geq 1 - \frac{1}{3} \sum_{j=1}^5 x_{ij} \\
+y_{R,i}^{-4} \geq 1 - \frac{1}{2} \sum_{j=1}^5 x_{ij} \\
+y_{R,i}^{-5} \geq 1 - \frac{1}{1} \sum_{j=1}^5 x_{ij}
+$$
+</div>
+
+<p>As before, let’s consider an example. Suppose \( \sum_{j=1}^5 x_{ij} = 1 \):</p>
+
+<div>
+$$
+y_{R,i}^{-3} \geq 1 - \frac{1}{3} \rightarrow y_{R,i}^{-3} = 1 \\
+y_{R,i}^{-4} \geq 1 - \frac{1}{2} \rightarrow y_{R,i}^{-4} = 1 \\
+y_{R,i}^{-5} \geq 1 - \frac{1}{1} \rightarrow y_{R,i}^{-5} \geq 0 
+$$
+</div>
+
+<p>You can also check that all variables will set to 1 in the case where the sum is zero, and that if the sum is 3 or higher then all can be set to zero.</p>
+
+<h3 id="putting-it-all-together">Putting it all together</h3>
+
+<p>Apart from a constraint to set the total number of residential lots, we have everything we need. Let’s build the model in JuMP and Julia.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Assuming a solver has been previously installed, e.g. Cbc</span>
+<span class="k">using</span> <span class="n">JuMP</span>
+
+<span class="k">function</span><span class="nf"> SolveUrban</span><span class="p">()</span>
+
+  <span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+
+  <span class="c"># x is indexed by row and column</span>
+  <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+
+  <span class="c"># y is indexed by R or C, and the points</span>
+  <span class="c"># JuMP allows indexing on arbitrary sets</span>
+  <span class="n">rowcol</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">]</span>
+  <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+  <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="n">rowcol</span><span class="p">,</span><span class="n">points</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+
+  <span class="c"># Objective - combine the positive and negative parts</span>
+  <span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Max</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span>
+    <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> 
+  <span class="o">+</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> 
+  <span class="o">+</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> 
+  <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> 
+  <span class="o">-</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">])</span>
+  <span class="o">-</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span>
+
+  <span class="c"># Constrain the number of residential lots</span>
+  <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span> <span class="o">==</span> <span class="mi">12</span><span class="p">)</span>
+
+  <span class="c"># Add the constraints that link the auxiliary y variables</span>
+  <span class="c"># to the x variables</span>
+  <span class="c"># Rows</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">5</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 5</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 4</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 3</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 2</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 1</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;R&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 0</span>
+  <span class="k">end</span>
+  <span class="c"># Columns</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">5</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 5</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 4</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 3</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 2</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 1</span>
+    <span class="p">@</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">1</span><span class="o">*</span><span class="n">sum</span><span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span> <span class="c"># sum = 0</span>
+  <span class="k">end</span>
+
+  <span class="c"># Solve it with the default solver (CBC)</span>
+  <span class="n">status</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="p">:</span><span class="n">Infeasible</span>
+    <span class="nb">error</span><span class="p">(</span><span class="s">&quot;Solver couldn&#39;t find solution!&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c"># Print results</span>
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;Best objective: </span><span class="si">$</span><span class="s">(round(getObjectiveValue(m)))&quot;</span><span class="p">)</span>
+  <span class="n">println</span><span class="p">(</span><span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="n">SolveUrban</span><span class="p">()</span></code></pre></div>
+
+<p>Try it yourself to see what the solution is. Do you believe the solution is correct, does it match your intuition?</p>
+
+<h3 id="discussion">Discussion</h3>
+
+<p>While you can probably solve this problem just by inspection and trying a few ideas, its interesting to consider how the an integer programming solver would handle this problem. The deep details of this are way beyond the scope of this blog post, but there are two main issues:</p>
+
+<ul>
+  <li>
+    <p>Symmetry: the rows and columns are all effectively interchangeable. For example, if row 1 has three residential lots and row 2 has four, we could swap these rows without changing the objective. This can be an issue for MIP solvers as there is a chance the solution will “bounce” between many equivalent possibilities before reaching optimality, although many techniques and heuristics are built into these solvers to counteract this and even harness it.</p>
+  </li>
+  <li>
+    <p>Fractionality: MIP solvers actually solve a succession of linear problems where the constraints \( x \in {0,1} \) are <em>relaxed</em> to \( 0 \leq x \leq 1 \). The result of this is that when we initially solve the problem, many of \( y \) variables will be fractional. MIP solvers add <em>cuts</em> (constraints that push the values towards the integer values) and <em>branch</em> (solve two new problems with a fractional variables fixed to either 0 or 1) to eventually find an integer solution. They may also employ heuristics that attempt to construct an integer solution from the fractional solution.</p>
+  </li>
+</ul>
+
+<p>The problem size here is so small that a solution is found almost instantly. However these are real issues for “real-world” problems and a lot of research is devoted to both improving solvers and studying the implications of different formulations.</p>
+
+  </div>
+</div>
+
+
+
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 1%">
+        <hr>
+        &copy; Iain Dunning, 2015. CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+      </div>
+    </div>
+  </div>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+  $("#abouttoggle").click( function() { $("#aboutcontent").toggle(); return false; });
+  $("#blogtoggle").click( function() { $("#blogcontent").toggle(); return false; });
+  $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
+  $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
+  $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

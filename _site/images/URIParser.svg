@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.2"
+     width="101.6mm" height="101.6mm" viewBox="0 0 101.6 101.6"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+>
+<g stroke-width="0.33" stroke="#BBBBBB" id="fig-4791253046754929bfb8b54ce4d96111-element-1">
+  <path d="M63.09,20.07 L 64.01 19"/>
+  <path d="M62.62,19.23 L 64.01 19"/>
+  <path d="M55.3,23.91 L 64.01 19"/>
+  <path d="M59.15,30.55 L 60.29 31.39"/>
+  <path d="M59.95,30.01 L 60.29 31.39"/>
+  <path d="M55.3,23.91 L 60.29 31.39"/>
+  <path d="M59.95,26.22 L 61.36 26.25"/>
+  <path d="M60.3,25.32 L 61.36 26.25"/>
+  <path d="M55.3,23.91 L 61.36 26.25"/>
+  <path d="M56.39,33.77 L 57.08 35"/>
+  <path d="M57.34,33.62 L 57.08 35"/>
+  <path d="M55.3,23.91 L 57.08 35"/>
+  <path d="M54.82,28.66 L 55.3 29.99"/>
+  <path d="M55.78,28.66 L 55.3 29.99"/>
+  <path d="M55.3,23.91 L 55.3 29.99"/>
+  <path d="M57.1,18.07 L 56.91 16.67"/>
+  <path d="M56.15,17.86 L 56.91 16.67"/>
+  <path d="M55.3,23.91 L 56.91 16.67"/>
+  <path d="M53.54,17.52 L 52.64 16.43"/>
+  <path d="M52.63,17.84 L 52.64 16.43"/>
+  <path d="M55.3,23.91 L 52.64 16.43"/>
+  <path d="M67.34,17.33 L 66.17 18.13"/>
+  <path d="M67.58,18.27 L 66.17 18.13"/>
+  <path d="M70.73,16.96 L 66.17 18.13"/>
+  <path d="M46.44,56.77 L 47.46 57.75"/>
+  <path d="M47.31,56.35 L 47.46 57.75"/>
+  <path d="M44.3,51.31 L 47.46 57.75"/>
+  <path d="M39.54,62.28 L 39.51 63.69"/>
+  <path d="M40.44,62.63 L 39.51 63.69"/>
+  <path d="M44.3,51.31 L 39.51 63.69"/>
+  <path d="M39.21,54.48 L 38.44 55.66"/>
+  <path d="M39.79,55.26 L 38.44 55.66"/>
+  <path d="M44.3,51.31 L 38.44 55.66"/>
+  <path d="M41.53,49.7 L 40.12 49.67"/>
+  <path d="M41.18,50.6 L 40.12 49.67"/>
+  <path d="M44.3,51.31 L 40.12 49.67"/>
+  <path d="M54.64,47.89 L 55.71 46.97"/>
+  <path d="M54.3,46.99 L 55.71 46.97"/>
+  <path d="M44.3,51.31 L 55.71 46.97"/>
+  <path d="M46.5,58.87 L 47.4 59.96"/>
+  <path d="M47.41,58.54 L 47.4 59.96"/>
+  <path d="M44.3,51.31 L 47.4 59.96"/>
+  <path d="M49.41,55.86 L 50.76 56.28"/>
+  <path d="M50,55.09 L 50.76 56.28"/>
+  <path d="M44.3,51.31 L 50.76 56.28"/>
+  <path d="M37.28,59.23 L 36.82 60.57"/>
+  <path d="M38.03,59.84 L 36.82 60.57"/>
+  <path d="M44.3,51.31 L 36.82 60.57"/>
+  <path d="M53.09,42.55 L 53.64 41.25"/>
+  <path d="M52.38,41.89 L 53.64 41.25"/>
+  <path d="M44.3,51.31 L 53.64 41.25"/>
+  <path d="M45.57,45.44 L 45.27 44.07"/>
+  <path d="M44.62,45.31 L 45.27 44.07"/>
+  <path d="M44.3,51.31 L 45.27 44.07"/>
+  <path d="M33.97,32.44 L 35.36 32.72"/>
+  <path d="M34.48,31.62 L 35.36 32.72"/>
+  <path d="M30.79,29.92 L 35.36 32.72"/>
+  <path d="M42.25,49.79 L 43.5 50.44"/>
+  <path d="M42.96,49.14 L 43.5 50.44"/>
+  <path d="M34.71,40.87 L 43.5 50.44"/>
+  <path d="M32.08,32.11 L 31.18 31.02"/>
+  <path d="M31.18,32.43 L 31.18 31.02"/>
+  <path d="M34.71,40.87 L 31.18 31.02"/>
+  <path d="M36.3,35.88 L 36.11 34.49"/>
+  <path d="M35.35,35.68 L 36.11 34.49"/>
+  <path d="M34.71,40.87 L 36.11 34.49"/>
+  <path d="M10.81,66.89 L 9.62 67.64"/>
+  <path d="M11.01,67.83 L 9.62 67.64"/>
+  <path d="M23.14,64.67 L 9.62 67.64"/>
+  <path d="M23.36,60.44 L 22.79 59.15"/>
+  <path d="M22.4,60.5 L 22.79 59.15"/>
+  <path d="M23.14,64.67 L 22.79 59.15"/>
+  <path d="M26.1,65.81 L 27.49 65.62"/>
+  <path d="M26.3,64.87 L 27.49 65.62"/>
+  <path d="M23.14,64.67 L 27.49 65.62"/>
+  <path d="M45.93,60.33 L 46.91 59.32"/>
+  <path d="M45.51,59.46 L 46.91 59.32"/>
+  <path d="M41.19,62.07 L 46.91 59.32"/>
+  <path d="M45.4,61.91 L 46.64 61.24"/>
+  <path d="M45.26,60.96 L 46.64 61.24"/>
+  <path d="M41.19,62.07 L 46.64 61.24"/>
+  <path d="M28.11,65.94 L 29.25 66.77"/>
+  <path d="M28.91,65.4 L 29.25 66.77"/>
+  <path d="M28.64,65.87 L 29.25 66.77"/>
+  <path d="M69.48,19.17 L 69.97 17.85"/>
+  <path d="M68.74,18.55 L 69.97 17.85"/>
+  <path d="M62.46,26.68 L 69.97 17.85"/>
+  <path d="M64.75,20.96 L 64.68 19.55"/>
+  <path d="M63.83,20.67 L 64.68 19.55"/>
+  <path d="M62.46,26.68 L 64.68 19.55"/>
+  <path d="M61.12,29.82 L 61.24 31.23"/>
+  <path d="M62.05,30.07 L 61.24 31.23"/>
+  <path d="M62.46,26.68 L 61.24 31.23"/>
+  <path d="M52.84,24.56 L 54.13 23.99"/>
+  <path d="M52.77,23.6 L 54.13 23.99"/>
+  <path d="M38.7,25.05 L 54.13 23.99"/>
+  <path d="M30.73,18.28 L 29.39 17.85"/>
+  <path d="M30.14,19.04 L 29.39 17.85"/>
+  <path d="M38.7,25.05 L 29.39 17.85"/>
+  <path d="M33.59,15.97 L 32.47 15.1"/>
+  <path d="M32.77,16.48 L 32.47 15.1"/>
+  <path d="M38.7,25.05 L 32.47 15.1"/>
+  <path d="M32.66,28.19 L 31.79 29.3"/>
+  <path d="M33.17,29.02 L 31.79 29.3"/>
+  <path d="M38.7,25.05 L 31.79 29.3"/>
+  <path d="M83.6,67.87 L 84.98 67.6"/>
+  <path d="M83.75,66.92 L 84.98 67.6"/>
+  <path d="M71.43,65.47 L 84.98 67.6"/>
+  <path d="M50.26,90.26 L 50.45 91.66"/>
+  <path d="M51.2,90.47 L 50.45 91.66"/>
+  <path d="M53.02,79.97 L 50.45 91.66"/>
+  <path d="M47.34,88.91 L 47.1 90.3"/>
+  <path d="M48.18,89.39 L 47.1 90.3"/>
+  <path d="M53.02,79.97 L 47.1 90.3"/>
+  <path d="M53.53,90.69 L 54.14 91.96"/>
+  <path d="M54.49,90.6 L 54.14 91.96"/>
+  <path d="M53.02,79.97 L 54.14 91.96"/>
+  <path d="M31.96,72.74 L 31.49 74.07"/>
+  <path d="M32.7,73.35 L 31.49 74.07"/>
+  <path d="M39.09,64.79 L 31.49 74.07"/>
+  <path d="M25.65,64.21 L 24.32 64.68"/>
+  <path d="M25.64,65.17 L 24.32 64.68"/>
+  <path d="M39.09,64.79 L 24.32 64.68"/>
+  <path d="M32.14,66.52 L 31.02 67.39"/>
+  <path d="M32.43,67.44 L 31.02 67.39"/>
+  <path d="M39.09,64.79 L 31.02 67.39"/>
+  <path d="M38.12,63.01 L 36.87 62.35"/>
+  <path d="M37.41,63.66 L 36.87 62.35"/>
+  <path d="M39.09,64.79 L 36.87 62.35"/>
+  <path d="M25.15,57.22 L 23.89 57.85"/>
+  <path d="M25.26,58.18 L 23.89 57.85"/>
+  <path d="M37.49,56.36 L 23.89 57.85"/>
+  <path d="M28.21,45.56 L 26.8 45.65"/>
+  <path d="M27.94,46.49 L 26.8 45.65"/>
+  <path d="M39.03,49.23 L 26.8 45.65"/>
+  <path d="M36.29,42.87 L 35.25 41.91"/>
+  <path d="M35.43,43.31 L 35.25 41.91"/>
+  <path d="M39.03,49.23 L 35.25 41.91"/>
+  <path d="M60.7,34.9 L 60.61 33.49"/>
+  <path d="M59.78,34.63 L 60.61 33.49"/>
+  <path d="M56.81,46.55 L 60.61 33.49"/>
+  <path d="M67.62,45.28 L 68.85 44.59"/>
+  <path d="M67.47,44.33 L 68.85 44.59"/>
+  <path d="M56.81,46.55 L 68.85 44.59"/>
+  <path d="M55.79,42.55 L 54.86 41.48"/>
+  <path d="M54.89,42.89 L 54.86 41.48"/>
+  <path d="M56.81,46.55 L 54.86 41.48"/>
+  <path d="M56.02,33.61 L 55.42 32.34"/>
+  <path d="M55.06,33.7 L 55.42 32.34"/>
+  <path d="M56.81,46.55 L 55.42 32.34"/>
+  <path d="M61.68,29.11 L 61.89 27.71"/>
+  <path d="M60.83,28.64 L 61.89 27.71"/>
+  <path d="M57.26,36.17 L 61.89 27.71"/>
+  <path d="M54.22,24.29 L 53.37 23.16"/>
+  <path d="M53.29,24.57 L 53.37 23.16"/>
+  <path d="M57.26,36.17 L 53.37 23.16"/>
+  <path d="M50.32,59.8 L 48.95 59.46"/>
+  <path d="M49.78,60.6 L 48.95 59.46"/>
+  <path d="M57.31,65.06 L 48.95 59.46"/>
+  <path d="M68.92,65.88 L 70.26 65.44"/>
+  <path d="M68.94,64.92 L 70.26 65.44"/>
+  <path d="M57.31,65.06 L 70.26 65.44"/>
+  <path d="M53.25,77.43 L 53.34 78.84"/>
+  <path d="M54.17,77.69 L 53.34 78.84"/>
+  <path d="M57.31,65.06 L 53.34 78.84"/>
+  <path d="M41.6,64.34 L 40.26 64.81"/>
+  <path d="M41.58,65.31 L 40.26 64.81"/>
+  <path d="M57.31,65.06 L 40.26 64.81"/>
+  <path d="M59.48,65.05 L 60.66 64.28"/>
+  <path d="M59.26,64.11 L 60.66 64.28"/>
+  <path d="M57.31,65.06 L 60.66 64.28"/>
+  <path d="M57.36,49.04 L 56.84 47.72"/>
+  <path d="M56.39,49.06 L 56.84 47.72"/>
+  <path d="M57.31,65.06 L 56.84 47.72"/>
+  <path d="M50.29,61.59 L 48.89 61.52"/>
+  <path d="M49.92,62.48 L 48.89 61.52"/>
+  <path d="M57.31,65.06 L 48.89 61.52"/>
+  <path d="M53.52,58.78 L 52.36 57.97"/>
+  <path d="M52.73,59.33 L 52.36 57.97"/>
+  <path d="M57.31,65.06 L 52.36 57.97"/>
+  <path d="M72.98,77.43 L 74.33 77.84"/>
+  <path d="M73.56,76.66 L 74.33 77.84"/>
+  <path d="M57.31,65.06 L 74.33 77.84"/>
+  <path d="M60.66,72.21 L 61.72 73.14"/>
+  <path d="M61.51,71.75 L 61.72 73.14"/>
+  <path d="M57.31,65.06 L 61.72 73.14"/>
+  <path d="M43.83,66.92 L 42.61 67.63"/>
+  <path d="M44,67.87 L 42.61 67.63"/>
+  <path d="M57.31,65.06 L 42.61 67.63"/>
+  <path d="M57.32,67.1 L 58.11 68.27"/>
+  <path d="M58.26,66.86 L 58.11 68.27"/>
+  <path d="M57.31,65.06 L 58.11 68.27"/>
+  <path d="M55.09,66.35 L 54.4 67.58"/>
+  <path d="M55.72,67.08 L 54.4 67.58"/>
+  <path d="M57.31,65.06 L 54.4 67.58"/>
+  <path d="M68.08,56.71 L 68.79 55.49"/>
+  <path d="M67.46,55.96 L 68.79 55.49"/>
+  <path d="M57.31,65.06 L 68.79 55.49"/>
+  <path d="M56.87,72.38 L 57.36 73.7"/>
+  <path d="M57.84,72.37 L 57.36 73.7"/>
+  <path d="M57.31,65.06 L 57.36 73.7"/>
+  <path d="M90.67,57.86 L 91.96 57.29"/>
+  <path d="M90.6,56.9 L 91.96 57.29"/>
+  <path d="M77.8,58.24 L 91.96 57.29"/>
+  <path d="M25.46,63.61 L 24.29 64.39"/>
+  <path d="M25.69,64.54 L 24.29 64.39"/>
+  <path d="M36.08,61.48 L 24.29 64.39"/>
+  <path d="M31.32,65.63 L 30.73 66.91"/>
+  <path d="M32,66.3 L 30.73 66.91"/>
+  <path d="M36.08,61.48 L 30.73 66.91"/>
+  <path d="M30.55,64.18 L 29.66 65.27"/>
+  <path d="M31.04,65.02 L 29.66 65.27"/>
+  <path d="M36.08,61.48 L 29.66 65.27"/>
+  <path d="M38.18,84.53 L 37.77 85.88"/>
+  <path d="M38.95,85.11 L 37.77 85.88"/>
+  <path d="M45.21,75.98 L 37.77 85.88"/>
+  <path d="M84.75,86.44 L 86.1 86.87"/>
+  <path d="M85.34,85.68 L 86.1 86.87"/>
+  <path d="M75.27,78.55 L 86.1 86.87"/>
+  <path d="M80.92,85.34 L 82.18 85.98"/>
+  <path d="M81.63,84.68 L 82.18 85.98"/>
+  <path d="M75.27,78.55 L 82.18 85.98"/>
+  <path d="M77.44,88.69 L 78.24 89.85"/>
+  <path d="M78.37,88.45 L 78.24 89.85"/>
+  <path d="M75.27,78.55 L 78.24 89.85"/>
+  <path d="M85.06,83.41 L 86.47 83.5"/>
+  <path d="M85.45,82.53 L 86.47 83.5"/>
+  <path d="M75.27,78.55 L 86.47 83.5"/>
+  <path d="M80.99,88.6 L 82.1 89.47"/>
+  <path d="M81.81,88.09 L 82.1 89.47"/>
+  <path d="M75.27,78.55 L 82.1 89.47"/>
+  <path d="M86.14,80.81 L 87.52 80.55"/>
+  <path d="M86.29,79.86 L 87.52 80.55"/>
+  <path d="M75.27,78.55 L 87.52 80.55"/>
+  <path d="M65.56,83.65 L 66.5 84.7"/>
+  <path d="M66.46,83.29 L 66.5 84.7"/>
+  <path d="M62.28,74.18 L 66.5 84.7"/>
+  <path d="M29.87,73.97 L 28.96 75.06"/>
+  <path d="M30.35,74.81 L 28.96 75.06"/>
+  <path d="M41.45,67.83 L 28.96 75.06"/>
+  <path d="M41.78,64.54 L 41.24 63.24"/>
+  <path d="M40.82,64.59 L 41.24 63.24"/>
+  <path d="M41.45,67.83 L 41.24 63.24"/>
+  <path d="M31.19,65.77 L 29.81 66.05"/>
+  <path d="M31.04,66.73 L 29.81 66.05"/>
+  <path d="M41.45,67.83 L 29.81 66.05"/>
+  <path d="M61.61,29.08 L 61.86 27.69"/>
+  <path d="M60.78,28.6 L 61.86 27.69"/>
+  <path d="M54.44,40.38 L 61.86 27.69"/>
+  <path d="M53.71,24.49 L 53.13 23.21"/>
+  <path d="M52.75,24.56 L 53.13 23.21"/>
+  <path d="M54.44,40.38 L 53.13 23.21"/>
+  <path d="M40.03,27.22 L 39.11 26.15"/>
+  <path d="M39.13,27.57 L 39.11 26.15"/>
+  <path d="M45.43,42.9 L 39.11 26.15"/>
+  <path d="M82.1,50.85 L 83.18 49.95"/>
+  <path d="M81.77,49.94 L 83.18 49.95"/>
+  <path d="M69.69,54.73 L 83.18 49.95"/>
+  <path d="M70.42,46.92 L 69.98 45.58"/>
+  <path d="M69.46,46.89 L 69.98 45.58"/>
+  <path d="M69.69,54.73 L 69.98 45.58"/>
+  <path d="M58.07,84.81 L 58.7 86.07"/>
+  <path d="M59.03,84.7 L 58.7 86.07"/>
+  <path d="M57.37,74.87 L 58.7 86.07"/>
+  <path d="M66.36,52.98 L 67.18 51.82"/>
+  <path d="M65.81,52.19 L 67.18 51.82"/>
+  <path d="M56.72,59.13 L 67.18 51.82"/>
+  <path d="M50.29,66.65 L 49.86 67.99"/>
+  <path d="M51.05,67.24 L 49.86 67.99"/>
+  <path d="M56.72,59.13 L 49.86 67.99"/>
+  <path d="M50.49,58.42 L 49.15 58.85"/>
+  <path d="M50.46,59.38 L 49.15 58.85"/>
+  <path d="M56.72,59.13 L 49.15 58.85"/>
+  <path d="M68.94,64.92 L 70.35 65.01"/>
+  <path d="M69.32,64.04 L 70.35 65.01"/>
+  <path d="M56.72,59.13 L 70.35 65.01"/>
+  <path d="M68.85,59.21 L 70.16 58.68"/>
+  <path d="M68.81,58.24 L 70.16 58.68"/>
+  <path d="M56.72,59.13 L 70.16 58.68"/>
+  <path d="M52.98,77.42 L 53.22 78.81"/>
+  <path d="M53.93,77.59 L 53.22 78.81"/>
+  <path d="M56.72,59.13 L 53.22 78.81"/>
+  <path d="M41.32,63.57 L 40.21 64.43"/>
+  <path d="M41.62,64.49 L 40.21 64.43"/>
+  <path d="M56.72,59.13 L 40.21 64.43"/>
+  <path d="M40.04,56.24 L 38.66 56.53"/>
+  <path d="M39.9,57.2 L 38.66 56.53"/>
+  <path d="M56.72,59.13 L 38.66 56.53"/>
+  <path d="M41.45,50.03 L 40.05 49.81"/>
+  <path d="M40.97,50.88 L 40.05 49.81"/>
+  <path d="M56.72,59.13 L 40.05 49.81"/>
+  <path d="M59.67,62.63 L 60.96 63.21"/>
+  <path d="M60.34,61.94 L 60.96 63.21"/>
+  <path d="M56.72,59.13 L 60.96 63.21"/>
+  <path d="M57.27,49.05 L 56.8 47.72"/>
+  <path d="M56.31,49.05 L 56.8 47.72"/>
+  <path d="M56.72,59.13 L 56.8 47.72"/>
+  <path d="M50.14,60.06 L 48.95 60.81"/>
+  <path d="M50.35,61 L 48.95 60.81"/>
+  <path d="M56.72,59.13 L 48.95 60.81"/>
+  <path d="M54.18,57.53 L 52.77 57.46"/>
+  <path d="M53.81,58.42 L 52.77 57.46"/>
+  <path d="M56.72,59.13 L 52.77 57.46"/>
+  <path d="M57.69,38.68 L 57.23 37.34"/>
+  <path d="M56.72,38.66 L 57.23 37.34"/>
+  <path d="M56.72,59.13 L 57.23 37.34"/>
+  <path d="M65.96,62.97 L 67.37 62.96"/>
+  <path d="M66.29,62.06 L 67.37 62.96"/>
+  <path d="M56.72,59.13 L 67.37 62.96"/>
+  <path d="M56.58,62.62 L 57.19 63.89"/>
+  <path d="M57.54,62.52 L 57.19 63.89"/>
+  <path d="M56.72,59.13 L 57.19 63.89"/>
+  <path d="M62.1,56.32 L 62.97 55.21"/>
+  <path d="M61.59,55.5 L 62.97 55.21"/>
+  <path d="M56.72,59.13 L 62.97 55.21"/>
+  <path d="M62.41,68.16 L 63.56 68.98"/>
+  <path d="M63.2,67.61 L 63.56 68.98"/>
+  <path d="M56.72,59.13 L 63.56 68.98"/>
+  <path d="M75.32,58.83 L 76.63 58.29"/>
+  <path d="M75.28,57.87 L 76.63 58.29"/>
+  <path d="M56.72,59.13 L 76.63 58.29"/>
+  <path d="M64.85,66.06 L 66.19 66.49"/>
+  <path d="M65.44,65.3 L 66.19 66.49"/>
+  <path d="M56.72,59.13 L 66.19 66.49"/>
+  <path d="M57.42,54.08 L 57 52.73"/>
+  <path d="M56.46,54.04 L 57 52.73"/>
+  <path d="M56.72,59.13 L 57 52.73"/>
+  <path d="M38.51,60.72 L 37.25 61.35"/>
+  <path d="M38.62,61.68 L 37.25 61.35"/>
+  <path d="M56.72,59.13 L 37.25 61.35"/>
+  <path d="M46.22,73.64 L 45.87 75.01"/>
+  <path d="M47.02,74.19 L 45.87 75.01"/>
+  <path d="M56.72,59.13 L 45.87 75.01"/>
+  <path d="M73.19,77.07 L 74.46 77.7"/>
+  <path d="M73.89,76.41 L 74.46 77.7"/>
+  <path d="M56.72,59.13 L 74.46 77.7"/>
+  <path d="M60.96,72 L 61.87 73.07"/>
+  <path d="M61.87,71.66 L 61.87 73.07"/>
+  <path d="M56.72,59.13 L 61.87 73.07"/>
+  <path d="M64.38,59.38 L 65.69 58.86"/>
+  <path d="M64.35,58.41 L 65.69 58.86"/>
+  <path d="M56.72,59.13 L 65.69 58.86"/>
+  <path d="M43.39,66.17 L 42.47 67.25"/>
+  <path d="M43.86,67.01 L 42.47 67.25"/>
+  <path d="M56.72,59.13 L 42.47 67.25"/>
+  <path d="M57.52,67.02 L 58.21 68.25"/>
+  <path d="M58.47,66.86 L 58.21 68.25"/>
+  <path d="M56.72,59.13 L 58.21 68.25"/>
+  <path d="M62.11,52.28 L 62.48 50.92"/>
+  <path d="M61.32,51.72 L 62.48 50.92"/>
+  <path d="M56.72,59.13 L 62.48 50.92"/>
+  <path d="M53.88,65.83 L 53.9 67.25"/>
+  <path d="M54.79,66.15 L 53.9 67.25"/>
+  <path d="M56.72,59.13 L 53.9 67.25"/>
+  <path d="M55.22,42.81 L 54.58 41.55"/>
+  <path d="M54.26,42.93 L 54.58 41.55"/>
+  <path d="M56.72,59.13 L 54.58 41.55"/>
+  <path d="M47.25,44.68 L 46.1 43.87"/>
+  <path d="M46.46,45.23 L 46.1 43.87"/>
+  <path d="M56.72,59.13 L 46.1 43.87"/>
+  <path d="M67.48,55.99 L 68.58 55.11"/>
+  <path d="M67.17,55.08 L 68.58 55.11"/>
+  <path d="M56.72,59.13 L 68.58 55.11"/>
+  <path d="M56.79,72.39 L 57.32 73.7"/>
+  <path d="M57.75,72.35 L 57.32 73.7"/>
+  <path d="M56.72,59.13 L 57.32 73.7"/>
+  <path d="M51.19,10.97 L 50.44 9.78"/>
+  <path d="M50.25,11.17 L 50.44 9.78"/>
+  <path d="M53.04,22.03 L 50.44 9.78"/>
+  <path d="M58.03,12.35 L 58.15 10.94"/>
+  <path d="M57.16,11.94 L 58.15 10.94"/>
+  <path d="M53.04,22.03 L 58.15 10.94"/>
+  <path d="M54.23,28.85 L 55.02 30.02"/>
+  <path d="M55.17,28.62 L 55.02 30.02"/>
+  <path d="M53.04,22.03 L 55.02 30.02"/>
+  <path d="M48.11,12.74 L 47.02 11.85"/>
+  <path d="M47.28,13.23 L 47.02 11.85"/>
+  <path d="M53.04,22.03 L 47.02 11.85"/>
+  <path d="M56.23,17.9 L 56.54 16.52"/>
+  <path d="M55.42,17.38 L 56.54 16.52"/>
+  <path d="M53.04,22.03 L 56.54 16.52"/>
+  <path d="M54.69,11.01 L 54.35 9.64"/>
+  <path d="M53.73,10.9 L 54.35 9.64"/>
+  <path d="M53.04,22.03 L 54.35 9.64"/>
+  <path d="M53.02,17.75 L 52.39 16.49"/>
+  <path d="M52.06,17.87 L 52.39 16.49"/>
+  <path d="M53.04,22.03 L 52.39 16.49"/>
+  <path d="M55.41,56.94 L 56.32 58.02"/>
+  <path d="M56.31,56.61 L 56.32 58.02"/>
+  <path d="M49.31,38.87 L 56.32 58.02"/>
+  <path d="M52.97,24.58 L 52.78 23.18"/>
+  <path d="M52.02,24.37 L 52.78 23.18"/>
+  <path d="M49.31,38.87 L 52.78 23.18"/>
+  <path d="M38.85,33.88 L 37.44 33.8"/>
+  <path d="M38.47,34.76 L 37.44 33.8"/>
+  <path d="M49.31,38.87 L 37.44 33.8"/>
+</g>
+<g stroke="#BBBBBB" fill="#AAAAFF" id="fig-4791253046754929bfb8b54ce4d96111-element-2">
+  <circle cx="8.47" cy="67.9" r="1.18"/>
+  <circle cx="55.3" cy="23.91" r="1.18"/>
+  <circle cx="28.46" cy="17.13" r="1.18"/>
+  <circle cx="31.85" cy="14.1" r="1.18"/>
+  <circle cx="70.73" cy="16.96" r="1.18"/>
+  <circle cx="65.03" cy="18.43" r="1.18"/>
+  <circle cx="44.3" cy="51.31" r="1.18"/>
+  <circle cx="30.79" cy="29.92" r="1.18"/>
+  <circle cx="86.15" cy="67.78" r="1.18"/>
+  <circle cx="50.19" cy="92.81" r="1.18"/>
+  <circle cx="46.51" cy="91.32" r="1.18"/>
+  <circle cx="54.24" cy="93.13" r="1.18"/>
+  <circle cx="30.74" cy="74.98" r="1.18"/>
+  <circle cx="22.72" cy="57.97" r="1.18"/>
+  <circle cx="25.67" cy="45.32" r="1.18"/>
+  <circle cx="34.71" cy="40.87" r="1.18"/>
+  <circle cx="60.94" cy="32.36" r="1.18"/>
+  <circle cx="93.13" cy="57.22" r="1.18"/>
+  <circle cx="23.14" cy="64.67" r="1.18"/>
+  <circle cx="29.9" cy="67.75" r="1.18"/>
+  <circle cx="37.07" cy="86.82" r="1.18"/>
+  <circle cx="87.03" cy="87.59" r="1.18"/>
+  <circle cx="82.98" cy="86.84" r="1.18"/>
+  <circle cx="78.54" cy="90.99" r="1.18"/>
+  <circle cx="87.55" cy="83.98" r="1.18"/>
+  <circle cx="82.72" cy="90.47" r="1.18"/>
+  <circle cx="88.69" cy="80.74" r="1.18"/>
+  <circle cx="66.94" cy="85.8" r="1.18"/>
+  <circle cx="27.95" cy="75.64" r="1.18"/>
+  <circle cx="41.19" cy="62.07" r="1.18"/>
+  <circle cx="28.64" cy="65.87" r="1.18"/>
+  <circle cx="62.46" cy="26.68" r="1.18"/>
+  <circle cx="38.7" cy="25.05" r="1.18"/>
+  <circle cx="84.29" cy="49.56" r="1.18"/>
+  <circle cx="70.02" cy="44.4" r="1.18"/>
+  <circle cx="58.84" cy="87.24" r="1.18"/>
+  <circle cx="68.14" cy="51.15" r="1.18"/>
+  <circle cx="49.14" cy="68.92" r="1.18"/>
+  <circle cx="47.97" cy="58.81" r="1.18"/>
+  <circle cx="71.43" cy="65.47" r="1.18"/>
+  <circle cx="71.33" cy="58.64" r="1.18"/>
+  <circle cx="53.02" cy="79.97" r="1.18"/>
+  <circle cx="39.09" cy="64.79" r="1.18"/>
+  <circle cx="37.49" cy="56.36" r="1.18"/>
+  <circle cx="39.03" cy="49.23" r="1.18"/>
+  <circle cx="61.81" cy="64.02" r="1.18"/>
+  <circle cx="56.81" cy="46.55" r="1.18"/>
+  <circle cx="47.8" cy="61.06" r="1.18"/>
+  <circle cx="51.69" cy="57" r="1.18"/>
+  <circle cx="57.26" cy="36.17" r="1.18"/>
+  <circle cx="68.48" cy="63.36" r="1.18"/>
+  <circle cx="57.31" cy="65.06" r="1.18"/>
+  <circle cx="63.96" cy="54.58" r="1.18"/>
+  <circle cx="64.24" cy="69.94" r="1.18"/>
+  <circle cx="77.8" cy="58.24" r="1.18"/>
+  <circle cx="67.12" cy="67.21" r="1.18"/>
+  <circle cx="57.05" cy="51.56" r="1.18"/>
+  <circle cx="36.08" cy="61.48" r="1.18"/>
+  <circle cx="45.21" cy="75.98" r="1.18"/>
+  <circle cx="75.27" cy="78.55" r="1.18"/>
+  <circle cx="62.28" cy="74.18" r="1.18"/>
+  <circle cx="66.87" cy="58.82" r="1.18"/>
+  <circle cx="41.45" cy="67.83" r="1.18"/>
+  <circle cx="58.4" cy="69.41" r="1.18"/>
+  <circle cx="63.15" cy="49.95" r="1.18"/>
+  <circle cx="53.52" cy="68.36" r="1.18"/>
+  <circle cx="54.44" cy="40.38" r="1.18"/>
+  <circle cx="45.43" cy="42.9" r="1.18"/>
+  <circle cx="69.69" cy="54.73" r="1.18"/>
+  <circle cx="57.37" cy="74.87" r="1.18"/>
+  <circle cx="50.2" cy="8.63" r="1.18"/>
+  <circle cx="58.64" cy="9.87" r="1.18"/>
+  <circle cx="55.3" cy="31.17" r="1.18"/>
+  <circle cx="46.42" cy="10.83" r="1.18"/>
+  <circle cx="57.17" cy="15.53" r="1.18"/>
+  <circle cx="54.47" cy="8.47" r="1.18"/>
+  <circle cx="52.25" cy="15.33" r="1.18"/>
+  <circle cx="56.72" cy="59.13" r="1.18"/>
+  <circle cx="53.04" cy="22.03" r="1.18"/>
+  <circle cx="36.36" cy="33.34" r="1.18"/>
+  <circle cx="49.31" cy="38.87" r="1.18"/>
+</g>
+<g font-size="4" stroke="none" fill="#000000" id="fig-4791253046754929bfb8b54ce4d96111-element-3">
+  <text x="8.47" y="67.9" text-anchor="middle" dy="0.35em">RobustStats</text>
+  <text x="55.3" y="23.91" text-anchor="middle" dy="0.35em">HttpCommon</text>
+  <text x="28.46" y="17.13" text-anchor="middle" dy="0.35em">HTTP</text>
+  <text x="31.85" y="14.1" text-anchor="middle" dy="0.35em">Ito</text>
+  <text x="70.73" y="16.96" text-anchor="middle" dy="0.35em">Meddle</text>
+  <text x="65.03" y="18.43" text-anchor="middle" dy="0.35em">Morsel</text>
+  <text x="44.3" y="51.31" text-anchor="middle" dy="0.35em">WinRPM</text>
+  <text x="30.79" y="29.92" text-anchor="middle" dy="0.35em">AWS</text>
+  <text x="86.15" y="67.78" text-anchor="middle" dy="0.35em">Clp</text>
+  <text x="50.19" y="92.81" text-anchor="middle" dy="0.35em">MAT</text>
+  <text x="46.51" y="91.32" text-anchor="middle" dy="0.35em">JPLEphemeris</text>
+  <text x="54.24" y="93.13" text-anchor="middle" dy="0.35em">MarketData</text>
+  <text x="30.74" y="74.98" text-anchor="middle" dy="0.35em">Gtk</text>
+  <text x="22.72" y="57.97" text-anchor="middle" dy="0.35em">OpenStreetMap</text>
+  <text x="25.67" y="45.32" text-anchor="middle" dy="0.35em">SMTPClient</text>
+  <text x="34.71" y="40.87" text-anchor="middle" dy="0.35em">HTTPClient</text>
+  <text x="60.94" y="32.36" text-anchor="middle" dy="0.35em">WebSockets</text>
+  <text x="93.13" y="57.22" text-anchor="middle" dy="0.35em">ChemicalKinetics</text>
+  <text x="23.14" y="64.67" text-anchor="middle" dy="0.35em">Winston</text>
+  <text x="29.9" y="67.75" text-anchor="middle" dy="0.35em">ProfileView</text>
+  <text x="37.07" y="86.82" text-anchor="middle" dy="0.35em">SDE</text>
+  <text x="87.03" y="87.59" text-anchor="middle" dy="0.35em">MixedModels</text>
+  <text x="82.98" y="86.84" text-anchor="middle" dy="0.35em">GARCH</text>
+  <text x="78.54" y="90.99" text-anchor="middle" dy="0.35em">NLreg</text>
+  <text x="87.55" y="83.98" text-anchor="middle" dy="0.35em">ChaosCommunications</text>
+  <text x="82.72" y="90.47" text-anchor="middle" dy="0.35em">Sobol</text>
+  <text x="88.69" y="80.74" text-anchor="middle" dy="0.35em">TimeModels</text>
+  <text x="66.94" y="85.8" text-anchor="middle" dy="0.35em">RandomMatrices</text>
+  <text x="27.95" y="75.64" text-anchor="middle" dy="0.35em">TestImages</text>
+  <text x="41.19" y="62.07" text-anchor="middle" dy="0.35em">OpenGL</text>
+  <text x="28.64" y="65.87" text-anchor="middle" dy="0.35em">ImageView</text>
+  <text x="62.46" y="26.68" text-anchor="middle" dy="0.35em">HttpServer</text>
+  <text x="38.7" y="25.05" text-anchor="middle" dy="0.35em">Calendar</text>
+  <text x="84.29" y="49.56" text-anchor="middle" dy="0.35em">Mongrel2</text>
+  <text x="70.02" y="44.4" text-anchor="middle" dy="0.35em">IJulia</text>
+  <text x="58.84" y="87.24" text-anchor="middle" dy="0.35em">GLPKMathProgInterface</text>
+  <text x="68.14" y="51.15" text-anchor="middle" dy="0.35em">Mosek</text>
+  <text x="49.14" y="68.92" text-anchor="middle" dy="0.35em">JellyFish</text>
+  <text x="47.97" y="58.81" text-anchor="middle" dy="0.35em">GLUT</text>
+  <text x="71.43" y="65.47" text-anchor="middle" dy="0.35em">Cbc</text>
+  <text x="71.33" y="58.64" text-anchor="middle" dy="0.35em">CPLEX</text>
+  <text x="53.02" y="79.97" text-anchor="middle" dy="0.35em">HDF5</text>
+  <text x="39.09" y="64.79" text-anchor="middle" dy="0.35em">Cairo</text>
+  <text x="37.49" y="56.36" text-anchor="middle" dy="0.35em">LightXML</text>
+  <text x="39.03" y="49.23" text-anchor="middle" dy="0.35em">LibCURL</text>
+  <text x="61.81" y="64.02" text-anchor="middle" dy="0.35em">Ipopt</text>
+  <text x="56.81" y="46.55" text-anchor="middle" dy="0.35em">Nettle</text>
+  <text x="47.8" y="61.06" text-anchor="middle" dy="0.35em">SDL</text>
+  <text x="51.69" y="57" text-anchor="middle" dy="0.35em">SQLite</text>
+  <text x="57.26" y="36.17" text-anchor="middle" dy="0.35em">HttpParser</text>
+  <text x="68.48" y="63.36" text-anchor="middle" dy="0.35em">ERFA</text>
+  <text x="57.31" y="65.06" text-anchor="middle" dy="0.35em">Homebrew</text>
+  <text x="63.96" y="54.58" text-anchor="middle" dy="0.35em">JuliaWebRepl</text>
+  <text x="64.24" y="69.94" text-anchor="middle" dy="0.35em">WCSLIB</text>
+  <text x="77.8" y="58.24" text-anchor="middle" dy="0.35em">Sundials</text>
+  <text x="67.12" y="67.21" text-anchor="middle" dy="0.35em">Gurobi</text>
+  <text x="57.05" y="51.56" text-anchor="middle" dy="0.35em">FLANN</text>
+  <text x="36.08" y="61.48" text-anchor="middle" dy="0.35em">Tk</text>
+  <text x="45.21" y="75.98" text-anchor="middle" dy="0.35em">Cubature</text>
+  <text x="75.27" y="78.55" text-anchor="middle" dy="0.35em">NLopt</text>
+  <text x="62.28" y="74.18" text-anchor="middle" dy="0.35em">GSL</text>
+  <text x="66.87" y="58.82" text-anchor="middle" dy="0.35em">MPI</text>
+  <text x="41.45" y="67.83" text-anchor="middle" dy="0.35em">Images</text>
+  <text x="58.4" y="69.41" text-anchor="middle" dy="0.35em">AudioIO</text>
+  <text x="63.15" y="49.95" text-anchor="middle" dy="0.35em">FITSIO</text>
+  <text x="53.52" y="68.36" text-anchor="middle" dy="0.35em">NetCDF</text>
+  <text x="54.44" y="40.38" text-anchor="middle" dy="0.35em">GnuTLS</text>
+  <text x="45.43" y="42.9" text-anchor="middle" dy="0.35em">ICU</text>
+  <text x="69.69" y="54.73" text-anchor="middle" dy="0.35em">ZMQ</text>
+  <text x="57.37" y="74.87" text-anchor="middle" dy="0.35em">GLPK</text>
+  <text x="50.2" y="8.63" text-anchor="middle" dy="0.35em">Etcd</text>
+  <text x="58.64" y="9.87" text-anchor="middle" dy="0.35em">Quandl</text>
+  <text x="55.3" y="31.17" text-anchor="middle" dy="0.35em">Twitter</text>
+  <text x="46.42" y="10.83" text-anchor="middle" dy="0.35em">Coverage</text>
+  <text x="57.17" y="15.53" text-anchor="middle" dy="0.35em">GitHub</text>
+  <text x="54.47" y="8.47" text-anchor="middle" dy="0.35em">Docker</text>
+  <text x="52.25" y="15.33" text-anchor="middle" dy="0.35em">MapLight</text>
+  <text x="56.72" y="59.13" text-anchor="middle" dy="0.35em">BinDeps</text>
+  <text x="53.04" y="22.03" text-anchor="middle" dy="0.35em">Requests</text>
+  <text x="36.36" y="33.34" text-anchor="middle" dy="0.35em">CommonCrawl</text>
+  <text x="49.31" y="38.87" text-anchor="middle" dy="0.35em">URIParser</text>
+</g>
+</svg>

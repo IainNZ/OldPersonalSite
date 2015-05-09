@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- HTML+CSS based on Skeleton: http://getskeleton.com/ -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title> Implementing Second-order Cone Constraints in Gurobi |  Iain Dunning</title>
+  <meta name="description" content="">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+</head>
+<body>
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+    <div class="row">
+  <div class="twelve columns" style="margin-top: 5%">
+    <h1><a href="/" class="hidelink">Iain Dunning</a></h1>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2>&rsaquo; Implementing Second-order Cone Constraints in Gurobi</h2>
+    
+    <h6>First posted: Dec 2, 2012</h6>
+
+    <p>While working on a class project I came across the following constraint that arose from “robustifying” a linear constraint with an ellipsoidal uncertainty set:</p>
+
+<div class="photo"><img src="/images/socpform1.png" alt="" /><p class="caption"></p></div>
+
+<p>where D is a diagonal matrix. In our case, <em>a</em> is the nominal value and the diagonal of D are the <em>“a-hat”</em> values that represent the small deviations we are robustifying against. This is a second-order cone constraint, so I needed to use <a href="http://en.wikipedia.org/wiki/Second-order_cone_programming">second-order cone programming</a> (SOCP). You can see from the Wikipedia page that this equation satisfies the form on that page. Gurobi 5.0 <a href="http://www.gurobi.com/products/gurobi-optimizer/what's-new-in-v5.0">supports</a> quadratic constraints and second-order cone problems, so how do you implement them? There is no “L2 norm” function in the API, so we will have to modify the constraint into a different form. Your first guess might be to move the first term to the right hand side and square both sides</p>
+
+<div class="photo"><img src="/images/socpform2.png" alt="" /><p class="caption"></p></div>
+
+<p>There is a problem here: both sides of this equation are convex, so this constraint doesn’t obviously describe a convex set (try it in <a href="http://cvxr.com/cvx/">CVX</a>, it will be unhappy with you). I actually tried this first, and Gurobi reported that the constraint was not positive-semi-definite (PSD), which is true. Gurobi sees this as me trying to enter an invalid quadratic constraint, not as entering a SO constraint. So what is the right form?</p>
+
+<p>The key is to look at documentation in the <a href="http://www.gurobi.com/documentation/5.0/reference-manual/node265">right place</a> (see second bullet point). However, what actually happened was that my friend <a href="http://www.mit.edu/~mlubin/">Miles Lubin</a> and I ended up doing it the hard way by looking at Gurobi’s MATLAB interface and figuring out the form SOCP’s must follow from that! We also had help from Chris Maes on the <a href="https://groups.google.com/d/topic/gurobi/UlCbvUjCs_w/discussion">Gurobi Google Group</a>, which confirmed our suspicions. In retrospect it seems obvious, from the definition of a second-order cone, but we sure did manage to confuse ourselves. To save someone else time in the future, if you have a constraint like this that has come from using an ellipsoidal uncertainty set, you need to do the following:</p>
+
+<div class="photo"><img src="/images/socpform3.png" alt="" /><p class="caption"></p></div>
+
+<p>To demonstrate what this would look like in C++, I made the following code snippet:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="c1">// Somewhere previously...</span>
+<span class="c1">// GRBModel model = ...</span>
+<span class="c1">// vector&lt;GRBVar&gt; x = ...</span>
+<span class="c1">// vector&lt;double&gt; a = ...</span>
+<span class="c1">// vector&lt;double&gt; ahat = ...</span>
+<span class="c1">// int n = ...; double b = ...;</span>
+    
+<span class="c1">// New constraint 1</span>
+<span class="n">GRBVar</span> <span class="n">t</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">addVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">GRB_INFINITY</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">GRB_CONTINUOUS</span><span class="p">);</span>
+<span class="n">model</span><span class="p">.</span><span class="n">update</span><span class="p">();</span>
+<span class="n">GRBLinExpr</span> <span class="n">teq</span><span class="p">;</span>
+<span class="n">teq</span> <span class="o">+=</span> <span class="n">b</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+  <span class="n">teq</span> <span class="o">-=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+<span class="n">model</span><span class="p">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">teq</span><span class="p">);</span>
+<span class="n">model</span><span class="p">.</span><span class="n">update</span><span class="p">();</span>
+    
+<span class="c1">// New constraints 2</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">GRBVar</span><span class="o">&gt;</span> <span class="n">y</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+  <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">addVar</span><span class="p">(</span><span class="o">-</span><span class="n">GRB_INFINITY</span><span class="p">,</span> <span class="n">GRB_INFINITY</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">GRB_CONTINOUS</span><span class="p">);</span>
+<span class="n">model</span><span class="p">.</span><span class="n">update</span><span class="p">();</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+  <span class="n">model</span><span class="p">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">ahat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]);</span>
+<span class="n">model</span><span class="p">.</span><span class="n">update</span><span class="p">();</span>
+
+<span class="c1">// The final constraint</span>
+<span class="n">GRBQuadExpr</span> <span class="n">lhs</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+  <span class="n">lhs</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+<span class="n">model</span><span class="p">.</span><span class="n">addQConstr</span><span class="p">(</span><span class="n">lhs</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="o">*</span><span class="n">t</span><span class="p">);</span>
+<span class="n">model</span><span class="p">.</span><span class="n">update</span><span class="p">();</span></code></pre></div>
+
+
+  </div>
+</div>
+
+
+
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 1%">
+        <hr>
+        &copy; Iain Dunning, 2015. CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+      </div>
+    </div>
+  </div>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+  $("#abouttoggle").click( function() { $("#aboutcontent").toggle(); return false; });
+  $("#blogtoggle").click( function() { $("#blogcontent").toggle(); return false; });
+  $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
+  $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
+  $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

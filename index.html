@@ -1,0 +1,256 @@
+---
+layout: default
+---
+
+<div class="row">
+  <div class="one-third column" style="margin-top: 5%">
+    <img src="/images/homepage/mitprofile.jpg" alt="Iain at MIT" width="100%">
+  </div>
+  <div class="two-thirds column" style="margin-top: 5%">
+    <h1>Iain Dunning</h1>
+    <h5>Ph.D. Candidate</h3>
+    <h5><a class="hidelink" href="http://web.mit.edu/orc/www/">Operations Research Center</a></h5>
+    <h5><a class="hidelink" href="http://www.mit.edu/">Massachusetts Institute of Technology</a></h5>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>,
+      <a href="http://www.linkedin.com/in/iaindunning">LinkedIn</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2 style="display: inline">&rsaquo; About Me</h2> <a id="abouttoggle">[expand/hide]</a>
+    <div style="display: none" id="aboutcontent">
+    <p>
+      I'm currently a fourth year doctoral candidate at the <a href="http://www.mit.edu/">MIT</a> <a href="http://web.mit.edu/orc/www/">Operations Research Center</a>. My primary <b>research</b> topic is "optimization under uncertainty" using <a href="http://arxiv.org/abs/1010.5445">robust optimization</a>. I'm also interested in topics at the intersection of machine learning and optimization - e.g. how machine learning can guide optimization.
+      &nbsp;<i><a href="#research">More about research.</a></i>
+    </p>
+
+    <p>
+      I've <b>taught</b> analytics (descriptive, predictive, and prescriptive) and related software tools to graduate students at MIT, MBAs and EMBAs at the <a href="http://mitsloan.mit.edu/">MIT Sloan School of Management</a>, and over 30,000 students around the world (and counting) as part of the <a href="https://www.edx.org/course/analytics-edge-mitx-15-071x-0">EdX online class "The Analytics Edge"</a>. 
+      &nbsp;<i><a href="#teaching">More about teaching.</a></i>
+    </p>
+
+    <p>
+      I enjoy creating <b>software</b>, and have <a href="https://github.com/IainNZ">created and contributed</a> to many open source programs. Many of these relate to the <a href="http://julialang.org">Julia</a> programming language. I'm a founder of the <a href="http://juliaopt.org">JuliaOpt</a> organization, which aims to make Julia the language of choice for optimization. Some of my packages include <a href="http://github.com/JuliaOpt/JuMP">JuMP</a>, an algebraic modeling language for optimization, and <a href="http://github.com/IainNZ/JuMPeR">JuMPeR</a>, an extension of JuMP for robust optimization. I lead and maintain the <a href="http://pkg.julialang.org">Julia package ecosystem</a> <a href="https://github.com/IainNZ/PackageEvaluator.jl/">testing infrastructure</a>.
+      &nbsp;<i><a href="#software">More about software.</a></i>
+    </p>
+
+    <p>
+      I've <b>previously worked</b> as a quantitative analyst at 
+      <b><span style="color:#33F">G</span><span style="color:#F33">o</span><span style="color:#FA3">o</span><span style="color:#33F">g</span><span style="color:#3F3">l</span><span style="color:#F33">e</span></b> (developed new algorithms for the search engine, tested by mashing some big data), and in various engineering and analyst intern roles in New Zealand. I obtained my undergraduate degree in engineering from the University of Auckland.
+    </p>
+    </div>
+
+    <br>
+
+
+    <a id="blog"></a>
+    <h2 style="display: inline">&rsaquo; Blog Posts</h2> <a id="blogtoggle">[expand/hide]</a>
+    <div style="display: none" id="blogcontent">
+      <ul class="post-list">
+        {% for post in site.posts %}
+          <li>
+              <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <br>
+
+
+    <a id="research"></a>
+    <h2 style="display: inline">&rsaquo; Research</h2> <a id="researchtoggle">[expand/hide]</a>
+    <div style="display: none" id="researchcontent">
+
+    <h4>Journal articles (accepted and submitted)</h4>
+    
+    <ul>
+      <li>
+        D. Bertsimas, I. Dunning.
+        <b>"Multistage Robust Mixed Integer Optimization with Adaptive Partitions."</b>
+        <i>Submitted to Operations Research.</i>
+        <a href="http://www.optimization-online.org/DB_FILE/2014/11/4658.pdf">
+          [preprint]
+        </a>
+        <ul>
+          <li>
+            We consider problems where we must make decisions over time with uncertain parameters, and some of the decisions are discrete (e.g. 'yes or no' decisions). These problems can be tough to solve exactly, so we propose an approach inspired by Voronoi diagrams to "partition" the space of possible outcomes, and associate decisions with each partition. Our approach focuses on getting good results in hard-to-satisfy situations, which allows us to quickly get provably good solutions.<br>
+            <img src="/images/homepage/ropart.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto">
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        D. Bertsimas, I. Dunning, M. Lubin.
+        <b>"Reformulation versus cutting planes for robust optimization".</b> 
+        <i>Submitted to Computational Management Science.</i>
+        <a href="http://www.optimization-online.org/DB_FILE/2014/04/4336.pdf">
+          [preprint]
+        </a>
+        <ul>
+          <li>
+            RO problems are normally solved (in the literature) by reformulating the uncertain problem (with an infinite number of constraints) into a deterministic problem of finite size, which we can then solve with a standard solvers. An alternative approach observes that only a finite number of constraints are needed, which we generate them on the fly. Here we perform a detailed computational study of variants of both, with guidance for practical implementations.<br>
+            <img src="/images/homepage/cutplot.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto">
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        M. Lubin, I. Dunning.
+        <b>"Computing in Operations Research using Julia".</b>
+        <i>INFORMS Journal on Computing</i>, (to appear)
+        <a href="http://arxiv.org/abs/1312.1431">
+          [preprint]
+        </a>
+        <ul>
+          <li>
+            There is a (perceived) divide between fast-but-hard-to-use languages like C/Fortran, and slow-but-easy-to-use languages like Python/MATLAB. Here we explore how Julia, a modern language for numerical computing bridges this divide, can be used for implementing software and algorithms fundamental to the field of operations research. We demonstrate algebraic modeling for linear and nonlinear optimization (JuMP) and a partial implementation of a practical simplex code. Benchmarks suggest Julia achieves state-of-the-art performance.<br>
+            <img src="/images/homepage/jlperf.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto">
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Conference talks</h4>
+
+    <ul>
+      <li>
+        "A Framework for the Systematic Evaluation of Computational Methods."
+        (with J. Silberholz)
+        <i>INFORMS 2014</i>, <a href="talks/informs2014secm.pdf">[slides]</a>
+      </li>
+
+      <li>
+        "Solver-independent MILP Callbacks in JuMP (w/ Applications to Robust Integer Optimization"
+        <i>INFORMS 2014</i>, <a href="talks/informs2014callback.pdf">[slides]</a>
+      </li>
+
+      <li>
+        "Computing in Operations Research using Julia"
+        (with M. Lubin)
+        <i>INFORMS 2013</i>, <a href="talks/informs2013.pdf">[slides]</a>
+      </li>
+
+      <li>
+        "OpenSolver: Open source optimisation for Excel"
+        (with A. Mason)
+        <i>45th Annual Conference of the ORSNZ (2010)</i>, <a href="https://secure.orsnz.org.nz/conf45/program/Papers/ORSNZ2010_Mason.pdf">[paper]</a>
+        <ul>
+          <li>Winner of <a href="http://www.coin-or.org/coinCup/coinCup2011Winner.html">COIN-OR INFORMS Cup 2011</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    </div> <!-- end research -->
+
+    <br>
+    <a id="teaching"></a>
+    <h2 style="display: inline">&rsaquo; Teaching</h2> <a id="teachingtoggle">[expand/hide]</a>        
+    <div style="display: none" id="teachingcontent">
+
+    <h4 style="margin-top: 2%">Highlights</h4>
+    <ul>
+      <li>
+        Spring 2014, Spring 2015: <a href="https://www.edx.org/course/analytics-edge-mitx-15-071x-0"><b>The Analytics Edge</b> (EdX)</a>
+        <ul>
+          <li>
+            30,000-person MOOC (Massive Open Online Course) that teaches predictive analytics (linear and logistic regression, CART, random forests), prescriptive analytics (linear and integer optimization), best practices and supporting techniques (e.g. cross-validation, text minining, clustering, visualizations). I was involved with creating the content as part of a team of MIT ORC doctoral students.
+          </li>
+        </ul>
+      </li>
+      <li>
+        January 2013, 2014, 2015: Software Tools for Operations Research (MIT)
+        <ul>
+          <li>
+            This is student-run and -taught class aimed primarily at MIT ORC masters and doctoral students. Students each teach a three-hour module, eight modules in total, about topics such as data wrangling in R or optimization in Julia. The class started in 2013, and has maintained an enrolment of 30 to 40 students each January. I've been involved as both a teacher and organizer in all years. We wrote a paper about the class after the 2014 edition, and are aware of other schools now replicating the class based on this template:
+          </li>
+          <li>
+            Iain Dunning, Vishal Gupta, Angela King, Jerry Kung, Miles Lubin, John Silberholz (2015).
+            A Course on Advanced Software Tools for Operations Research and Analytics
+            <i>INFORMS Transactions on Education</i> 15(2):169-179.
+            <a href="http://pubsonline.informs.org/doi/abs/10.1287/ited.2014.0131">[paper]</a>
+        </ul>
+      </li>
+    </ul>
+
+    <h4>Recent teaching assistantships</h4>
+    <ul>
+      <li>
+        Spring 2015: <b>The Analytics Edge</b> (MIT Sloan, MBA)
+        <ul>
+          <li>
+            Popular elective, following on from "Data, Models and Decisions". Covers same material as the EdX class.
+          </li>
+        </ul>
+      </li>
+      
+      <li>Spring 2014: <b>Data, Models and Decisions</b> (MIT Sloan, EMBA)
+        <ul>
+          <li>
+            EMBA core class. Covers probability, simulation, regression, and optimization, in a case-based style.
+            <a href="http://www.amazon.com/Data-Models-Decisions-Fundamentals-Management/dp/097591460X">[textbook]</a>
+          </li>
+        </ul>
+      </li>
+
+      <li>Spring 2013: <b>The Analytics Edge</b> (MIT Sloan, EMBA)
+      </li>
+
+      <li>2009,2010,2011: Engineering classes at University of Auckland
+        <ul>
+          <li>
+            Second- and third-year engineering mathematics and computational technique classes.
+          </li>
+      </li>
+    </ul>
+
+    </div> <!-- end teaching -->
+
+    <br>
+    <a id="software"></a>
+    <h2 style="display: inline">&rsaquo; Software</h2> <a id="softwaretoggle">[expand/hide]</a>        
+    <div style="display: none" id="softwarecontent">
+
+    <p style="margin-top: 2%">
+      I've released or contributed to a variety of programs and projects over the years. Here is a summary of some of those. My languages of choice are Julia, C++, Python, and R, although I've used plenty of Javascript, Visual Basic, MATLAB, and C over the years. I've dabbled with Java, and even made a text-based RPG with PHP once. I'd like to try something non-trivial with a language like Haskell, F# or OCaml in the future.
+    </p>
+
+    <h5><a href="http://juliaopt.org">JuliaOpt</a></h5>
+
+    <img src="/images/homepage/juliaopt.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto">
+
+    <p>
+      I am one of the founders of the JuliaOpt organization, a collection of optimization-related packages for Julia. I am a co-creator of <a href="https://github.com/JuliaOpt/JuMP">JuMP</a>, a modeling language for optimization problems. I've also been involved in creating and maintaining several of the solver wrappers. I have spoken about JuliaOpt at <a href="http://youtu.be/VwZvUvXX-vY?list=PLP8iPy9hna6TSRouJfvobfxkZFYiPSvPd">JuliaCon 2014</a>, at UC Berkeley, and in the talks and papers about JuMP mentioned above.
+    </p>
+
+    <h5><a href="http://pkg.julialang.org">Julia package listing</a> and <a href="https://github.com/IainNZ/PackageEvaluator.jl/">continuous integration</a>.</h5>
+    
+    <p>
+      I am the creator and maintainer for the official Julia package listing. The listing is automatically generated by <a href="https://github.com/IainNZ/PackageEvaluator.jl/">PackageEvaluator.jl</a>, which tests every registered package every day on both release and unstable Julia. Tests run in a Vagrant-launched VirtualBox Ubuntu VM. I'm submitted patchs to a large number of Julia packages to improve their stability, testing, and deployability. I talked about the package ecosystem at <a href="http://www.youtube.com/watch?v=tYpQvB9-tqA">JuliaCon 2014</a>.
+    </p>
+
+    <h5>Other Julia Code</h5>
+
+    <ul>
+      <li><a href="https://github.com/JuliaLang/julia/commits/master?author=IainNZ">Julia</a> itself: mostly minor fixes, and test and documentation improvements.
+      <li><a href="https://github.com/IainNZ/Coverage.jl">Coverage.jl</a>: tools for reporting Julia code coverage results.</li>
+      <li><a href="https://github.com/IainNZ/GraphLayout.jl">GraphLayout.jl</a>: algorithms to visualize graphs.</li>
+      <li><a href="https://github.com/IainNZ/Humanize.jl">Humanize.jl</a>: "humanizes" numbers like sizes of data, date-time deltas, and adds digit separators.</li>
+      <li><a href="https://github.com/IainNZ/JuMPeR.jl">JuMPeR.jl</a>: an extension of JuMP for robust optimization.</li>
+      <li><a href="https://github.com/IainNZ/MetadataTools.jl">MetadataTools.jl</a>: tools for manipulating and analyzing Julia's package registry.</li>
+    </ul>
+
+    <h5>Other Code</h5>
+
+    <ul>
+      <li><a href="http://opensolver.org/">OpenSolver</a>: a plug-in for Excel that allows you to use a variety of powerful solvers, without limitation. Winner of the <a href="http://www.coin-or.org/coinCup/coinCup2011Winner.html">COIN-OR INFORMS Cup</a></li>
+      <li><a href="https://github.com/IainNZ/SimplexJS">SimplexJS</a>: a toy mixed-integer linear programming solver in pure Javascript.</li>
+      <li><a href="http://tenkicompare.com/">TenkiCompare</a>: compare weather in different cities, find cities with similar weather.
+    </ul>
+  </div>
+</div>

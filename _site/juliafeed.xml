@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Iain Dunning - Blog</title>
+    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</description>
+    <link>http://iaindunning.com/</link>
+    <atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 08 May 2015 21:16:43 -0400</pubDate>
+    <lastBuildDate>Fri, 08 May 2015 21:16:43 -0400</lastBuildDate>
+    <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>MetadataTools.jl</title>
+        <description>
+            &lt;p&gt;This is my first attempt at turning an &lt;a href=&quot;https://github.com/JuliaLang/IJulia.jl&quot;&gt;IJulia Notebook&lt;/a&gt; into a blog post. I gave a lightning talk at the &lt;a href=&quot;http://www.meetup.com/julia-cajun/&quot;&gt;Cambridge Area Julia Users Group (CAJUN)&lt;/a&gt; on Sept. 4th 2014 about some fun things you can do with &lt;a href=&quot;https://github.com/IainNZ/MetadataTools.jl&quot;&gt;MetadataTools.jl&lt;/a&gt; and used the following notebook as my “slides”. Here is that notebook, converted to Markdown for my site. It works fairly well, although I’ve had to a little bit of manual editing to make it look correct.&lt;/p&gt;
+
+&lt;h2 id=&quot;metadatatoolsjl-demo&quot;&gt;MetadataTools.jl Demo&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;using MetadataTools
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;getting-information-about-packages&quot;&gt;Getting information about packages&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MetadataTools&lt;/code&gt; defines a &lt;code&gt;PkgMeta&lt;/code&gt; type that represents a package’s METADATA entry, and contains a &lt;code&gt;PkgMetaVersion&lt;/code&gt; for each tagged version.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pkgs = get_all_pkg()  # Returns a Dict{String,PkgMeta}
+pkgs[&quot;DataArrays&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;DataArrays   git://github.com/JuliaStats/DataArrays.jl.git
+  0.0.0,a6ce00,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.1,0001ff,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.2,7a61d2,julia 0.2-,StatsBase 0.2.5 0.3-,SortingAlgorithms
+  0.0.3,613ca1,julia 0.2- 0.3-,StatsBase 0.3.8-
+  0.1.0,ae7d82,julia 0.3-,StatsBase 0.3-,SortingAlgorithms
+  0.1.1,3fe861,julia 0.3-,StatsBase 0.3
+  0.1.2,d0a0b3,julia 0.3-,StatsBase 0.3
+  0.1.3,d9ad97,julia 0.3-,StatsBase 0.3
+  0.1.4,4742f2,julia 0.3.0-prerelease+1942,StatsBase 0.3
+  0.1.5,833e53,julia 0.3.0-,StatsBase 0.3
+  0.1.6,4be6c8,julia 0.3.0-,StatsBase 0.3
+  0.1.7,fc8a8a,julia 0.3.0-,StatsBase 0.3
+  0.1.8,511e2c,julia 0.3.0-,StatsBase 0.3
+  0.1.9,9c281b,julia 0.3.0-,StatsBase 0.3
+  0.1.10,440fb0,julia 0.3.0-,StatsBase 0.3
+  0.1.11,623147,julia 0.3.0-,StatsBase 0.3
+  0.1.12,e0e4a7,julia 0.3.0-,StatsBase 0.3
+  0.2.0,d78a6d,julia 0.3.0-,StatsBase 0.3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can check that maximum supported Julia version using &lt;code&gt;get_upper_limit&lt;/code&gt; - useful for checking if a package is deprecated.&lt;/p&gt;
+
+&lt;p&gt;Input:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;get_upper_limit(get_pkg(&quot;Monads&quot;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;v&quot;0.3.0&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Input:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;get_upper_limit(get_pkg(&quot;DataFrames&quot;))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;v&quot;0.0.0&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also request information about a package from GitHub (or wherever it is hosted - only GitHub needed right now!)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gadfly_info = get_pkg_info(get_pkg(&quot;Gadfly&quot;))
+Base.isless(a::MetadataTools.Contributor,b::MetadataTools.Contributor) =
+    isless(a.username,b.username)
+sort(gadfly_info.contributors, rev=true)[1:10]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;10-element Array{(Int64,Contributor),1}:
+ (428,Contributor(&quot;dcjones&quot;,&quot;https://github.com/dcjones&quot;))        
+ (8,Contributor(&quot;dchudz&quot;,&quot;https://github.com/dchudz&quot;))            
+ (7,Contributor(&quot;darwindarak&quot;,&quot;https://github.com/darwindarak&quot;))  
+ (6,Contributor(&quot;timholy&quot;,&quot;https://github.com/timholy&quot;))          
+ (5,Contributor(&quot;kleinschmidt&quot;,&quot;https://github.com/kleinschmidt&quot;))
+ (5,Contributor(&quot;aviks&quot;,&quot;https://github.com/aviks&quot;))              
+ (5,Contributor(&quot;Keno&quot;,&quot;https://github.com/Keno&quot;))                
+ (4,Contributor(&quot;jverzani&quot;,&quot;https://github.com/jverzani&quot;))        
+ (4,Contributor(&quot;inq&quot;,&quot;https://github.com/inq&quot;))                  
+ (4,Contributor(&quot;IainNZ&quot;,&quot;https://github.com/IainNZ&quot;))            
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I pulled all the data about a week ago and serialized it for later use.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;f = open(&quot;metadata.jldata&quot;,&quot;r&quot;)
+pkg_info = deserialize(f)
+close(f)
+pkg_info[&quot;Dates&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PkgInfo(&quot;https://github.com/quinnj/Dates.jl&quot;,&quot;Date/DateTime Implementation for the Julia Language; Successor to Datetime.jl&quot;,&quot;&quot;,5,2,[(2,Contributor(&quot;jiahao&quot;,&quot;https://github.com/jiahao&quot;)),(131,Contributor(&quot;quinnj&quot;,&quot;https://github.com/quinnj&quot;))])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Input:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Calculate commits stats
+total_coms = Dict()
+total_pkgs = Dict()
+
+for pkg in values(pkg_info)
+    for contrib in pkg.contributors
+        commits, c = contrib
+        total_coms[c.username] = get(total_coms,c.username,0) + commits
+        total_pkgs[c.username] = get(total_pkgs,c.username,0) + 1
+    end
+end
+
+# Turn dicts into sorted (num,username) vectors
+total_pkgs = sort([(total_pkgs[n],n) for n in keys(total_pkgs)],rev=true)
+total_coms = sort([(total_coms[n],n) for n in keys(total_coms)],rev=true)
+
+println(&quot;Number of packages contributed to&quot;)
+map(println, total_pkgs[1:20])
+
+println(&quot;Number of commits across all packages&quot;)
+map(println, total_coms[1:20]);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Number of packages contributed to
+(51,&quot;timholy&quot;)
+(45,&quot;johnmyleswhite&quot;)
+(40,&quot;kmsquire&quot;)
+(37,&quot;StefanKarpinski&quot;)
+(35,&quot;Keno&quot;)
+(34,&quot;lindahua&quot;)
+(30,&quot;simonster&quot;)
+(29,&quot;IainNZ&quot;)
+(25,&quot;mlubin&quot;)
+(24,&quot;staticfloat&quot;)
+(24,&quot;aviks&quot;)
+(21,&quot;vtjnash&quot;)
+(20,&quot;stevengj&quot;)
+(20,&quot;ihnorton&quot;)
+(18,&quot;quinnj&quot;)
+(17,&quot;tanmaykm&quot;)
+(17,&quot;dcjones&quot;)
+(17,&quot;carlobaldassi&quot;)
+(16,&quot;tkelman&quot;)
+(16,&quot;powerdistribution&quot;)
+
+Number of commits across all packages
+(1734,&quot;lindahua&quot;)
+(1427,&quot;jakebolewski&quot;)
+(1178,&quot;timholy&quot;)
+(893,&quot;johnmyleswhite&quot;)
+(821,&quot;dcjones&quot;)
+(788,&quot;simonster&quot;)
+(749,&quot;mlubin&quot;)
+(678,&quot;milktrader&quot;)
+(462,&quot;stevengj&quot;)
+(435,&quot;dmbates&quot;)
+(415,&quot;nolta&quot;)
+(402,&quot;one-more-minute&quot;)
+(398,&quot;quinnj&quot;)
+(397,&quot;IainNZ&quot;)
+(372,&quot;joehuchette&quot;)
+(353,&quot;powerdistribution&quot;)
+(350,&quot;WestleyArgentum&quot;)
+(340,&quot;Keno&quot;)
+(336,&quot;scidom&quot;)
+(330,&quot;tanmaykm&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;package-ecosystem&quot;&gt;Package Ecosystem&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;MetadataTools&lt;/code&gt; has a dependency on &lt;code&gt;Graphs&lt;/code&gt; to enable an analysis of how
+packages rely on each other.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;using Graphs
+# Get a directed graph where PkgA -&amp;gt; PkgB iff 
+# PkgA directly requires PkgB
+g = get_pkgs_dep_graph(get_all_pkg())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Directed Graph (418 vertices, 496 edges)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Input:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;g_gadfly = get_pkg_dep_graph(get_pkg(&quot;Gadfly&quot;),g)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Directed Graph (24 vertices, 36 edges)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To plot the dependency graph for a package, we can use my GraphLayout.jl package which uses Compose.jl internally for drawing. I haven’t got around to adding Graphs.jl support to GraphLayout.jl just yet though…&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;using GraphLayout
+for pkg_name in [&quot;Gadfly&quot;,&quot;QuantEcon&quot;,&quot;JuMP&quot;,&quot;Twitter&quot;]
+    # Extract graph
+    g_pkg = get_pkg_dep_graph(get_pkg(pkg_name),g)
+    # Extract adjacency matrix
+    adj_mat = adjacency_matrix(g_pkg)
+    # Build layout
+    locs_x,locs_y = layout_spring_adj(adj_mat)
+    # Extract name for each vertex
+    vert_names = map(pm-&amp;gt;pm.name, vertices(g_pkg))
+    # Draw as an SVG
+    draw_layout_adj(adj_mat, locs_x, locs_y, labels=vert_names)
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_0.svg&quot; alt=&quot;&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_1.svg&quot; alt=&quot;&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_2.svg&quot; alt=&quot;&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/metadatatools_16_3.svg&quot; alt=&quot;&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;We can also look at which packages depend on the most packages&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&quot;Top 10 packages by number of packages depended on:&quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&quot; &quot;), num_pkg_req[i][1]-1)
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Top 10 packages by number of packages depended on:
+RobustStats         30
+MachineLearning     30
+Quandl              26
+Twitter             25
+Lumira              24
+Gadfly              23
+QuantEcon           22
+ProfileView         22
+ImageView           21
+Etcd                21
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can also reverse the graph - now an arc from PkgA to PkgB means PkgB requires PkgA&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;g_rev = get_pkgs_dep_graph(pkgs, reverse=true)
+# Count size of every subgraphs like above
+num_pkg_req = [
+    (num_vertices(get_pkg_dep_graph(pkg, g_rev)), pkg.name)
+        for pkg in values(pkgs)]
+sort!(num_pkg_req, rev=true)  # Sort descending
+println(&quot;Top 10 packages by number of packages that depend on them:&quot;)
+for i in 1:10
+    println(rpad(num_pkg_req[i][2],20,&quot; &quot;), num_pkg_req[i][1]-1)
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Top 10 packages by number of packages that depend on them:
+URIParser           89
+SHA                 88
+BinDeps             87
+ArrayViews          76
+JSON                71
+StatsBase           66
+Homebrew            58
+Zlib                49
+URLParse            40
+Reexport            40
+&lt;/code&gt;&lt;/pre&gt;
+
+
+            
+        </description>
+        <pubDate>Fri, 05 Sep 2014 08:00:00 -0400</pubDate>
+        <link>http://iaindunning.com/blog/metadatatools.html</link>
+        <guid isPermaLink="true">http://iaindunning.com/blog/metadatatools.html</guid>
+      </item>
+    
+      <item>
+        <title>Julia Package Ecosystem Dependency Graphs</title>
+        <description>
+            &lt;p&gt;&lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt; is a relatively young programming language that is rising in popularity. I personally use it heavily in my work, and try to contribute back where I can. It has an &lt;a href=&quot;http://docs.julialang.org/en/release-0.2/manual/packages/&quot;&gt;in-built package manager&lt;/a&gt; that is mostly used to access packages from the central repository, &lt;a href=&quot;https://github.com/JuliaLang/METADATA.jl&quot;&gt;METADATA.jl&lt;/a&gt;, which contains a listing of packages and their dependencies. At the time of writing there were 363 packages available that are compatible with the Julia 0.3 release candidate.&lt;/p&gt;
+
+&lt;p&gt;I recently wrote some code to analyze METADATA, available as part of &lt;a href=&quot;https://github.com/IainNZ/PackageEvaluator.jl&quot;&gt;PackageEval.jl&lt;/a&gt; (funnily enough, this package isn’t in METADATA). I have utilized that functionality to generate &lt;em&gt;dependency graphs&lt;/em&gt; for METADATA, where a directed link between two packages A and B means that package A depends on package B. Combining this with &lt;a href=&quot;https://github.com/IainNZ/GraphLayout.jl&quot;&gt;GraphLayout.jl&lt;/a&gt;, which does force-based graph layout in pure Julia, and &lt;a href=&quot;https://github.com/dcjones/Compose.jl&quot;&gt;Compose.jl&lt;/a&gt;, a declarative vector graphics library with multiple backends, enables us to make some interesting plots. I apologize in advance for the overlapping labels and nodes - the algorithm I’ve implemented in GraphLayout is still pretty basic and doesn’t do anything smart with labels or line avoidance.&lt;/p&gt;
+
+&lt;p&gt;The obvious question is to determine which packages have the highest number of dependencies which we can find by determining the sizes of the connected component of packages reachable by starting from each package. It turns out that the package with the most dependencies is &lt;a href=&quot;https://github.com/milktrader/Quandl.jl&quot;&gt;Quandl.jl&lt;/a&gt; with 30. Interestingly, it only directly depends on five packages itself.&lt;/p&gt;
+
+&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/Quandl.svg&quot; alt=&quot;Quandl.jl dependency graph&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;Quandl.jl dependency graph&lt;/p&gt;&lt;/div&gt;
+
+
+            
+                &lt;br&gt;&lt;a href=&quot;http://iaindunning.com/blog/pkg-deps.html&quot;&gt;Read more at iaindunning.com&lt;/a&gt;
+            
+        </description>
+        <pubDate>Sun, 20 Jul 2014 08:00:00 -0400</pubDate>
+        <link>http://iaindunning.com/blog/pkg-deps.html</link>
+        <guid isPermaLink="true">http://iaindunning.com/blog/pkg-deps.html</guid>
+      </item>
+    
+  </channel>
+</rss>
