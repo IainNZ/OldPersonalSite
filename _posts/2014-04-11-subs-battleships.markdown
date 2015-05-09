@@ -2,21 +2,22 @@
 author: idunning
 date: 2014-04-11 12:00:00+00:00
 layout: post
-title: Naval Warfare with JuMP + Julia
+title: JuMP + Julia - Naval Warfare Puzzle
 tag: julia
 ---
 
-[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for optimization embedded in [Julia](http://julialang.org).
 
-## Subs vs. Battleships (April 2013)
+
+### Subs vs. Battleships (April 2013)
 
 [(Link to full problem statement)](http://puzzlor.com/2013-04_SubsBattleships.html)
 
-In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.
+In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack?). Our goal is to **minimize the total distance the submarines need to travel to destroy all the battleships**.
+<img src="/images/submarines.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto" alt="Those battleships don't stand a chance!">
 
-{% img /images/submarines.png Those battleships don't stand a chance! %}
 
-### Modeling the Problem
+#### Modeling the Problem
 
 Our decision variables are binary: \\( x\_{s,b} = 1 \\) if submarine \\( s \\) will be sent to destroy battleship \\( b \\), and will be 0 otherwise.
 
@@ -37,12 +38,14 @@ $$
 </div>
 
 
-### Putting it all together
+#### Putting it all together
 
 Let's build the model in JuMP and Julia!
 
 {% highlight julia %}
-# Assuming a solver has been previously installed, e.g. [CBC](http://github.com/JuliaOpt/Cbc.jl)
+# We'll assume we already have a solver installed.
+# It'll need to be able to solve MILPs, so options
+# include Cbc, GLPK, and commercial solvers.
 using JuMP
 
 function solveSubBattle(sub_locs, ship_locs)
@@ -54,8 +57,9 @@ function solveSubBattle(sub_locs, ship_locs)
   @defVar(m, x[s=1:15, b=1:15], Bin)
 
   # Objective - minimize total distance travelled
-  @setObjective(m, Min, sum{ dist(sub_locs[s], ship_locs[b])*x[s,b], 
-                                s=1:15, b=1:15})
+  @setObjective(m, Min,
+    sum{ dist(sub_locs[s], ship_locs[b]) * x[s,b], 
+                                    s=1:15, b=1:15})
 
   # Every ship must be attacked!
   for b = 1:15
@@ -78,13 +82,13 @@ function solveSubBattle(sub_locs, ship_locs)
             round(getObjectiveValue(m), 2))
   for s = 1:15
     for b = 1:15
-      if getValue(x[s,b]) >= 0.9
+      if iround(getValue(x[s,b])) == 1
         # This binary variable is set to 1
-        # We use 0.9 though because due to floating point
+        # We use iround because due to floating point
         # error it might be not exactly 1.0
-        println("Sub ", s, " at (", 
+        println("Sub $s at (", 
                 sub_locs[s][1], ",", sub_locs[s][2], ")",
-                " attacks ship ", b, " at (", 
+                " attacks ship $b at (", 
                 ship_locs[b][1], ",", ship_locs[b][2], ")")
       end
     end
@@ -125,7 +129,8 @@ solveSubBattle(sub_locs, ship_locs)
 
 {% endhighlight %}
 
-### Plotting the solution
+
+#### Plotting the solution
 
 There are many plotting solutions available in Julia but today I'm going to use [PyPlot.jl](https://github.com/stevengj/PyPlot.jl), a wrapper around the versatile [Matplotlib](http://matplotlib.org/). First, we need to modify our solve routine to return pairs of submarines and battleships:
 
@@ -171,11 +176,12 @@ readline()  # Stop the program from exiting until we've seen it!
 
 The result looks pretty sensible too - see the image at the top of the post.
 
-### Extensions
+
+#### Extensions
 
 Here some ideas for some things you could do with this problem, and a "difficulty" for each:
 
-* _(easy)_ What happens if you use [Manhattan distance](http://en.wikipedia.org/wiki/Manhattan_distance) instead of [Euclidean distance](http://en.wikipedia.org/wiki/Euclidean_distance)? You can find out by making a very very small change to how the ``norm`` function is used.
+* _(easy)_ What happens if you use [Manhattan distance](http://en.wikipedia.org/wiki/Manhattan_distance) instead of [Euclidean distance](http://en.wikipedia.org/wiki/Euclidean_distance)? You can find out by making a very small change to how the ``norm`` function is used.
 
 * _(easy)_ How would you need to change the model if there were more battleships than submarines? Or more submarines than battleships?
 

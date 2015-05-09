@@ -6,8 +6,8 @@
 </description>
     <link>http://iaindunning.com/</link>
     <atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 08 May 2015 21:16:43 -0400</pubDate>
-    <lastBuildDate>Fri, 08 May 2015 21:16:43 -0400</lastBuildDate>
+    <pubDate>Sat, 09 May 2015 01:00:40 -0400</pubDate>
+    <lastBuildDate>Sat, 09 May 2015 01:00:40 -0400</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -531,19 +531,18 @@ $$
       </item>
     
       <item>
-        <title>Naval Warfare with JuMP + Julia</title>
+        <title>JuMP + Julia - Naval Warfare Puzzle</title>
         <description>
-            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for/in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
+            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for optimization embedded in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&quot;subs-vs-battleships-april-2013&quot;&gt;Subs vs. Battleships (April 2013)&lt;/h2&gt;
+&lt;h3 id=&quot;subs-vs-battleships-april-2013&quot;&gt;Subs vs. Battleships (April 2013)&lt;/h3&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/2013-04_SubsBattleships.html&quot;&gt;(Link to full problem statement)&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.&lt;/p&gt;
+&lt;p&gt;In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack?). Our goal is to &lt;strong&gt;minimize the total distance the submarines need to travel to destroy all the battleships&lt;/strong&gt;.
+&lt;img src=&quot;/images/submarines.png&quot; style=&quot;max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto&quot; alt=&quot;Those battleships don&#39;t stand a chance!&quot; /&gt;&lt;/p&gt;
 
-&lt;div class=&quot;photo&quot;&gt;&lt;img src=&quot;/images/submarines.png&quot; alt=&quot;Those battleships don&#39;t stand a chance!&quot; /&gt;&lt;p class=&quot;caption&quot;&gt;Those battleships don&#39;t stand a chance!&lt;/p&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;modeling-the-problem&quot;&gt;Modeling the Problem&lt;/h3&gt;
+&lt;h4 id=&quot;modeling-the-problem&quot;&gt;Modeling the Problem&lt;/h4&gt;
 
 &lt;p&gt;Our decision variables are binary: \( x_{s,b} = 1 \) if submarine \( s \) will be sent to destroy battleship \( b \), and will be 0 otherwise.&lt;/p&gt;
 
@@ -563,11 +562,13 @@ $$
 $$
 &lt;/div&gt;
 
-&lt;h3 id=&quot;putting-it-all-together&quot;&gt;Putting it all together&lt;/h3&gt;
+&lt;h4 id=&quot;putting-it-all-together&quot;&gt;Putting it all together&lt;/h4&gt;
 
 &lt;p&gt;Let’s build the model in JuMP and Julia!&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Assuming a solver has been previously installed, e.g. [CBC](http://github.com/JuliaOpt/Cbc.jl)&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-julia&quot; data-lang=&quot;julia&quot;&gt;&lt;span class=&quot;c&quot;&gt;# We&amp;#39;ll assume we already have a solver installed.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# It&amp;#39;ll need to be able to solve MILPs, so options&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# include Cbc, GLPK, and commercial solvers.&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JuMP&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt; solveSubBattle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -579,8 +580,9 @@ $$
   &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;defVar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
   &lt;span class=&quot;c&quot;&gt;# Objective - minimize total distance travelled&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setObjective&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
-                                &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setObjective&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+                                    &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
 
   &lt;span class=&quot;c&quot;&gt;# Every ship must be attacked!&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;
@@ -603,13 +605,13 @@ $$
             &lt;span class=&quot;n&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getObjectiveValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.9&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;iround&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
         &lt;span class=&quot;c&quot;&gt;# This binary variable is set to 1&lt;/span&gt;
-        &lt;span class=&quot;c&quot;&gt;# We use 0.9 though because due to floating point&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# We use iround because due to floating point&lt;/span&gt;
         &lt;span class=&quot;c&quot;&gt;# error it might be not exactly 1.0&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Sub &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot; at (&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+        &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Sub &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s at (&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
                 &lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                &lt;span class=&quot;s&quot;&gt;&amp;quot; attacks ship &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot; at (&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                &lt;span class=&quot;s&quot;&gt;&amp;quot; attacks ship &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;b at (&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
                 &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;,&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
       &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
@@ -646,7 +648,7 @@ $$
 
 &lt;span class=&quot;n&quot;&gt;solveSubBattle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ship_locs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;plotting-the-solution&quot;&gt;Plotting the solution&lt;/h3&gt;
+&lt;h4 id=&quot;plotting-the-solution&quot;&gt;Plotting the solution&lt;/h4&gt;
 
 &lt;p&gt;There are many plotting solutions available in Julia but today I’m going to use &lt;a href=&quot;https://github.com/stevengj/PyPlot.jl&quot;&gt;PyPlot.jl&lt;/a&gt;, a wrapper around the versatile &lt;a href=&quot;http://matplotlib.org/&quot;&gt;Matplotlib&lt;/a&gt;. First, we need to modify our solve routine to return pairs of submarines and battleships:&lt;/p&gt;
 
@@ -688,13 +690,13 @@ $$
 
 &lt;p&gt;The result looks pretty sensible too - see the image at the top of the post.&lt;/p&gt;
 
-&lt;h3 id=&quot;extensions&quot;&gt;Extensions&lt;/h3&gt;
+&lt;h4 id=&quot;extensions&quot;&gt;Extensions&lt;/h4&gt;
 
 &lt;p&gt;Here some ideas for some things you could do with this problem, and a “difficulty” for each:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
-    &lt;p&gt;&lt;em&gt;(easy)&lt;/em&gt; What happens if you use &lt;a href=&quot;http://en.wikipedia.org/wiki/Manhattan_distance&quot;&gt;Manhattan distance&lt;/a&gt; instead of &lt;a href=&quot;http://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean distance&lt;/a&gt;? You can find out by making a very very small change to how the &lt;code&gt;norm&lt;/code&gt; function is used.&lt;/p&gt;
+    &lt;p&gt;&lt;em&gt;(easy)&lt;/em&gt; What happens if you use &lt;a href=&quot;http://en.wikipedia.org/wiki/Manhattan_distance&quot;&gt;Manhattan distance&lt;/a&gt; instead of &lt;a href=&quot;http://en.wikipedia.org/wiki/Euclidean_distance&quot;&gt;Euclidean distance&lt;/a&gt;? You can find out by making a very small change to how the &lt;code&gt;norm&lt;/code&gt; function is used.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;&lt;em&gt;(easy)&lt;/em&gt; How would you need to change the model if there were more battleships than submarines? Or more submarines than battleships?&lt;/p&gt;
@@ -1269,9 +1271,9 @@ even without the filibuster.&lt;/strong&gt;&lt;/p&gt;
       </item>
     
       <item>
-        <title>Solving an Urban Planning Puzzle with JuMP + Julia</title>
+        <title>JuMP + Julia - Urban Planning Puzzle</title>
         <description>
-            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for/in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
+            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for optimization embedded in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;urban-planning-august-2013&quot;&gt;Urban Planning (August 2013)&lt;/h2&gt;
 
@@ -1501,9 +1503,9 @@ $$
       </item>
     
       <item>
-        <title>Solving a Combination Lock Puzzle with JuMP + Julia</title>
+        <title>JuMP + Julia - Combination Lock Puzzle</title>
         <description>
-            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for/in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
+            &lt;p&gt;&lt;a href=&quot;http://puzzlor.com/&quot;&gt;The PuzzlOR&lt;/a&gt; is a website connected to &lt;a href=&quot;https://www.informs.org&quot;&gt;INFORMS&lt;/a&gt; that publishes &lt;a href=&quot;https://www.informs.org/About-INFORMS/What-is-Operations-Research&quot;&gt;operations research&lt;/a&gt;-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate &lt;a href=&quot;https://github.com/JuliaOpt/JuMP.jl&quot;&gt;JuMP&lt;/a&gt;, an algebraic modeling language for optimization embedded in &lt;a href=&quot;http://julialang.org&quot;&gt;Julia&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;combination-locks-august-2012&quot;&gt;Combination Locks (August 2012)&lt;/h2&gt;
 

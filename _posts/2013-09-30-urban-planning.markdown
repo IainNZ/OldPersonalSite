@@ -2,10 +2,11 @@
 author: idunning
 date: 2013-09-30 12:00:00+00:00
 layout: post
-title: Solving an Urban Planning Puzzle with JuMP + Julia
+title: JuMP + Julia - Urban Planning Puzzle
+tag: julia
 ---
 
-[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for/in [Julia](http://julialang.org).
+[The PuzzlOR](http://puzzlor.com/) is a website connected to [INFORMS](https://www.informs.org) that publishes [operations research](https://www.informs.org/About-INFORMS/What-is-Operations-Research)-related problems bimonthly. In a series of posts I'm going to solve some of the problems to demonstrate [JuMP](https://github.com/JuliaOpt/JuMP.jl), an algebraic modeling language for optimization embedded in [Julia](http://julialang.org).
 
 ## Urban Planning (August 2013)
 

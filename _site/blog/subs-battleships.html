@@ -6,7 +6,7 @@
   <!-- Basic Page Needs
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
-  <title> Naval Warfare with JuMP + Julia |  Iain Dunning</title>
+  <title> JuMP + Julia - Naval Warfare Puzzle |  Iain Dunning</title>
   <meta name="description" content="">
   <meta name="author" content="Iain Dunning">
 
@@ -47,21 +47,20 @@
 
 <div class="row">
   <div class="twelve columns" style="margin-top: 1%">
-    <h2>&rsaquo; Naval Warfare with JuMP + Julia</h2>
+    <h2>&rsaquo; JuMP + Julia - Naval Warfare Puzzle</h2>
     
     <h6>First posted: Apr 11, 2014</h6>
 
-    <p><a href="http://puzzlor.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for/in <a href="http://julialang.org">Julia</a>.</p>
+    <p><a href="http://puzzlor.com/">The PuzzlOR</a> is a website connected to <a href="https://www.informs.org">INFORMS</a> that publishes <a href="https://www.informs.org/About-INFORMS/What-is-Operations-Research">operations research</a>-related problems bimonthly. In a series of posts I’m going to solve some of the problems to demonstrate <a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a>, an algebraic modeling language for optimization embedded in <a href="http://julialang.org">Julia</a>.</p>
 
-<h2 id="subs-vs-battleships-april-2013">Subs vs. Battleships (April 2013)</h2>
+<h3 id="subs-vs-battleships-april-2013">Subs vs. Battleships (April 2013)</h3>
 
 <p><a href="http://puzzlor.com/2013-04_SubsBattleships.html">(Link to full problem statement)</a></p>
 
-<p>In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack!). Our goal is to minimize the total distance the submarines need to travel to destroy all the battleships.</p>
+<p>In this problem we have a 10-by-10 grid representing an area of ocean. We control 15 submarines and our mission is to destroy the 15 enemy battleships. Initially all the submarines and battleships are in different cells on the grid but if we can move a submarine to the same cell as a battleship, we will destroy it. Each submarine can only destroy one battleship, and battleships cannot move (perhaps it is a simultaneous surprise attack?). Our goal is to <strong>minimize the total distance the submarines need to travel to destroy all the battleships</strong>.
+<img src="/images/submarines.png" style="max-width:100%; height:auto; display: block; margin-left: auto; margin-right: auto" alt="Those battleships don't stand a chance!" /></p>
 
-<div class="photo"><img src="/images/submarines.png" alt="Those battleships don't stand a chance!" /><p class="caption">Those battleships don't stand a chance!</p></div>
-
-<h3 id="modeling-the-problem">Modeling the Problem</h3>
+<h4 id="modeling-the-problem">Modeling the Problem</h4>
 
 <p>Our decision variables are binary: \( x_{s,b} = 1 \) if submarine \( s \) will be sent to destroy battleship \( b \), and will be 0 otherwise.</p>
 
@@ -81,11 +80,13 @@ $$
 $$
 </div>
 
-<h3 id="putting-it-all-together">Putting it all together</h3>
+<h4 id="putting-it-all-together">Putting it all together</h4>
 
 <p>Let’s build the model in JuMP and Julia!</p>
 
-<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Assuming a solver has been previously installed, e.g. [CBC](http://github.com/JuliaOpt/Cbc.jl)</span>
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># We&#39;ll assume we already have a solver installed.</span>
+<span class="c"># It&#39;ll need to be able to solve MILPs, so options</span>
+<span class="c"># include Cbc, GLPK, and commercial solvers.</span>
 <span class="k">using</span> <span class="n">JuMP</span>
 
 <span class="k">function</span><span class="nf"> solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span>
@@ -97,8 +98,9 @@ $$
   <span class="p">@</span><span class="n">defVar</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">],</span> <span class="n">Bin</span><span class="p">)</span>
 
   <span class="c"># Objective - minimize total distance travelled</span>
-  <span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">sum</span><span class="p">{</span> <span class="n">dist</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> 
-                                <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">})</span>
+  <span class="p">@</span><span class="n">setObjective</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span>
+    <span class="n">sum</span><span class="p">{</span> <span class="n">dist</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> 
+                                    <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">15</span><span class="p">})</span>
 
   <span class="c"># Every ship must be attacked!</span>
   <span class="k">for</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
@@ -121,13 +123,13 @@ $$
             <span class="n">round</span><span class="p">(</span><span class="n">getObjectiveValue</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
   <span class="k">for</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
     <span class="k">for</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">15</span>
-      <span class="k">if</span> <span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mf">0.9</span>
+      <span class="k">if</span> <span class="n">iround</span><span class="p">(</span><span class="n">getValue</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="n">b</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="c"># This binary variable is set to 1</span>
-        <span class="c"># We use 0.9 though because due to floating point</span>
+        <span class="c"># We use iround because due to floating point</span>
         <span class="c"># error it might be not exactly 1.0</span>
-        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Sub &quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s">&quot; at (&quot;</span><span class="p">,</span> 
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Sub </span><span class="si">$</span><span class="s">s at (&quot;</span><span class="p">,</span> 
                 <span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">sub_locs</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s">&quot;)&quot;</span><span class="p">,</span>
-                <span class="s">&quot; attacks ship &quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s">&quot; at (&quot;</span><span class="p">,</span> 
+                <span class="s">&quot; attacks ship </span><span class="si">$</span><span class="s">b at (&quot;</span><span class="p">,</span> 
                 <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
@@ -164,7 +166,7 @@ $$
 
 <span class="n">solveSubBattle</span><span class="p">(</span><span class="n">sub_locs</span><span class="p">,</span> <span class="n">ship_locs</span><span class="p">)</span></code></pre></div>
 
-<h3 id="plotting-the-solution">Plotting the solution</h3>
+<h4 id="plotting-the-solution">Plotting the solution</h4>
 
 <p>There are many plotting solutions available in Julia but today I’m going to use <a href="https://github.com/stevengj/PyPlot.jl">PyPlot.jl</a>, a wrapper around the versatile <a href="http://matplotlib.org/">Matplotlib</a>. First, we need to modify our solve routine to return pairs of submarines and battleships:</p>
 
@@ -206,13 +208,13 @@ $$
 
 <p>The result looks pretty sensible too - see the image at the top of the post.</p>
 
-<h3 id="extensions">Extensions</h3>
+<h4 id="extensions">Extensions</h4>
 
 <p>Here some ideas for some things you could do with this problem, and a “difficulty” for each:</p>
 
 <ul>
   <li>
-    <p><em>(easy)</em> What happens if you use <a href="http://en.wikipedia.org/wiki/Manhattan_distance">Manhattan distance</a> instead of <a href="http://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>? You can find out by making a very very small change to how the <code>norm</code> function is used.</p>
+    <p><em>(easy)</em> What happens if you use <a href="http://en.wikipedia.org/wiki/Manhattan_distance">Manhattan distance</a> instead of <a href="http://en.wikipedia.org/wiki/Euclidean_distance">Euclidean distance</a>? You can find out by making a very small change to how the <code>norm</code> function is used.</p>
   </li>
   <li>
     <p><em>(easy)</em> How would you need to change the model if there were more battleships than submarines? Or more submarines than battleships?</p>
@@ -239,7 +241,7 @@ $$
     <div class="row">
       <div class="twelve columns" style="margin-top: 1%">
         <hr>
-        &copy; Iain Dunning, 2015. CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+        &copy; Iain Dunning, 2015. Base theme/CSS by <a href="http://getskeleton.com/">Skeleton</a>.
       </div>
     </div>
   </div>
@@ -256,6 +258,13 @@ $$
   $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
   $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
   $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+
+  $("#ijocjumptoggle").click( function() { $("#ijocjumpcontent").toggle(); return false; });
+  $("#shetoggle").click( function() { $("#shecontent").toggle(); return false; });
+  $("#siamjumptoggle").click( function() { $("#siamjumpcontent").toggle(); return false; });
+  $("#amiotoggle").click( function() { $("#amiocontent").toggle(); return false; });
+  $("#refcuttoggle").click( function() { $("#refcutcontent").toggle(); return false; });
+  
 </script>
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
