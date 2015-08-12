@@ -425,7 +425,7 @@ These are customizations to the base theme for iaindunning.com
 */
 
 .hidelink { color: #222; text-decoration: none; }
-
+img { max-width: 100%; }
 
 /**
  * Syntax highlighting styles
