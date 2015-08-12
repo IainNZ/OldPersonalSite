@@ -1,0 +1,11 @@
+{% extends 'markdown.tpl' %}
+
+{%- block input_group -%}
+{% raw %}
+{% highlight julia %}
+{% endraw %}
+{{super()}}
+{% raw %}
+{% endhighlight %}
+{% endraw %}
+{%- endblock input_group -%}

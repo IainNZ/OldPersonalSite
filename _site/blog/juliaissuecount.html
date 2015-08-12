@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- HTML+CSS based on Skeleton: http://getskeleton.com/ -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title> Analyzing Julia's issue count |  Iain Dunning</title>
+  <meta name="description" content="">
+  <meta name="author" content="Iain Dunning">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-33856541-3', 'auto');
+    ga('send', 'pageview');
+  </script>
+
+</head>
+<body>
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+    <div class="row">
+  <div class="twelve columns" style="margin-top: 5%">
+    <h1><a href="/" class="hidelink">Iain Dunning</a></h1>
+    <p>
+    <b>Contact</b>: 
+      iaindunning at gmail, 
+      <a href="https://twitter.com/iaindunning">@iaindunning</a>,
+      <a href="https://github.com/IainNZ/">github/IainNZ</a>
+    </p>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="twelve columns" style="margin-top: 1%">
+    <h2>&rsaquo; Analyzing Julia's issue count</h2>
+    
+    <h6>First posted: Aug 11, 2015</h6>
+
+    <p>In this post we’ll be analyzing the number of issues open on the <a href="http://julialang.org">Julia language</a>’s <a href="https://github.com/JuliaLang/julia/issues?q=sort%3Aupdated-desc">issue tracker</a>. We’ll be counting both issues (bug reports, ideas, plans) and “pull requests” (PRs, code that has been submitted for review before merging it into the langauge). What I’m mainly interested in how the number of “open” issues/PRs varies over time, and how that relates to the total number of issues/PRs.</p>
+
+<p>For this job we’ll need three Julia packages, all made by community members:</p>
+
+<ul>
+  <li><a href="https://github.com/WestleyArgentum/GitHub.jl"><code>GitHub.jl</code></a>, to query the issue tracker. We could do this manually through the GitHub API, but this is much easier.</li>
+  <li><a href="https://github.com/JuliaLang/JLD.jl"><code>JLD.jl</code></a>, which we’ll use to cache the API results in a file.</li>
+  <li><a href="https://gadflyjl.org"><code>Gadfly.jl</code></a>, a plotting package for Julia.</li>
+  <li>If you are on Julia 0.3, you’ll also need <a href="https://github.com/quinnj/Dates.jl"><code>Dates.jl</code></a>, which provides string-to-date conversions and more. Its built into the standard library in Julia 0.4, but Julia 0.4 hasn’t been released as of the time of writing.</li>
+</ul>
+
+<p>All of these can be installed with the Julia package manager, e.g. <code>Pkg.add("GitHub"); Pkg.add("JLD")</code> and so on. If you haven’t used Julia in a while, you might want to run <code>Pkg.update()</code> first so you get the freshest versions of these packages.</p>
+
+<p>First step, load the packages</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="k">using</span> <span class="n">GitHub</span><span class="p">,</span> <span class="n">JLD</span><span class="p">,</span> <span class="n">Gadfly</span>
+<span class="k">using</span> <span class="n">Dates</span>  <span class="c"># Only needed on Julia 0.3.x</span></code></pre></div>
+
+<p>We use the <code>issues</code> function of the <code>GitHub.jl</code> package to download every open and closed issue or pull request (PR) for the <code>julia</code> repository - this takes a while, as it needs to download a fair bit of data. You’ll want to get an “auth token”, so that Github won’t bounce our request as a spam attack of some sort. You can get this by signing up for a Github account, if you don’t already have one, and going to your settings page.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Replace with your token</span>
+<span class="n">TOKEN</span> <span class="o">=</span> <span class="s">&quot;yourauthtokenhere&quot;</span>
+<span class="c"># Authenticate with GitHub, so they know we&#39;re legit</span>
+<span class="n">my_auth</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">TOKEN</span><span class="p">)</span>
+<span class="c"># Pull all open issues...</span>
+<span class="n">open_issues</span> <span class="o">=</span> <span class="n">issues</span><span class="p">(</span><span class="n">my_auth</span><span class="p">,</span><span class="s">&quot;JuliaLang&quot;</span><span class="p">,</span><span class="s">&quot;julia&quot;</span><span class="p">,</span><span class="n">state</span><span class="o">=</span><span class="s">&quot;open&quot;</span><span class="p">)</span>
+<span class="c"># ... and all closed issues (10x as many of these)</span>
+<span class="n">closed_issues</span> <span class="o">=</span> <span class="n">issues</span><span class="p">(</span><span class="n">my_auth</span><span class="p">,</span><span class="s">&quot;JuliaLang&quot;</span><span class="p">,</span><span class="s">&quot;julia&quot;</span><span class="p">,</span><span class="n">state</span><span class="o">=</span><span class="s">&quot;closed&quot;</span><span class="p">)</span>
+<span class="c"># Combine them into one vector of issues</span>
+<span class="n">all_issues</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="n">open_issues</span><span class="p">,</span><span class="n">closed_issues</span><span class="p">)</span></code></pre></div>
+
+<p>We’ll create a little type that just keeps the creation and close dates.
+If an issue is open, it doesn’t have a close date, so we’ll just use a time far in the future (Jan 1, 2099!) for now. The <code>DateTime</code> function creates a <code>DateTime</code> object from a string (or from manually spelling out a date).</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Define our reduced issue type</span>
+<span class="k">type</span><span class="nc"> SimpleIssue</span>
+    <span class="n">created_at</span><span class="p">::</span><span class="n">DateTime</span>
+    <span class="n">closed_at</span><span class="p">::</span><span class="n">DateTime</span>
+<span class="k">end</span>
+<span class="c"># Provide a constructor that takes in</span>
+<span class="c"># cr   creation date</span>
+<span class="c"># cl   close data - might be `nothing` = open</span>
+<span class="n">SimpleIssue</span><span class="p">(</span><span class="n">cr</span><span class="p">::</span><span class="n">String</span><span class="p">,</span><span class="n">cl</span><span class="p">)</span> <span class="o">=</span> <span class="n">SimpleIssue</span><span class="p">(</span>
+    <span class="n">DateTime</span><span class="p">(</span><span class="n">cr</span><span class="p">),</span> 
+    <span class="n">cl</span> <span class="o">==</span> <span class="n">nothing</span> <span class="o">?</span> <span class="n">DateTime</span><span class="p">(</span><span class="mi">2099</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="n">DateTime</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span> <span class="p">)</span></code></pre></div>
+
+<p>We now use the <code>JLD.jl</code> package to serialize this data to a file in case we want to come back and analyze it later. <code>JLD.jl</code> can save pretty much any Julia thing, even types you define. Read the README for caveats!</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">save</span><span class="p">(</span><span class="s">&quot;all_issues.jld&quot;</span><span class="p">,</span><span class="s">&quot;all_issues&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">SimpleIssue</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">created_at</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">closed_at</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">all_issues</span><span class="p">])</span></code></pre></div>
+
+<p>We’ll pretend we’re revisiting this some time in the future. Loading data is just the reverse of saving it with JLD:</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">all_issues</span> <span class="o">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&quot;all_issues.jld&quot;</span><span class="p">,</span> <span class="s">&quot;all_issues&quot;</span><span class="p">);</span></code></pre></div>
+
+<p>Now for some actual work. We collect a vector of every date “seen” - this is basically every day something happened on the issue tracker, which is probably almost every day since the announcement of Julia.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">all_create_dts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Date</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">created_at</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">all_issues</span><span class="p">]</span>
+<span class="n">all_close_dts</span> <span class="o">=</span> <span class="p">[</span><span class="n">Date</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">closed_at</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">all_issues</span><span class="p">]</span>
+<span class="n">all_dates</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">vcat</span><span class="p">(</span><span class="n">all_create_dts</span><span class="p">,</span><span class="n">all_close_dts</span><span class="p">)))</span>
+<span class="n">length</span><span class="p">(</span><span class="n">all_dates</span><span class="p">)</span></code></pre></div>
+
+<p>1457</p>
+
+<p>Now for the actual counting. We’ll use a not-particularly-efficient method, but quick enough for the data at hand. For each issue/PR, simply increment a count for each date that the issue/PR was open (the dates between its opening and closing). We’ll also keep a count of total opened ever versus date.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Initialize two dictionaries of dates=&gt;counts</span>
+<span class="n">open_at_count</span>  <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="kt">Int</span><span class="p">}()</span>
+<span class="n">total_at_count</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="kt">Int</span><span class="p">}()</span>
+<span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span>
+    <span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">end</span>
+<span class="c"># For each issue/PR...</span>
+<span class="k">for</span> <span class="n">iss</span> <span class="k">in</span> <span class="n">all_issues</span>
+    <span class="n">create_dt</span> <span class="o">=</span> <span class="n">iss</span><span class="o">.</span><span class="n">created_at</span>
+    <span class="n">close_dt</span>  <span class="o">=</span> <span class="n">iss</span><span class="o">.</span><span class="n">closed_at</span>
+    <span class="c"># For every date...</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span>
+        <span class="c"># If the issue was made before...</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="n">create_dt</span>
+            <span class="c"># Then it existed on this date</span>
+            <span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c"># If it was closed after this...</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">close_dt</span>
+                <span class="c"># Then it is open on this date</span>
+                <span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>To finish, lets plot these two quantities versus time using <code>Gadfly</code> - just simple line plots will do.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Collect results into vectors</span>
+<span class="n">open_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">];</span>
+<span class="n">total_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">];</span>
+<span class="c"># Correct for special last day (currently open)</span>
+<span class="n">plot_dates</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="n">all_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">all_dates</span><span class="p">[</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Day</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="c"># Draw the results as a PNG (default is SVG)</span>
+<span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">total_vec</span><span class="p">,</span><span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">Title</span><span class="p">(</span><span class="s">&quot;Total Issues/PR&quot;</span><span class="p">),</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Count&quot;</span><span class="p">))</span>
+<span class="p">)</span></code></pre></div>
+
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_15_0.png" alt="Total Issues" /></p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">open_vec</span><span class="p">,</span><span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">Title</span><span class="p">(</span><span class="s">&quot;Open Issues/PR&quot;</span><span class="p">),</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Count&quot;</span><span class="p">))</span>
+<span class="p">)</span></code></pre></div>
+
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_16_0.png" alt="Open Issues" /></p>
+
+<p>Finally, we’ll look at what fraction of the issues/PRs are open at any one time. As you can see, it seems to have “converged” to about 10% - I wonder why? One explanation is that whenever it gets much over 10% then people get the urge to review older issues and fix or close them. When it drops below 10%, people don’t care too much. Another explanation is that there is a core of things in the “too hard” pile at any one time, and the number of those “too hard” things is going up but at no greater a rate than the overall number of issues.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">open_vec</span><span class="o">./</span><span class="n">total_vec</span><span class="p">,</span><span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">Title</span><span class="p">(</span><span class="s">&quot;Open:Total Issues/PR&quot;</span><span class="p">),</span>
+        <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Fraction&quot;</span><span class="p">))</span>
+<span class="p">)</span></code></pre></div>
+
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_18_0.png" alt="Open/Total Issues" /></p>
+
+
+  </div>
+</div>
+
+
+
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 1%">
+        <hr>
+        &copy; Iain Dunning, 2015. Base theme/CSS by <a href="http://getskeleton.com/">Skeleton</a>.
+      </div>
+    </div>
+  </div>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+  $("#abouttoggle").click( function() { $("#aboutcontent").toggle(); return false; });
+  $("#blogtoggle").click( function() { $("#blogcontent").toggle(); return false; });
+  $("#researchtoggle").click( function() { $("#researchcontent").toggle(); return false; });
+  $("#teachingtoggle").click( function() { $("#teachingcontent").toggle(); return false; });
+  $("#softwaretoggle").click( function() { $("#softwarecontent").toggle(); return false; });
+
+  $("#ijocjumptoggle").click( function() { $("#ijocjumpcontent").toggle(); return false; });
+  $("#shetoggle").click( function() { $("#shecontent").toggle(); return false; });
+  $("#siamjumptoggle").click( function() { $("#siamjumpcontent").toggle(); return false; });
+  $("#amiotoggle").click( function() { $("#amiocontent").toggle(); return false; });
+  $("#refcuttoggle").click( function() { $("#refcutcontent").toggle(); return false; });
+  
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>
