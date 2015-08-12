@@ -5,12 +5,12 @@
     <description>Personal website for Iain Dunning.</description>
     <link>http://iaindunning.com/</link>
     <atom:link href="http://iaindunning.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 12 Aug 2015 00:17:59 -0400</pubDate>
-    <lastBuildDate>Wed, 12 Aug 2015 00:17:59 -0400</lastBuildDate>
+    <pubDate>Wed, 12 Aug 2015 01:22:25 -0400</pubDate>
+    <lastBuildDate>Wed, 12 Aug 2015 01:22:25 -0400</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
-        <title>Analyzing Julia&#39;s issue count</title>
+        <title>Analyzing Julia&#39;s issue counts over time</title>
         <description>
             &lt;p&gt;In this post we’ll be analyzing the number of issues open on the &lt;a href=&quot;http://julialang.org&quot;&gt;Julia language&lt;/a&gt;’s &lt;a href=&quot;https://github.com/JuliaLang/julia/issues?q=sort%3Aupdated-desc&quot;&gt;issue tracker&lt;/a&gt;. We’ll be counting both issues (bug reports, ideas, plans) and “pull requests” (PRs, code that has been submitted for review before merging it into the langauge). What I’m mainly interested in how the number of “open” issues/PRs varies over time, and how that relates to the total number of issues/PRs.&lt;/p&gt;
 

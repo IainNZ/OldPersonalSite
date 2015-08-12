@@ -3,7 +3,7 @@ author: idunning
 date: 2015-08-11 12:00:00+00:00
 layout: post
 category: julia
-title: Analyzing Julia's issue count
+title: Analyzing Julia's issue counts over time
 ---
 
 In this post we'll be analyzing the number of issues open on the [Julia language](http://julialang.org)'s [issue tracker](https://github.com/JuliaLang/julia/issues?q=sort%3Aupdated-desc). We'll be counting both issues (bug reports, ideas, plans) and "pull requests" (PRs, code that has been submitted for review before merging it into the langauge). What I'm mainly interested in how the number of "open" issues/PRs varies over time, and how that relates to the total number of issues/PRs.
