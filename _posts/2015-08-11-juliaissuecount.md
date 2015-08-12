@@ -115,18 +115,19 @@ length(all_dates)
 
 
 
-Now for the actual counting. We'll use a not-particularly-efficient method, but quick enough for the data at hand. For each issue/PR, simply increment a count for each date that the issue/PR was open (the dates between its opening and closing). We'll also keep a count of total opened ever versus date.
+Now for the actual counting. We'll use a not-particularly-efficient method, but quick enough for the data at hand. For each issue/PR, simply increment a count for each date that the issue/PR was open (the dates between its opening and closing). We'll also keep a count of total opened ever versus date, and for every date, the ages for all open issues at that date.
 
 {% highlight julia %}
 
 
 
-# Initialize two dictionaries of dates=>counts
 open_at_count  = Dict{Date,Int}()
 total_at_count = Dict{Date,Int}()
+days_open_at   = Dict{Date,Vector{Int}}()
 for d in all_dates
     open_at_count[d]  = 0
     total_at_count[d] = 0
+    days_open_at[d]   = Int[]
 end
 # For each issue/PR...
 for iss in all_issues
@@ -135,13 +136,15 @@ for iss in all_issues
     # For every date...
     for d in all_dates
         # If the issue was made before...
-        if d >= create_dt
+        if create_dt <= d
             # Then it existed on this date
             total_at_count[d] += 1
             # If it was closed after this...
             if d <= close_dt
                 # Then it is open on this date
                 open_at_count[d] += 1
+                # Its been open this long
+                push!(days_open_at[d], Int(d - Date(create_dt)))
             end
         end
     end
@@ -150,15 +153,15 @@ end
 
 {% endhighlight %}
 
-To finish, lets plot these two quantities versus time using `Gadfly` - just simple line plots will do.
+To finish, lets plot these quantities versus time using `Gadfly` - just simple line plots will do.
 
 {% highlight julia %}
 
 
 
 # Collect results into vectors
-open_vec = [open_at_count[d] for d in all_dates];
-total_vec = [total_at_count[d] for d in all_dates];
+open_vec  = [open_at_count[d]  for d in all_dates]
+total_vec = [total_at_count[d] for d in all_dates]
 # Correct for special last day (currently open)
 plot_dates = vcat(all_dates[1:end-1], all_dates[end-1]+Day(1))
 # Draw the results as a PNG (default is SVG)
@@ -172,7 +175,7 @@ plot(x=plot_dates,y=total_vec,Geom.line,
 {% endhighlight %}
 
 
-![Total Issues](/images/JuliaIssueCount/JuliaIssueCount_15_0.png)
+![png](/images/JuliaIssueCount/JuliaIssueCount_15_0.png)
 
 
 {% highlight julia %}
@@ -189,10 +192,10 @@ plot(x=plot_dates,y=open_vec,Geom.line,
 {% endhighlight %}
 
 
-![Open Issues](/images/JuliaIssueCount/JuliaIssueCount_16_0.png)
+![png](/images/JuliaIssueCount/JuliaIssueCount_16_0.png)
 
 
-Finally, we'll look at what fraction of the issues/PRs are open at any one time. As you can see, it seems to have "converged" to about 10% - I wonder why? One explanation is that whenever it gets much over 10% then people get the urge to review older issues and fix or close them. When it drops below 10%, people don't care too much. Another explanation is that there is a core of things in the "too hard" pile at any one time, and the number of those "too hard" things is going up but at no greater a rate than the overall number of issues.
+We'll now look at what fraction of the issues/PRs are open at any one time. As you can see, it seems to have "converged" to about 10% - I wonder why? One explanation is that whenever it gets much over 10% then people get the urge to review older issues and fix or close them. When it drops below 10%, people don't care too much. Another explanation is that there is a core of things in the "too hard" pile at any one time, and the number of those "too hard" things is going up but at no greater a rate than the overall number of issues.
 
 {% highlight julia %}
 
@@ -207,5 +210,37 @@ plot(x=plot_dates,y=open_vec./total_vec,Geom.line,
 
 {% endhighlight %}
 
-![Open/Total Issues](/images/JuliaIssueCount/JuliaIssueCount_18_0.png)
+
+![png](/images/JuliaIssueCount/JuliaIssueCount_18_0.png)
+
+
+For a different perpsective, we can also analyze the distribution of the ages of the open issues/PRs. I'd would have guessed this was increasing, and sure enough it seems to be.
+
+{% highlight julia %}
+
+
+
+p25_age_vec = vcat(0.0,[quantile(days_open_at[d],0.25) for d in all_dates[2:end-1]])
+p50_age_vec = vcat(0.0,[quantile(days_open_at[d],0.50) for d in all_dates[2:end-1]])
+p75_age_vec = vcat(0.0,[quantile(days_open_at[d],0.75) for d in all_dates[2:end-1]])
+
+draw(PNG(8inch,4inch), plot(
+layer(  x=plot_dates[1:end-1],y=p25_age_vec,
+        color=fill("25th percentile",length(p25_age_vec)),
+        Geom.line),
+layer(  x=plot_dates[1:end-1],y=p50_age_vec,
+        color=fill("Median",length(p50_age_vec)),
+        Geom.line),
+layer(  x=plot_dates[1:end-1],y=p75_age_vec,
+        color=fill("75th percentile",length(p75_age_vec)),
+        Geom.line),
+Guide.Title("Age of Open Issues/PR"),
+Guide.xlabel("Date"), Guide.ylabel("Age (days)")))
+
+
+{% endhighlight %}
+
+
+![png](/images/JuliaIssueCount/JuliaIssueCount_20_0.png)
+
 

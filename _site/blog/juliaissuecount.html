@@ -125,14 +125,15 @@ If an issue is open, it doesn’t have a close date, so we’ll just use a time 
 
 <p>1457</p>
 
-<p>Now for the actual counting. We’ll use a not-particularly-efficient method, but quick enough for the data at hand. For each issue/PR, simply increment a count for each date that the issue/PR was open (the dates between its opening and closing). We’ll also keep a count of total opened ever versus date.</p>
+<p>Now for the actual counting. We’ll use a not-particularly-efficient method, but quick enough for the data at hand. For each issue/PR, simply increment a count for each date that the issue/PR was open (the dates between its opening and closing). We’ll also keep a count of total opened ever versus date, and for every date, the ages for all open issues at that date.</p>
 
-<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Initialize two dictionaries of dates=&gt;counts</span>
-<span class="n">open_at_count</span>  <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="kt">Int</span><span class="p">}()</span>
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">open_at_count</span>  <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="kt">Int</span><span class="p">}()</span>
 <span class="n">total_at_count</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="kt">Int</span><span class="p">}()</span>
+<span class="n">days_open_at</span>   <span class="o">=</span> <span class="n">Dict</span><span class="p">{</span><span class="n">Date</span><span class="p">,</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}}()</span>
 <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span>
     <span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span>
     <span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">days_open_at</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>   <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
 <span class="k">end</span>
 <span class="c"># For each issue/PR...</span>
 <span class="k">for</span> <span class="n">iss</span> <span class="k">in</span> <span class="n">all_issues</span>
@@ -141,23 +142,25 @@ If an issue is open, it doesn’t have a close date, so we’ll just use a time 
     <span class="c"># For every date...</span>
     <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span>
         <span class="c"># If the issue was made before...</span>
-        <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="n">create_dt</span>
+        <span class="k">if</span> <span class="n">create_dt</span> <span class="o">&lt;=</span> <span class="n">d</span>
             <span class="c"># Then it existed on this date</span>
             <span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="c"># If it was closed after this...</span>
             <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">close_dt</span>
                 <span class="c"># Then it is open on this date</span>
                 <span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c"># Its been open this long</span>
+                <span class="n">push</span><span class="o">!</span><span class="p">(</span><span class="n">days_open_at</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="kt">Int</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="n">Date</span><span class="p">(</span><span class="n">create_dt</span><span class="p">)))</span>
             <span class="k">end</span>
         <span class="k">end</span>
     <span class="k">end</span>
 <span class="k">end</span></code></pre></div>
 
-<p>To finish, lets plot these two quantities versus time using <code>Gadfly</code> - just simple line plots will do.</p>
+<p>To finish, lets plot these quantities versus time using <code>Gadfly</code> - just simple line plots will do.</p>
 
 <div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="c"># Collect results into vectors</span>
-<span class="n">open_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">];</span>
-<span class="n">total_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">];</span>
+<span class="n">open_vec</span>  <span class="o">=</span> <span class="p">[</span><span class="n">open_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>  <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">]</span>
+<span class="n">total_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_at_count</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">]</span>
 <span class="c"># Correct for special last day (currently open)</span>
 <span class="n">plot_dates</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="n">all_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">all_dates</span><span class="p">[</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Day</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="c"># Draw the results as a PNG (default is SVG)</span>
@@ -167,7 +170,7 @@ If an issue is open, it doesn’t have a close date, so we’ll just use a time 
         <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Count&quot;</span><span class="p">))</span>
 <span class="p">)</span></code></pre></div>
 
-<p><img src="/images/JuliaIssueCount/JuliaIssueCount_15_0.png" alt="Total Issues" /></p>
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_15_0.png" alt="png" /></p>
 
 <div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">open_vec</span><span class="p">,</span><span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
@@ -175,9 +178,9 @@ If an issue is open, it doesn’t have a close date, so we’ll just use a time 
         <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Count&quot;</span><span class="p">))</span>
 <span class="p">)</span></code></pre></div>
 
-<p><img src="/images/JuliaIssueCount/JuliaIssueCount_16_0.png" alt="Open Issues" /></p>
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_16_0.png" alt="png" /></p>
 
-<p>Finally, we’ll look at what fraction of the issues/PRs are open at any one time. As you can see, it seems to have “converged” to about 10% - I wonder why? One explanation is that whenever it gets much over 10% then people get the urge to review older issues and fix or close them. When it drops below 10%, people don’t care too much. Another explanation is that there is a core of things in the “too hard” pile at any one time, and the number of those “too hard” things is going up but at no greater a rate than the overall number of issues.</p>
+<p>We’ll now look at what fraction of the issues/PRs are open at any one time. As you can see, it seems to have “converged” to about 10% - I wonder why? One explanation is that whenever it gets much over 10% then people get the urge to review older issues and fix or close them. When it drops below 10%, people don’t care too much. Another explanation is that there is a core of things in the “too hard” pile at any one time, and the number of those “too hard” things is going up but at no greater a rate than the overall number of issues.</p>
 
 <div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span>
 <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">open_vec</span><span class="o">./</span><span class="n">total_vec</span><span class="p">,</span><span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
@@ -185,7 +188,28 @@ If an issue is open, it doesn’t have a close date, so we’ll just use a time 
         <span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Fraction&quot;</span><span class="p">))</span>
 <span class="p">)</span></code></pre></div>
 
-<p><img src="/images/JuliaIssueCount/JuliaIssueCount_18_0.png" alt="Open/Total Issues" /></p>
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_18_0.png" alt="png" /></p>
+
+<p>For a different perpsective, we can also analyze the distribution of the ages of the open issues/PRs. I’d would have guessed this was increasing, and sure enough it seems to be.</p>
+
+<div class="highlight"><pre><code class="language-julia" data-lang="julia"><span class="n">p25_age_vec</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,[</span><span class="n">quantile</span><span class="p">(</span><span class="n">days_open_at</span><span class="p">[</span><span class="n">d</span><span class="p">],</span><span class="mf">0.25</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">p50_age_vec</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,[</span><span class="n">quantile</span><span class="p">(</span><span class="n">days_open_at</span><span class="p">[</span><span class="n">d</span><span class="p">],</span><span class="mf">0.50</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">p75_age_vec</span> <span class="o">=</span> <span class="n">vcat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,[</span><span class="n">quantile</span><span class="p">(</span><span class="n">days_open_at</span><span class="p">[</span><span class="n">d</span><span class="p">],</span><span class="mf">0.75</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="k">in</span> <span class="n">all_dates</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">draw</span><span class="p">(</span><span class="n">PNG</span><span class="p">(</span><span class="mi">8</span><span class="n">inch</span><span class="p">,</span><span class="mi">4</span><span class="n">inch</span><span class="p">),</span> <span class="n">plot</span><span class="p">(</span>
+<span class="n">layer</span><span class="p">(</span>  <span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">p25_age_vec</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">fill</span><span class="p">(</span><span class="s">&quot;25th percentile&quot;</span><span class="p">,</span><span class="n">length</span><span class="p">(</span><span class="n">p25_age_vec</span><span class="p">)),</span>
+        <span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">),</span>
+<span class="n">layer</span><span class="p">(</span>  <span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">p50_age_vec</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">fill</span><span class="p">(</span><span class="s">&quot;Median&quot;</span><span class="p">,</span><span class="n">length</span><span class="p">(</span><span class="n">p50_age_vec</span><span class="p">)),</span>
+        <span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">),</span>
+<span class="n">layer</span><span class="p">(</span>  <span class="n">x</span><span class="o">=</span><span class="n">plot_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">p75_age_vec</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">fill</span><span class="p">(</span><span class="s">&quot;75th percentile&quot;</span><span class="p">,</span><span class="n">length</span><span class="p">(</span><span class="n">p75_age_vec</span><span class="p">)),</span>
+        <span class="n">Geom</span><span class="o">.</span><span class="n">line</span><span class="p">),</span>
+<span class="n">Guide</span><span class="o">.</span><span class="n">Title</span><span class="p">(</span><span class="s">&quot;Age of Open Issues/PR&quot;</span><span class="p">),</span>
+<span class="n">Guide</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">),</span> <span class="n">Guide</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Age (days)&quot;</span><span class="p">)))</span></code></pre></div>
+
+<p><img src="/images/JuliaIssueCount/JuliaIssueCount_20_0.png" alt="png" /></p>
 
 
   </div>
