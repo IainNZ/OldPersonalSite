@@ -16,7 +16,7 @@ server {
 
   # Redirect old posts
   rewrite ^/2014/(.*)$ /blog/$1 permanent;
-  rewrite ^/2014/(.*)$ /blog/$1 permanent;
+  rewrite ^/2013/(.*)$ /blog/$1 permanent;
   rewrite ^/2012/(.*)$ /blog/$1 permanent;
 }
 
